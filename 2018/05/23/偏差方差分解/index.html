@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在回归问题中，我们有提到两个问题： （1）模型的泛化能力和参数正则化 （2）梯度下降优化损失函数 这两部分其实都有可以深入探讨的地方，本篇来谈谈模型的偏差方差分解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bias-Variance Decompostion">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/05/23/偏差方差分解/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="在回归问题中，我们有提到两个问题： （1）模型的泛化能力和参数正则化 （2）梯度下降优化损失函数 这两部分其实都有可以深入探讨的地方，本篇来谈谈模型的偏差方差分解">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/23/偏差方差分解/bias-variance.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/23/偏差方差分解/model.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/23/偏差方差分解/experiment.png">
+<meta property="og:updated_time" content="2018-10-08T14:32:58.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bias-Variance Decompostion">
+<meta name="twitter:description" content="在回归问题中，我们有提到两个问题： （1）模型的泛化能力和参数正则化 （2）梯度下降优化损失函数 这两部分其实都有可以深入探讨的地方，本篇来谈谈模型的偏差方差分解">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/05/23/偏差方差分解/bias-variance.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/05/23/偏差方差分解/"/>
+
+
+
+
+
+  <title>Bias-Variance Decompostion | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/05/23/偏差方差分解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Bias-Variance Decompostion</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-23T20:03:21+08:00">
+                2018-05-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在回归问题中，我们有提到两个问题：</p>
+<p>（1）模型的泛化能力和参数正则化</p>
+<p>（2）梯度下降优化损失函数</p>
+<p>这两部分其实都有可以深入探讨的地方，本篇来谈谈模型的偏差方差分解</p>
+<a id="more"></a>
+<hr>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>在很多机器学习的课程中，都会提到偏差方差分解问题 bias-variance decompostion 试图通过数学公式的推导指出，模型的期望泛化错误来自于三部分：偏差-方差-噪声</p>
+<p><img src="/2018/05/23/偏差方差分解/bias-variance.png" width="400px"></p>
+<p>变量参数说明：</p>
+<p>$\hat{f}$ : 最优的目标函数，我们可以将其视为，我们优化的模型的目标，就是充分逼近这个函数</p>
+<p>$\ f^*$: 我们设计的模型函数</p>
+<p>$E[\ f^*] = \bar{f}$: </p>
+<p>根据不同训练样本得到的$\ f^*$的期望，在无偏估计下<script type="math/tex">\bar{f} = \hat{f}</script></p>
+<p>bias : 偏差，即  <script type="math/tex">\bar{f}</script> 与 <script type="math/tex">\hat{f}</script>之间的差值</p>
+<p>variance: 方差，即<script type="math/tex">\ f^*</script>之间的离散程度</p>
+<p><strong>我们接下来的分析要围绕这个图进行分析！</strong></p>
+<p><strong>bias</strong>: 度量了某种学习算法的平均估计结果所能逼近学习目标的程度；（独立于训练样本的误差，刻画了匹配的准确性和质量：一个高的偏置意味着一个坏的匹配）</p>
+<p>=&gt;度量学习算法期望预测与真实结果的偏离程度，即刻画了学习算法本身的拟合能力</p>
+<p><strong>variance</strong>:  度量了在面对同样规模的不同训练集时，学习算法的估计结果发生变动的程度。（相关于观测样本的误差，刻画了一个学习算法的精确性和特定性：一个高的方差意味着一个弱的匹配）</p>
+<p>=&gt;度量了同样大小的训练集的变动所导致的学习性能的变化，即刻画了数据扰动所造成的影响</p>
+<p><strong>noise</strong> 本真噪音是任何学习算法在该学习目标上的期望误差的下界；( 任何方法都克服不了的误差)</p>
+<p>=&gt;在当前任务上任何学习算法所能达到的期望泛化误差的下界，即刻画了学习问题本身的难度</p>
+<h3 id="形象化解释"><a href="#形象化解释" class="headerlink" title="形象化解释"></a>形象化解释</h3><p><strong>我们以射击打靶为例形象化说明一下：</strong></p>
+<p><script type="math/tex">\hat{f}</script>是我应该瞄准的靶心🎯，但是因为我本身近视，误将靶心旁边的一点<strong>bias</strong>误认为靶心，然后实际打靶过程中，我由于紧张手抖，每次打靶都不能射中我误以为的靶心<strong>bias</strong>，导致多次打靶后，都不在那个误认为的中心， 而跑到了其他位置，这些位置越分散（<strong>variance越大</strong>），证明我打靶过程中手越抖，我越紧张</p>
+<p>bias很大，vairance很小：说明我的近视将靶心看错，但是我每次打靶时手都不太抖，都可以射中我误认为的靶心附近</p>
+<hr>
+<h3 id="模型复杂度的角度"><a href="#模型复杂度的角度" class="headerlink" title="模型复杂度的角度"></a>模型复杂度的角度</h3><p>在回归问题中，我们有提到，模型越复杂，越能拟合训练样本（复杂的模型集合实际上包括了简单模型）</p>
+<p>那模型的复杂程度跟bias和variacne有什么关系呢？</p>
+<p>（1）模型越简单，variance越小，bias越大</p>
+<p>（2）模型越复杂，variance越大，bias越小</p>
+<p>模型越简单，受不同数据的扰动越小=&gt;极端的例子就是f(x) = c,这是一个最简单的模型，不受数据扰动影响，所以variance越小</p>
+<p>模型越复杂，每个模型都能更好地拟合自己的训练样本，所以在期望情况下，其越能接近最优函数（有点类似于集成学习的概念，每个模型拟合一部分数据，全部集成在一起，就可以很好的拟合全部数据），所以bias越小</p>
+<p><strong>这里面有一个逻辑问题，模型复杂bias小，不证明模型简单bias大，可能模型简单的时候bias也小：</strong></p>
+<p><img src="/2018/05/23/偏差方差分解/model.png" width="400px"></p>
+<p>图中的圆圈可以视为函数空间，模型越简单，包含的函数越少；模型越复杂，包含的函数越多；机器学习是从function set中挑选一个最优函数的过程中，模型越复杂，function set越大，越容易找出贴合最优函数的函数模型</p>
+<p>如果模型的复杂度和bias／variance的关系依然不是很明确， 可以看如下的直观实验结果：</p>
+<p><img src="/2018/05/23/偏差方差分解/experiment.png" width="400px"></p>
+<p>（忽略最上脚那个bias的标志hhh）</p>
+<p>这个实验做的是在同一个问题中，用不同的训练样本（训练样本独立同分布）训练模型，左边的是简单的模型，右边是复杂的模型，右边的模型包括左边的模型（另w2/w3/w4/w5都等于0，即是左边的模型）</p>
+<p>图例中红色的线代表在不同的样本下，训练得到的模型；黑色的线代表我们要去逼近的函数，即理论最优函数；蓝色的线是对红色的线代表的函数求的期望，可以看出：</p>
+<p>（1）模型简单，不同样本训练得到的结果差异不是很大=&gt;variance小，但是总的期望与最优函数不是非常贴合=&gt;bias大</p>
+<p>（2）模型复杂， 不同训练样本得到的结果差异很大，基本充满整个空间=&gt;variance大，但是总的期望与最优函数非常贴合=&gt;bias小</p>
+<p>这个实验是利用的pokemon的数据集，非常有意思的数据，用来预测进化后的pokemon的cp值</p>
+<p><a href="https://www.kaggle.com/terminus7/pokemon-challenge/data?spm=a2c4e.11153940.blogcont312032.13.3be043a9Zjh044" target="_blank" rel="noopener">https://www.kaggle.com/terminus7/pokemon-challenge/data?spm=a2c4e.11153940.blogcont312032.13.3be043a9Zjh044</a></p>
+<hr>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p><strong>回到最开始的问题，我们现在已知偏差和方差以及他们和模型的关系，那如何根据bias variance分解来调整模型呢？</strong></p>
+<p>如果模型无法很好的拟合训练样本，证明模型欠拟合underfit，模型的bias比较大：</p>
+<p>（1）重新设计模型，添加更多的feature</p>
+<p>（2）增加模型复杂度</p>
+<p>如果模型无法很好的预测／分类测试样本，证明模型过拟合overfit，模型的vriacne大：</p>
+<p>💡过拟合是指在模型参数拟合过程中出现的问题，由于训练数据包含了抽样误差（训练数据集可以看作是从全数据集里的抽样），训练时，复杂的模型将抽样误差也考虑其中，并对抽样误差进行了很好的拟合</p>
+<p>（1）增加训练数据集（比如构造数据，手写识别中，将所有的样本左旋或者右旋15度），即让模型看到尽可能多的“例外”情况</p>
+<p>（2）损失函数中构造正则化项=&gt;但是从模型复杂度和偏差方差的关系中，我们可以得知，正则化参数会破坏模型的偏差</p>
+<p>//todo:补充数学公式推导</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/22/回归Regression/" rel="next" title="Regression">
+                <i class="fa fa-chevron-left"></i> Regression
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/31/Gradient-Descent/" rel="prev" title="Gradient Descent">
+                Gradient Descent <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#形象化解释"><span class="nav-number">2.</span> <span class="nav-text">形象化解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型复杂度的角度"><span class="nav-number">3.</span> <span class="nav-text">模型复杂度的角度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

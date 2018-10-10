@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="深度学习有别于传统的机器学习，将前面提到的特征工程交给神经网络来做，而不需要人为采用启发式的方法找到特征变化或者特征处理。 深度学习同样适用于前面提到的机器学习的三个步骤： （1）找到合适的function set，对于深度学习而言，就是找到合适的网络结构 （2）确定从函数空间选出最优函数的准则，对于深度学习而言，依然是优化损失函数（最小化损失函数） （3）根据确定的准则，找到最优的函数，根据梯度">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DeepLearning Introduction">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="深度学习有别于传统的机器学习，将前面提到的特征工程交给神经网络来做，而不需要人为采用启发式的方法找到特征变化或者特征处理。 深度学习同样适用于前面提到的机器学习的三个步骤： （1）找到合适的function set，对于深度学习而言，就是找到合适的网络结构 （2）确定从函数空间选出最优函数的准则，对于深度学习而言，依然是优化损失函数（最小化损失函数） （3）根据确定的准则，找到最优的函数，根据梯度">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d2.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d4.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d5.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d6.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d7.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d8.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d9.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d10.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d11.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d12.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d13.png">
+<meta property="og:updated_time" content="2018-10-08T14:42:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DeepLearning Introduction">
+<meta name="twitter:description" content="深度学习有别于传统的机器学习，将前面提到的特征工程交给神经网络来做，而不需要人为采用启发式的方法找到特征变化或者特征处理。 深度学习同样适用于前面提到的机器学习的三个步骤： （1）找到合适的function set，对于深度学习而言，就是找到合适的网络结构 （2）确定从函数空间选出最优函数的准则，对于深度学习而言，依然是优化损失函数（最小化损失函数） （3）根据确定的准则，找到最优的函数，根据梯度">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/d1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/"/>
+
+
+
+
+
+  <title>DeepLearning Introduction | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/06/26/深度学习DeepLearning介绍/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DeepLearning Introduction</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-26T21:44:31+08:00">
+                2018-06-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>深度学习有别于传统的机器学习，将前面提到的特征工程交给神经网络来做，而不需要人为采用启发式的方法找到特征变化或者特征处理。</p>
+<p>深度学习同样适用于前面提到的机器学习的三个步骤：</p>
+<p>（1）找到合适的function set，对于深度学习而言，就是找到合适的网络结构</p>
+<p>（2）确定从函数空间选出最优函数的准则，对于深度学习而言，依然是优化损失函数（最小化损失函数）</p>
+<p>（3）根据确定的准则，找到最优的函数，根据梯度下降的方法，找到合适的参数（对于深度学习 神经网络来说，网络结构就是函数空间，比如有几个隐藏层，每个隐藏层有几个神经元等，不同的权值参数对应不同的函数）</p>
+<a id="more"></a>
+<h2 id="全连接神经网络"><a href="#全连接神经网络" class="headerlink" title="全连接神经网络"></a>全连接神经网络</h2><p><strong>Fully Connect Feedforward Network</strong></p>
+<p>我们可以定义不同的神经网络结构，通过训练样本对网络结构进行训练，得到合适的参数$w,b$ </p>
+<p>$\theta$ :神经网络中所有的权值$w$和偏置$b$</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d1.png" width="400px"></p>
+<p>对于全连接网络，前一层的输出作为下一层的输入，全部连接到下一层的神经元（Neuron）</p>
+<h3 id="神经元"><a href="#神经元" class="headerlink" title="神经元"></a><strong>神经元</strong></h3><p>每一个神经元类似之前的一个逻辑回归函数，所有的输入乘以对应的权值$w_i$，再加上偏置$b$, 得到的$y=w·x+b$  输入激活函数（activation function), 比如sigmoid函数</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d2.png" width="200px"></p>
+<h3 id="矩阵运算"><a href="#矩阵运算" class="headerlink" title="矩阵运算"></a>矩阵运算</h3><p>对于全连接的神经网络，可以将其转换成矩阵的运算：</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d3.png" width="400px"></p>
+<p>第一个隐藏层的输入为$（x_1,x_2,x_3···x_N）$</p>
+<p>第一个隐藏层的输出为<script type="math/tex">\sigma(w·x+b) = \sigma(w_1*x_1+w_2*x_2+···+w_N*x_N+b)</script></p>
+<p>对于其他层同样</p>
+<h3 id="多分类问题"><a href="#多分类问题" class="headerlink" title="多分类问题"></a>多分类问题</h3><p><img src="/2018/06/26/深度学习DeepLearning介绍/d4.png" width="400px"></p>
+<p>对于多分类问题而言，输出层的激活函数设定为softmax</p>
+<p>前面的隐藏层相当于我们做的特征工程，对特征进行处理</p>
+<p>（1）损失函数</p>
+<p>假设进行10个分类，则对于一个训练样本，其训练误差为（交叉熵）：</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d5.png" width="400px"></p>
+<p>则对于所有训练样本，其训练误差为 $L=\sum_{n=1}^{N}C^n$</p>
+<p>（2）梯度下降进行优化</p>
+<p>可以采用Backpropagation的方式进行优化</p>
+<p>💡对于任何连续的函数模型，我们都可以用只有一个隐藏层的神经网络将其表示出来</p>
+<p>💡如何设计网络结构：是一些先验知识+试错</p>
+<p>💡网络结构可以通过Evolutionary Artificial Neural Network自动学习得出</p>
+<p>💡网络权值的初始值设定可以采用RBM的方式</p>
+<h2 id="误差反向传播-Backpropagation"><a href="#误差反向传播-Backpropagation" class="headerlink" title="误差反向传播 Backpropagation"></a>误差反向传播 Backpropagation</h2><p>全连接神经网络的参数优化采用误差反向传播的方法，传统的更新参数的方式是：</p>
+<p>计算误差-&gt;计算误差对$w_i$的梯度-&gt;根据梯度下降的方向，更新参数</p>
+<p>💡但是全连接神经网络的参数太多，逐个更新的速度很慢，所以采用backpropagation 反向传播的方法</p>
+<h3 id="函数链式法则-Chain-Rule"><a href="#函数链式法则-Chain-Rule" class="headerlink" title="函数链式法则 Chain Rule"></a>函数链式法则 Chain Rule</h3><p><strong>case 1</strong></p>
+<p>$y=g(x)  \quad z=h(y) $:    $\Delta x =&gt; \Delta y =&gt; \Delta z$</p>
+<p>$ \frac{dz}{dx} =  \frac{dz}{dy}  \frac{dy}{dx} $</p>
+<p><strong>case 2</strong></p>
+<p>$y=g(s)  \quad y=h(s) \quad z=k(x,y) $:    </p>
+<p>$\Delta s =&gt; \Delta y $</p>
+<p>$\Delta s=&gt; \Delta x$</p>
+<p>$\Delta x \quad and \quad\Delta y =&gt; \Delta z$</p>
+<p>$ \frac{dz}{ds} =  \frac{dz}{dx}  \frac{dx}{ds} +\frac{dz}{dy}  \frac{dy}{ds} $</p>
+<h3 id="Backpropagation-反向传播"><a href="#Backpropagation-反向传播" class="headerlink" title="Backpropagation 反向传播"></a>Backpropagation 反向传播</h3><p>在经过一次训练以后，神经网络在所有样本上的误差为：$L(\theta) = \sum_{n=1}^{N}C^n(\theta)$,N是所有的样本数</p>
+<p>则，损失对于某一个参数的梯度$\frac{\partial L(\theta)}{\partial w_i}$ 可以转换成 某一个样本对参数的梯度，再求和，即$\frac{\partial \sum_{n=1}^{N}C^n(\theta)}{\partial w_i}$</p>
+<p>所以，<strong>只需要计算某一个样本的误差对参数的梯度</strong></p>
+<p>假设我们需要对如下的$w_1$和$w_2$进行参数更新</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d6.png" width="300px"></p>
+<p>$\frac{\partial C}{\partial w} = \frac{\partial z}{\partial w}\frac{\partial C}{\partial z}$</p>
+<p>通过链式法则，我们可以将损失对于参数的导数分解为Forward Pass和Backward Pass</p>
+<p><strong>Forward Pass</strong>: 计算$ \frac{\partial z}{\partial w}$</p>
+<p><strong>Backward Pass</strong>: 计算$\frac{\partial C}{\partial z}$</p>
+<p>其中，z是激活函数的input</p>
+<h4 id="Forward-Pass"><a href="#Forward-Pass" class="headerlink" title="Forward Pass"></a>Forward Pass</h4><p>之所以将这个部分称为forward pass，是因为从计算中我们很容易得到，$ \frac{\partial z}{\partial w_i} = x_i$</p>
+<p>即对应的微分值就是权值对应的输入</p>
+<h4 id="Backward-Pass"><a href="#Backward-Pass" class="headerlink" title="Backward Pass"></a>Backward Pass</h4><p>对于上面那个网络，我们往后多看几层</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d7.png" width="400px"></p>
+<p>根据链式法则$\frac{\partial C}{\partial z} =\frac{\partial a}{\partial z}\frac{\partial C}{\partial a} $</p>
+<p>其中，a是z经过激活函数后得到的结果，我们以使用sigmoid激活函数为例，进行推导</p>
+<p>$\frac{\partial a}{\partial z} = {\sigma}’(z) = \sigma(z)(1-\sigma(z)) $</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d8.png" width="300px"></p>
+<p>通过上面的网络，可以分析得到，a影响${z}’  $和${z}’’$，${z}’$和${z}’’$影响最终的C，所以通过链式法则，可以得到：</p>
+<p>$\frac{\partial C}{\partial a}=\frac{\partial {z}’}{\partial a}\frac{\partial C}{\partial {z}’}+\frac{\partial {z}’’}{\partial a}\frac{\partial C}{\partial {z}’’} = w_3\frac{\partial C}{\partial {z}’}+w_4\frac{\partial C}{\partial {z}’’} $</p>
+<p>因此，$\frac{\partial C}{\partial a} ={\sigma}’(z)[w_3\frac{\partial C}{\partial {z}’}+w_4\frac{\partial C}{\partial {z}’’} ] $</p>
+<p><strong>现在的问题转变成</strong> 求出$\frac{\partial C}{\partial {z}’}\quad\frac{\partial C}{\partial {z}’’} $</p>
+<p>（1）假设${z’} {z’’}$对应着输出层的输入，即二者分别输入激活函数以后，输出$y_1$和$y_2$，对于这种情况，可以直接根据链式法则求出导数</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d9.png" width="400px"></p>
+<p>（2）假设${z’} {z’’}$对应着中间层的输入，即二者经过激活函数以后，会继续沿着前向传播的方向继续流动，产生$z_a$和$z_b$</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d10.png" width="400px"></p>
+<p>这种情况下，我们可以进行递归求解，即：</p>
+<p>$\frac{\partial C}{\partial z’} ={\sigma}’(z’)[w_5\frac{\partial C}{\partial {z_a}}+w_6\frac{\partial C}{\partial {z_b}} ] $</p>
+<p>因此，可以形象地将这个网络表示成误差的反向传播：激活函数不是非线性函数，而是放大信号📶，即乘以$\sigma’(z)$</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d11.png" width="500px"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>对于神经网络而言，误差对于参数的梯度，可以拆分成两个部分：</p>
+<p>（1）训练样本的前向传播</p>
+<p>（2）训练误差的反向传播</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d12.png" width="400px"></p>
+<h2 id="📎-概念补充"><a href="#📎-概念补充" class="headerlink" title="📎 概念补充"></a>📎 概念补充</h2><h3 id="激活函数的意义"><a href="#激活函数的意义" class="headerlink" title="激活函数的意义"></a>激活函数的意义</h3><p>引入激活函数的意义就是引入非线性因素，以此解决线性模型不能解决的问题，如果不引入激活函数，则无论我们的网络搭建的多么深入，都是线性模型的组合</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d3.png" width="400px"></p>
+<p>💡就是将上图中所有的sigmoid函数去掉</p>
+<p>我们以只有一个隐藏层的神经网络为例：</p>
+<p><img src="/2018/06/26/深度学习DeepLearning介绍/d13.png" width="700px"></p>
+<p>如果不引入激活函数，则整个网络是</p>
+<p>$y = w_{21}(w_{1-11}x_1+w_{1-21}x_2+b_{1-1})+w_{22}(w_{1-12}x_1+w_{1-22}x_2+b_{1-2})+w_{23}(w_{1-13}x_1+w_{1-23}x_2+b_{1-3})$</p>
+<p>整理以后得到：</p>
+<p>$y=x_1(w_{21}w_{1-11}+w_{22}w_{1-12}+w_{23}w_{1-13})+x_2(w_{21}w_{1-21}+w_{22}w_{1-22}+w_{23}w_{1-23})+(w_{21}b_{1-1}+w_{22}b_{1-2}+w_{23}b_{1-3})$</p>
+<p>依然是线性的</p>
+<p>而引入激活函数的意义，可以从函数的泰勒展开式明确</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/20/逻辑回归Logistic-Regression/" rel="next" title="Logistic Regression">
+                <i class="fa fa-chevron-left"></i> Logistic Regression
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/02/数据库概述/" rel="prev" title="数据库概述">
+                数据库概述 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#全连接神经网络"><span class="nav-number">1.</span> <span class="nav-text">全连接神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#神经元"><span class="nav-number">1.1.</span> <span class="nav-text">神经元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵运算"><span class="nav-number">1.2.</span> <span class="nav-text">矩阵运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多分类问题"><span class="nav-number">1.3.</span> <span class="nav-text">多分类问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#误差反向传播-Backpropagation"><span class="nav-number">2.</span> <span class="nav-text">误差反向传播 Backpropagation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数链式法则-Chain-Rule"><span class="nav-number">2.1.</span> <span class="nav-text">函数链式法则 Chain Rule</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Backpropagation-反向传播"><span class="nav-number">2.2.</span> <span class="nav-text">Backpropagation 反向传播</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Forward-Pass"><span class="nav-number">2.2.1.</span> <span class="nav-text">Forward Pass</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Backward-Pass"><span class="nav-number">2.2.2.</span> <span class="nav-text">Backward Pass</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#📎-概念补充"><span class="nav-number">3.</span> <span class="nav-text">📎 概念补充</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#激活函数的意义"><span class="nav-number">3.1.</span> <span class="nav-text">激活函数的意义</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

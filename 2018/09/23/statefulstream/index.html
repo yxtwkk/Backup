@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Spark Streaming提供了一套完整的状态管理机制，Spark Streaming会将dstream中的数据按batch interval 分成不同的rdd，再按block interval 分成不同的partition交给程序处理（如果使用kafka发送数据的话，partition的计算方式不同）；以word count 为例，我们总希望 本次计算中，能够直接用到之前数据的word co">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stateful Stream">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/09/23/statefulstream/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="Spark Streaming提供了一套完整的状态管理机制，Spark Streaming会将dstream中的数据按batch interval 分成不同的rdd，再按block interval 分成不同的partition交给程序处理（如果使用kafka发送数据的话，partition的计算方式不同）；以word count 为例，我们总希望 本次计算中，能够直接用到之前数据的word co">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/statefulstream/l3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/statefulstream/l1.png">
+<meta property="og:updated_time" content="2018-09-28T01:44:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Stateful Stream">
+<meta name="twitter:description" content="Spark Streaming提供了一套完整的状态管理机制，Spark Streaming会将dstream中的数据按batch interval 分成不同的rdd，再按block interval 分成不同的partition交给程序处理（如果使用kafka发送数据的话，partition的计算方式不同）；以word count 为例，我们总希望 本次计算中，能够直接用到之前数据的word co">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/09/23/statefulstream/l3.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/09/23/statefulstream/"/>
+
+
+
+
+
+  <title>Stateful Stream | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/09/23/statefulstream/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Stateful Stream</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-23T23:01:50+08:00">
+                2018-09-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/大数据系统/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Spark Streaming提供了一套完整的状态管理机制，Spark Streaming会将dstream中的数据按batch interval 分成不同的rdd，再按block interval 分成不同的partition交给程序处理（如果使用kafka发送数据的话，partition的计算方式不同）；以word count 为例，我们总希望 本次计算中，能够直接用到之前数据的word count的计算结果，即“状态”，而这个“状态”信息是无法从数据流中读入的，需要一个外部的数据／变量等来保存</p>
+<a id="more"></a>
+<h2 id="Stateful-Stream"><a href="#Stateful-Stream" class="headerlink" title="Stateful-Stream"></a>Stateful-Stream</h2><h3 id="checkpoint"><a href="#checkpoint" class="headerlink" title="checkpoint"></a>checkpoint</h3><p>提到状态管理，首先需要提到spark streaming 提供的checkpoint机制</p>
+<p>spark streaming对流式数据的处理是7*24小时的，这就需要一定的机制来应对一些与程序本身执行逻辑无关的错误，比如，JVM crash，System Failuer等。因此，spark streaming需要将每个interval中足够的信息checkpoint到一个具有fault-tolerant的存储系统中，比如 Amazon S3，HDFS等，并可以通过这些信息进行故障恢复。</p>
+<p>在无状态的流处理中，checkpoint是一个optional的机制；但是在 stateful-stream processing中，checkpoint是强制的。</p>
+<p>💡需要强调的是，checkpoint存储的数据信息等和代码版本是一一对应的；如果我们将更新了的代码jar包上传到集群上，原有的checkpoint到falut-tolerant storage的数据信息是无法被用来进行故障恢复的。</p>
+<p>💡如果checkpoint的地址写成”.”，则是将数据checkpoint到本地</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> sparkContext = <span class="keyword">new</span> <span class="type">SparkContext</span>()</span><br><span class="line"><span class="keyword">val</span> ssc = <span class="keyword">new</span> <span class="type">StreamingContext</span>(sparkContext,<span class="type">Seconds</span>(<span class="number">10000</span>))</span><br><span class="line">ssc.checkpoint(<span class="string">"."</span>)</span><br></pre></td></tr></table></figure>
+<p>statful-stream process 需要在k-v数据流上进行处理，即DStream[(K,V)]；在k-v数据流上进行数据处理，spark streaming程序可以将相同key的数据shuffle到一起，因此，相同key的数据可以在同一个节点上进行处理。spark streaming提供两种状态处理方式，updateStateByKey和mapwithState</p>
+<h3 id="updateStateByKey"><a href="#updateStateByKey" class="headerlink" title="updateStateByKey"></a>updateStateByKey</h3><p><code>def updateStateByKey[S](updateFunc:(Seq[V],Option[S]) =&gt; Option[S])</code></p>
+<p>其中：</p>
+<p>（1）Seq[V]：在当下这个batch中，给定key的所有对应value的list</p>
+<p>（2）Option[S]：在每轮数据处理迭代中，需要更新的状态</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">updateUserEvents</span></span>(newEvents: <span class="type">Seq</span>[<span class="type">UserEvent</span>],</span><br><span class="line">                    state: <span class="type">Option</span>[<span class="type">UserSession</span>]): <span class="type">Option</span>[<span class="type">UserSession</span>] = &#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  Append the new events to the state. If this the first time we're invoked for the key</span></span><br><span class="line"><span class="comment">  we fallback to creating a new UserSession with the new events.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="keyword">val</span> newState = state</span><br><span class="line">    .map(prev =&gt; <span class="type">UserSession</span>(prev.userEvents ++ newEvents))</span><br><span class="line">    .orElse(<span class="type">Some</span>(<span class="type">UserSession</span>(newEvents)))</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">If we received the `isLast` event in the current batch, save the session to the underlying store and return None to delete the state.</span></span><br><span class="line"><span class="comment">Otherwise, return the accumulated state so we can keep updating it in the next batch.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">  <span class="keyword">if</span> (newEvents.exists(_.isLast)) &#123;</span><br><span class="line">    saveUserSession(state)</span><br><span class="line">    <span class="type">None</span></span><br><span class="line">  &#125; <span class="keyword">else</span> newState</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">id means the key,the user-id</span></span><br><span class="line"><span class="comment">data means the session type,the content of the event that occurred.</span></span><br><span class="line"><span class="comment">isLast is a flag  which indicates the end of the session.</span></span><br><span class="line"><span class="comment">*／</span></span><br><span class="line"><span class="comment">case class UserEvent(id: Int, data: String, isLast: Boolean)</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">case class UserSession(userEvents: Seq[UserEvent])</span></span><br></pre></td></tr></table></figure>
+<p>上述代码的功能是需要判断每个用户id进行的操作data有哪些，isLast表示这个用户是否完成自己的会话</p>
+<p>对于新到的数据点，需求是对每个用户，将新的用户操作和旧的用户操作结合，成为新的状态Option[UserSession]；如果是新到的用户，则根据现有的event创建对应key的state</p>
+<p>然后通过标志为 isLast来判断这是不是这个用户所做的最后一个操作，如果是用户的最后一个操作，则将这个用户的状态信息保存，并返回none，表示对这个用户key的统计已经结束；否则，返回对应的状态</p>
+<p><img src="/2018/09/23/statefulstream/l3.png" width="750px"></p>
+<p>Spark Streaming根据定义的更新函数，在每个计算时间间隔内更新内部维护的状态。实时流入程序的数据流liveDStream，通过liveDStream.updateStateByKey调用，得到StateDStream；实时更新状态时，程序会根据当前时间间隔内的数据rdd-x，与上一个时间间隔的状state-(x-1)进行<strong>cogroup</strong>操作，cogroup中更新过程是定义的unpdateState函数</p>
+<p>💡每次进行cogroup时，实时数据要跟全量的状态做cogroup计算；随着计算时间进行，cogroup可能会越来越慢</p>
+<p>出于容错考虑，状态数据流StateDStream会进行cache和定期的checkpoint</p>
+<h4 id="updateStateByKey-的缺点"><a href="#updateStateByKey-的缺点" class="headerlink" title="updateStateByKey 的缺点"></a>updateStateByKey 的缺点</h4><p>根据我们上面的例子其实可以看出updateStateByKey有如下几个问题：</p>
+<p>（1）在进行newState处理时，我们需要对所有的state进行map，即需要遍历整个state空间，即时有的key没有数据流入</p>
+<p>（2）我们需要自己建立标志位isLast来判断是否是用户最后的操作，换言之就是，我们需要自己判断某个key对应的state是否是会长时间不更新，如果这个state长时间不更新，则从state空间中移除这个状态</p>
+<p>（3）喂给updateStateByKey的数据type限制了updateStateByKey的返回值类型，这对下游的程序编写有限制🚫</p>
+<h3 id="mapWithState"><a href="#mapWithState" class="headerlink" title="mapWithState"></a>mapWithState</h3><p>mapWithState是spark 1.6以后引入的新的状态管理方式，其具有以下几个特性：</p>
+<p>（1）提供了timeout机制，如果一个状态在限定时间内没有被更新，则这个状态会被移除；</p>
+<p>（2）部分更新机制，根据喂入程序的数据的key来得到对应key的state进行更新，而不是遍历全部的状态；</p>
+<p>（3）自定义返回值类型，与喂给程序的数据类型无关；</p>
+<p>（4）提供初始化状态的函数</p>
+<p><strong>MapWithState的用法：</strong><br><code>message.mapWithState(StateSpec.function(func).initialState(RDD).timeout(time))</code></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A mapping function that maintains an integer state and return a String</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mappingFunction</span></span>(key: <span class="type">String</span>, value: <span class="type">Option</span>[<span class="type">Int</span>], state: <span class="type">State</span>[<span class="type">Int</span>]): <span class="type">Option</span>[<span class="type">String</span>] = &#123;</span><br><span class="line">  <span class="comment">// Use state.exists(), state.get(), state.update() and state.remove()</span></span><br><span class="line">  <span class="comment">// to manage state, and return the necessary string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> spec = <span class="type">StateSpec</span>.function(mappingFunction)</span><br></pre></td></tr></table></figure>
+<p>与updateStateByKey不同的是，mapWithState的数据输入类型是Option[S]，而不是Seq[S]</p>
+<p>mapWithState的函数signature是：</p>
+<p><code>mapWithState[StateType, MappedType](spec: StateSpec[K, V, StateType, MappedType])</code></p>
+<p>需要通过初始化StateSpec来进行初始化</p>
+<p>而StateSpec.function是一个工厂方法，需要一个拥有如下signature的方法进行初始化：</p>
+<p><code>mappingFunction: (KeyType, Option[ValueType], State[StateType]) =&gt; MappedType</code></p>
+<p>其中：</p>
+<p>（1）<code>KeyType</code>：就是key</p>
+<p>（2）<code>Option[ValueType]</code>：传入数据的类型</p>
+<p>（3）<code>State[StateType]</code>：State的类型</p>
+<p>（4）<code>MappedType</code>：返回值类型</p>
+<p>在updateStateByKey通过Option[S]对state进行维护，但是在mapWithState中，用State[S]对state进行维护</p>
+<p>State[S]类提供了如下几个方法：</p>
+<p>（1）<code>def exists()：Boolean</code> </p>
+<p>//判断状态是否存在</p>
+<p>（2）<code>def get()：S</code> </p>
+<p>//得到当前key的状态，如果key的状态不存在，则会抛出异常java.util.NoSuchElementException</p>
+<p>（3）<code>def isTimingOut()：Boolean</code> </p>
+<p>//判断当前状态是否超时，如果超时，则在本次batch处理后，会将状态移除</p>
+<p>（4）<code>def remove()：Unit</code> </p>
+<p>// 移除当前state空间中存在的状态</p>
+<p>（5）<code>def update(newState:S) ：Unit</code></p>
+<p> //根据流入的新数据更新状态</p>
+<p>（6）<code>def getOption()：Option[S]</code></p>
+<p> //得到scala.Option类型的状态 </p>
+<p>前面提到，mapWithState不再是接受一个Seq[S]的数据，而是一个数据一个数据的处理，即</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">updateUserEvents</span></span>(key: <span class="type">Int</span>,</span><br><span class="line">                     value: <span class="type">Option</span>[<span class="type">UserEvent</span>],</span><br><span class="line">                     state: <span class="type">State</span>[<span class="type">UserSession</span>]): <span class="type">Option</span>[<span class="type">UserSession</span>] = &#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  Get existing user events, or if this is our first iteration</span></span><br><span class="line"><span class="comment">  create an empty sequence of events.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="keyword">val</span> existingEvents: <span class="type">Seq</span>[<span class="type">UserEvent</span>] =</span><br><span class="line">    state</span><br><span class="line">      .getOption()</span><br><span class="line">      .map(_.userEvents)</span><br><span class="line">      .getOrElse(<span class="type">Seq</span>[<span class="type">UserEvent</span>]())</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  Extract the new incoming value, appending the new event with the old</span></span><br><span class="line"><span class="comment">  sequence of events.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="keyword">val</span> updatedUserSession: <span class="type">UserSession</span> =</span><br><span class="line">    value</span><br><span class="line">      .map(newEvent =&gt; <span class="type">UserSession</span>(newEvent +: existingEvents))</span><br><span class="line">      .getOrElse(<span class="type">UserSession</span>(existingEvents))</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Look for the end event. If found, return the final `UserSession`,</span></span><br><span class="line"><span class="comment">If not, update the internal state and return `None`</span></span><br><span class="line"><span class="comment">*/</span>      </span><br><span class="line">  updatedUserSession.userEvents.find(_.isLast) <span class="keyword">match</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">Some</span>(_) =&gt;</span><br><span class="line">      state.remove()</span><br><span class="line">      <span class="type">Some</span>(updatedUserSession)</span><br><span class="line">    <span class="keyword">case</span> <span class="type">None</span> =&gt;</span><br><span class="line">      state.update(updatedUserSession)</span><br><span class="line">      <span class="type">None</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>强调几个地方：</strong></p>
+<p>（1）getOrElse(Seq[UserEvent]()) 相当于if..else，如果存在这个key对应的状态，则返回对应的状态；如果不存在，则根据当前数据UserEvent，新建状态</p>
+<p>（2）判断当前UserSession是否是用户最后的一个操作，如果是，则移除对应key的状态，并返回相关的状态；如果不是，则继续更新状态，并返回None</p>
+<p>（3）timeout的作用是判断在一定时间time内，某个key的value是否被更新，如果没被更新，则这个key会从state中移除，下次再有这个key的数据流入时，会重新计算</p>
+<p>💡设置timeout后，需要在func里使用state.isTimingout()进行判断，不然会报错</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">updateUserEvents</span></span>(key: <span class="type">Int</span>,</span><br><span class="line">                     value: <span class="type">Option</span>[<span class="type">UserEvent</span>],</span><br><span class="line">                     state: <span class="type">State</span>[<span class="type">UserSession</span>]): <span class="type">Option</span>[<span class="type">UserSession</span>] = &#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">updateUserSession</span></span>(newEvent: <span class="type">UserEvent</span>): <span class="type">Option</span>[<span class="type">UserSession</span>] = &#123;</span><br><span class="line">    <span class="keyword">val</span> existingEvents: <span class="type">Seq</span>[<span class="type">UserEvent</span>] =</span><br><span class="line">      state</span><br><span class="line">        .getOption()</span><br><span class="line">        .map(_.userEvents)</span><br><span class="line">        .getOrElse(<span class="type">Seq</span>[<span class="type">UserEvent</span>]())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> updatedUserSession = <span class="type">UserSession</span>(newEvent +: existingEvents)</span><br><span class="line"></span><br><span class="line">    updatedUserSession.userEvents.find(_.isLast) <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">Some</span>(_) =&gt;</span><br><span class="line">        state.remove()</span><br><span class="line">        <span class="type">Some</span>(updatedUserSession)</span><br><span class="line">      <span class="keyword">case</span> <span class="type">None</span> =&gt;</span><br><span class="line">        state.update(updatedUserSession)</span><br><span class="line">        <span class="type">None</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  value <span class="keyword">match</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">Some</span>(newEvent) =&gt; updateUserSession(newEvent)</span><br><span class="line">    <span class="keyword">case</span> _ <span class="keyword">if</span> state.isTimingOut() =&gt; state.getOption()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以通过使用stateSnapshots()获取全局的状态信息（key-state），否则得到的是数据是类型是mappingFunction的返回类型</p>
+<p>mapWithState通过自定义返回值类型，可以将返回值给下游数据处理使用</p>
+<p>数据流liveDStream流入系统，通过调用liveDStream.mapWithState，得到MapWithStateDStream，而MapWithStateDStream中的每个rdd是MapWithStateRDD，该rdd的元素是MapWithStateRDDRecord，<strong>记录某个parition下所有key的State</strong></p>
+<p><img src="/2018/09/23/statefulstream/l1.png" width="750px"></p>
+<p>程序在遍历当前时间间隔内的数据rdd-x，与上一个时间间隔状态state-(x-1)中查找指定的状态，并更新状态，更新操作是用户定义的mappingFunc</p>
+<p>💡这里的状态更新不需要全量扫描状态数据，因为状态数据存储在hashmap中</p>
+<hr>
+<h4 id="源码解读"><a href="#源码解读" class="headerlink" title="源码解读"></a>源码解读</h4><p>mapWithState接收的是一个statespec对象，是对用户自定义的mapstatefunction的一个包裹</p>
+<p>在mapWithState，通过new一个MapWithStateDStreamImpl类来得到MapWithStateDStream</p>
+<p>MapWithStateDStreamImpl中创建一个类型为InternalMapWithStateDStream类型对象 internalStream</p>
+<p>并在MapWithStateDStreamImpl的compute是方法中调用InternalMapWithStateDStream的getOrCompute方法</p>
+<p>InternalMapWithStateDStream的getOrCompute方法其实是继承其父类的方法，并回调子类<strong>InternalMapWithStateDStream的compute方法</strong></p>
+<p><strong>compute方法的具体逻辑：</strong> compute返回的是MapWithStateRDD，rdd中每个元素是MapWithStateRecord</p>
+<p>首先获取先前状态的rdd：preStateRDD和当前时间的rdd：dataRDD</p>
+<p>（1）首选判断这个preStateRDD是否被正确partition，因为后面的计算过程是利用preStateRDD和dataRDD进行计算，如果二者分区不同，则会造成计算错误了；</p>
+<p>（2）如果现在没有preStateRDD，则需要根据StateSpec设置的iniitalStateRDD设置初始值，如果没有initial</p>
+<p>StateRDD，则创建一个空的MapWithStateRDD</p>
+<p>（3）从dstream中获取当前batch数据的dataRDD，然后对dataRDD根据先前状态rdd即preStateRDD的分区器进行重新分区，得到paritionedDataRDD；如果没有数据，则创建空的rdd</p>
+<p>然后返回preStateRDD，partitionedDataRDD，用户自定义的mappingFunction传给新生成的MapWithStateRDD，并返回</p>
+<p>而前文提到，MapWithStateRDD每个元素都是MapWithStateRecord，一个MapWithStateRecord对应一个partition</p>
+<p>在MapWithStateRDD的内部compute过程，实际上是将preStateRDD和patitionedDataRDD交给MapWithStateRecord来处理</p>
+<p>在MapWithStateRecord中，用函数 updateRecordWithData() 根据prevStateRDD和partitionedDataRDD进行处理：</p>
+<p>从prevStateRDD中拷贝历史的状态数据，保存在MapWithStateRDDRecord的stateMap属性中</p>
+<p>根据 本batch的所有记录，key-value循环找到stateMap中对应的状态并进行更新</p>
+<p>MapWithStateRDD本身代表着状态更新的RDD，RDD本身不可以改变，但是内部的元素MapWithStateRDDRecord可以改变，主要由 stateMap：StateMap（保存历史状态）和mappedData：Seq（保存返回，即流出的数据）</p>
+<p>在MapWithStateDStreamImpl中的compute方法， <strong>调用的是mappedData数据</strong>，<strong>如果想要得到全局的状态，需要调用stateSnapShots（）</strong></p>
+<hr>
+<p>无论是updateStateByKey还是mapWithState都是stateful streaming的操作，spark streaming 要求在进行stateful steaming操作时，需要checkpoint机制防止故障恢复</p>
+<p>默认情况下是10个batch的时间做一次checkpoint，cache的记忆时间是20个batch（最多可以缓存20份历史状态）</p>
+<p>此外，spark streaming在存储数据时，还会额外存储包括，时间戳，是否被删除标记，是否更新标记等的信息，而且在状态没有完全更新完毕时，旧的状态不会被删除，中间可能会存有两份临时状态</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/23/Transfer-Learning/" rel="next" title="Transfer Learning">
+                <i class="fa fa-chevron-left"></i> Transfer Learning
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/28/lookup/" rel="prev" title="Lookup additional data in Spark Streaming">
+                Lookup additional data in Spark Streaming <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Stateful-Stream"><span class="nav-number">1.</span> <span class="nav-text">Stateful-Stream</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#checkpoint"><span class="nav-number">1.1.</span> <span class="nav-text">checkpoint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#updateStateByKey"><span class="nav-number">1.2.</span> <span class="nav-text">updateStateByKey</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#updateStateByKey-的缺点"><span class="nav-number">1.2.1.</span> <span class="nav-text">updateStateByKey 的缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mapWithState"><span class="nav-number">1.3.</span> <span class="nav-text">mapWithState</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#源码解读"><span class="nav-number">1.3.1.</span> <span class="nav-text">源码解读</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

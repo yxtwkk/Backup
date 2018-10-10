@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="原生题库数据主要是初中数学题目，题目包括选择题，填空题，简单题等； 相比于其他的文本分类问题，题库数据相对复杂，可以抽取的特征包括：题目的题干内容，题目的公式内容，题目的图片信息，题目解析等等 现有的工作是基于这些数据，进行题目难度分类和题目知识点分类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于题库数据的难度和知识点分类模型">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/07/19/基于题库数据的难度和知识点分类模型/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="原生题库数据主要是初中数学题目，题目包括选择题，填空题，简单题等； 相比于其他的文本分类问题，题库数据相对复杂，可以抽取的特征包括：题目的题干内容，题目的公式内容，题目的图片信息，题目解析等等 现有的工作是基于这些数据，进行题目难度分类和题目知识点分类">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/19/基于题库数据的难度和知识点分类模型/p1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/19/基于题库数据的难度和知识点分类模型/p2.png">
+<meta property="og:updated_time" content="2018-09-27T13:12:03.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于题库数据的难度和知识点分类模型">
+<meta name="twitter:description" content="原生题库数据主要是初中数学题目，题目包括选择题，填空题，简单题等； 相比于其他的文本分类问题，题库数据相对复杂，可以抽取的特征包括：题目的题干内容，题目的公式内容，题目的图片信息，题目解析等等 现有的工作是基于这些数据，进行题目难度分类和题目知识点分类">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/07/19/基于题库数据的难度和知识点分类模型/p1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/07/19/基于题库数据的难度和知识点分类模型/"/>
+
+
+
+
+
+  <title>基于题库数据的难度和知识点分类模型 | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/07/19/基于题库数据的难度和知识点分类模型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基于题库数据的难度和知识点分类模型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-19T13:26:55+08:00">
+                2018-07-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原生题库数据主要是初中数学题目，题目包括选择题，填空题，简单题等；</p>
+<p>相比于其他的文本分类问题，题库数据相对复杂，可以抽取的特征包括：题目的题干内容，题目的公式内容，题目的图片信息，题目解析等等</p>
+<p>现有的工作是基于这些数据，进行题目难度分类和题目知识点分类</p>
+<a id="more"></a>
+<h2 id="题目难度分类"><a href="#题目难度分类" class="headerlink" title="题目难度分类"></a>题目难度分类</h2><h4 id="任务"><a href="#任务" class="headerlink" title="任务"></a>任务</h4><p>题目共有五级难度（1，2，3，4，5）；需要根据题库中的数据特征进行题目难度的单标签分类</p>
+<h4 id="数据理解"><a href="#数据理解" class="headerlink" title="数据理解"></a>数据理解</h4><p>在题目难度分类问题中，虽然类别标签是1，2，3，4，5；但是我们一般情况下需要将类别标签转换成one-hot向量，因为1，2，3，4，5的类别表明类别1和类别2的相关性是高于类别1和类别3的相关性。</p>
+<p>题库数据中的4，5级难度问题较少，所以在该模型构建中我们没有考虑这两级的题目难度</p>
+<p>此外， 题目难度为2的题目最多，其数目之和近似等于题目难度1+题目难度3的数目，所以，我们将多分类问题转换成两个二分类问题，首先分类题目难度为2和题目难度非2，在进行题目难1和题目难度3的分类</p>
+<h4 id="模型构建"><a href="#模型构建" class="headerlink" title="模型构建"></a>模型构建</h4><p>数据特征选择：</p>
+<p>（1）题目的题干内容</p>
+<p>（2）题目的知识点标签</p>
+<p>针对题目的题干内容</p>
+<p>a. 我们首先进行分词，然后统计分词后的TF／DF值，选择前200个，作为停用词的候选词</p>
+<p>人工review出合理的停用此表，更新stopWords</p>
+<p>b. 根据分词后的结果，结合停用词表，对题干内容进行处理，过滤停用词，然后用过滤处理后的题干内容训练word2Vec模型，保存在本地</p>
+<p>c. 将分词后的题干内容结合知识点标签作为特征，统一送入textCNN网络，进行分类；其中，textCNN网络的第一层wordEmbedding层需要替换成我们已经训练好的word2Vec模型</p>
+<h4 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h4><p>f1: 0.5993494171862294</p>
+<p>mse:0.4803469775006777</p>
+<h2 id="题目知识点标签分类"><a href="#题目知识点标签分类" class="headerlink" title="题目知识点标签分类"></a>题目知识点标签分类</h2><p>题目知识点共有三级标签，每级标签又有多个类别，这是一个典型的多标签分类问题</p>
+<p>针对多标签分类问题，可以将问题转换，具体转换方法如下：</p>
+<p>（1）二元关联：</p>
+<p>把每个标签当作一个单独的分类问题，有几个标签就构建几个分类器</p>
+<p><img src="/2018/07/19/基于题库数据的难度和知识点分类模型/p1.png" width="320px"></p>
+<p>x是独立的特征，y是目标变量，可以将上述问题转换成四个单分类问题</p>
+<p>（2）分类器链：</p>
+<p>在这种情况下，第一个分类器只在输入数据上进行训练，然后每个分类器都在输入空间和链上的所有之前的分类器上进行训练</p>
+<p>（3）标签PowerSet（Label Powerset）</p>
+<p>在这方面，我们将问题转化为一个多类问题，一个多类分类器在训练数据中发现的所有唯一的标签组合上被训练。让我们通过一个例子来理解它</p>
+<p><img src="/2018/07/19/基于题库数据的难度和知识点分类模型/p2.png" width="320px"></p>
+<p>在这一点上，我们发现x1和x4有相同的标签。同样的，x3和x6有相同的标签。因此，标签powerset将这个问题转换为一个单一的多类问题</p>
+<p>针对题库数据的标签较多的应用场景，我们构建这样的分类标签：</p>
+<p>每个题目所拥有的最细粒度的标签是不同的，有的题目有四级标签，有的题目只有三级标签，基于此，我们构建的题目知识点标签列表是每个题目的最小粒度的标签的集合，每个题目的类别是一个one-hot向量，维度是构建的知识点标签列表，如果题目在属于这个标签，则对应位置为1，否则为0</p>
+<h3 id="数据特征处理"><a href="#数据特征处理" class="headerlink" title="数据特征处理"></a>数据特征处理</h3><p>特征主要包括：原始题目的题干内容，题目的公式内容，题目的图像特征</p>
+<h4 id="FormulaFeature"><a href="#FormulaFeature" class="headerlink" title="FormulaFeature:"></a>FormulaFeature:</h4><p>主要包括ContentSegment.py/FormulaFeatureExtract.py/FormulaParse.py</p>
+<p><strong>ContentSegment.py</strong></p>
+<p>（1）根据题库原生数据得到知识点标签和题目内容</p>
+<p>（2）对知识点标签进行处理：</p>
+<p>a. 构建khList ：每个题目对应的最小粒度的知识点标签的集合</p>
+<p>b. 根据khList，对每个题目进行标签，标签是one-hot向量，得到id_tagNum</p>
+<p>（3）对题目内容进行处理</p>
+<p>a. 根据原始数据，通过正则表达式进行题目内容和题目公式分拆构成id_content字典和id_formula字典</p>
+<p>b. 根据id_content，对题目内容进行分词处理，每个题目分词后形成一个list，对所有题目的list构建一个大的题目分词list：cut_list</p>
+<p>c. 根据cut_list，统计每个单词的tf和df值，根据统计结果，更新stopWords停用词表</p>
+<p><strong>FormulaFeatureExtract.py</strong></p>
+<p>根据id_formula和id_tagNum进行公式解析和公式类别标签学习</p>
+<p>利用FormulaParse.py解析latex公式，根据解析的结果，将每个公式转换成embedding向量，将各个题目的公式embedding向量和题目的知识点标签对应，构建训练样本训练textCNN公式分类模型，利用得到的模型将每个公式的类别特征输出，得到id_formulaFeature.pkl</p>
+<h4 id="PicFeature："><a href="#PicFeature：" class="headerlink" title="PicFeature："></a>PicFeature：</h4><p>主要包括PicSelect.py和PicFeatureExtract.py，JAVA模块 SVG2PNG</p>
+<p><strong>PicSelect.py</strong></p>
+<p>题库题目的图像信息在统一的文件路径下 img/imglist</p>
+<p>每个题目的题号que_id和对应的图片字典存在id2pic.pkl中</p>
+<p>我们通过shutil模块，根据id2pic.pkl，将需要的图片复制到规定的目标地址下</p>
+<p>根据id2pic和id_tagNum，将题目的图像和对应的题目知识点标签对应起来，构建pic_tagNum.pkl</p>
+<p><strong>SVG2PNG</strong></p>
+<p>这是一个java模块，主要是对原生图像进行处理</p>
+<p>原始的题目图片的格式多样，有.svg/.png/.jpeg/.jpg，但是后续的图像特征处理Tensorflow的Inception模型只能对.jpg和.jpeg格式的图片进行处理，所以我们需要这个模块进行图像处理</p>
+<p>a. ReadFile.java</p>
+<p>根据filepath读取文件夹下的所有图像文件</p>
+<p>b. PicConverter.java</p>
+<p>对读取到的文件进行处理，svg图像转png图像，png图像转jp图像</p>
+<p><strong>PicFeatureExtract.py</strong></p>
+<p>这个模块是利用Tensorflow的Inception V3进行迁移学习，首先利用Inception进行特征提取，再将学习到的图像特征和图像对应题目的知识点标签送入全连接网络进行学习</p>
+<p>得到pic_featureLabel字典</p>
+<h3 id="分类模型构建"><a href="#分类模型构建" class="headerlink" title="分类模型构建"></a>分类模型构建</h3><p>（1）获取id_content，根据分词结果和停用词表处理content并训练word2vec模型</p>
+<p>（2）获取id_pic 和 pic_featureLabel，找到题目图像相对题目类别标签的特征表示</p>
+<p>（3）获取id_formula，找到题目公式相对题目类别标签的特征表示</p>
+<p>（4）构建textCNN分类模型，找到文本和类别标签之间的特征表示</p>
+<p>（5）将题干内容的标签特征表示+公式的标签特征表示+图像的标签特征表示送入自己搭建的cnn分类网络中</p>
+<p>（6）利用训练好的网络进行分类预测，将预测结果送入encoding层进行解码（softmax输出的是样本在各个类别标签上的概率，需要根据概率进行转换）</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/17/神经网络优化/" rel="next" title="Tips for Deep Learning">
+                <i class="fa fa-chevron-left"></i> Tips for Deep Learning
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/26/半监督学习/" rel="prev" title="Semi-supervid Learning">
+                Semi-supervid Learning <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目难度分类"><span class="nav-number">1.</span> <span class="nav-text">题目难度分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#任务"><span class="nav-number">1.0.1.</span> <span class="nav-text">任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据理解"><span class="nav-number">1.0.2.</span> <span class="nav-text">数据理解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模型构建"><span class="nav-number">1.0.3.</span> <span class="nav-text">模型构建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实验结果"><span class="nav-number">1.0.4.</span> <span class="nav-text">实验结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题目知识点标签分类"><span class="nav-number">2.</span> <span class="nav-text">题目知识点标签分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据特征处理"><span class="nav-number">2.1.</span> <span class="nav-text">数据特征处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FormulaFeature"><span class="nav-number">2.1.1.</span> <span class="nav-text">FormulaFeature:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PicFeature："><span class="nav-number">2.1.2.</span> <span class="nav-text">PicFeature：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分类模型构建"><span class="nav-number">2.2.</span> <span class="nav-text">分类模型构建</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

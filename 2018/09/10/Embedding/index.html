@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近觉得压力有点大，已经很久没写博客了。 今天准备写写Embedding的内容。 Embedding 其实种类很多啦，最常被提到的应该就是word embedding吧；除了word embedding，还有neighbor embedding，graph embedding等。 Embedding在数学表示为一个映射函数，存在injective和strcuture-preseving两个特性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Embedding">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/09/10/Embedding/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="最近觉得压力有点大，已经很久没写博客了。 今天准备写写Embedding的内容。 Embedding 其实种类很多啦，最常被提到的应该就是word embedding吧；除了word embedding，还有neighbor embedding，graph embedding等。 Embedding在数学表示为一个映射函数，存在injective和strcuture-preseving两个特性">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/10/Embedding/e1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/10/Embedding/e2.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/10/Embedding/e3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/10/Embedding/e4.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/10/Embedding/e5.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/10/Embedding/e6.png">
+<meta property="og:updated_time" content="2018-09-27T13:12:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Embedding">
+<meta name="twitter:description" content="最近觉得压力有点大，已经很久没写博客了。 今天准备写写Embedding的内容。 Embedding 其实种类很多啦，最常被提到的应该就是word embedding吧；除了word embedding，还有neighbor embedding，graph embedding等。 Embedding在数学表示为一个映射函数，存在injective和strcuture-preseving两个特性">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/09/10/Embedding/e1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/09/10/Embedding/"/>
+
+
+
+
+
+  <title>Embedding | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/09/10/Embedding/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Embedding</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-10T20:32:24+08:00">
+                2018-09-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近觉得压力有点大，已经很久没写博客了。</p>
+<p>今天准备写写Embedding的内容。</p>
+<p>Embedding 其实种类很多啦，最常被提到的应该就是word embedding吧；除了word embedding，还有neighbor embedding，graph embedding等。</p>
+<p>Embedding在数学表示为一个映射函数，存在injective和strcuture-preseving两个特性</p>
+<a id="more"></a>
+<p>Embedding在数学表示为一个映射函数 $f:x-&gt;y$，这个映射函数具有如下特点：</p>
+<p>（1）injective：单映射函数，即每个y只唯一对应一个x，每个x只对应一个y</p>
+<p>（2）structue-preseving：结构保存特性，即在x所属空间上如果存在$x_1&lt;x_2$，则在新的映射空间y上同样存在$y_1&lt;y_2$</p>
+<p>我们接下来首先介绍Neighbor Embedding，接下来再介绍Word Embedding</p>
+<h2 id="Neighbor-Embedding"><a href="#Neighbor-Embedding" class="headerlink" title="Neighbor Embedding"></a>Neighbor Embedding</h2><p><strong>Neighbor Embedding就是 根据数据点x与其邻居数据点的关系进行非线性降维</strong></p>
+<h3 id="Manifold-Learning"><a href="#Manifold-Learning" class="headerlink" title="Manifold Learning"></a>Manifold Learning</h3><p>Neighbor Embedding中可以解决的一个问题就是Manifold Learning</p>
+<p>Manifold 是指数据在空间中呈现流形，传统的欧式距离计算方式在部分点之间将失效：</p>
+<p><img src="/2018/09/10/Embedding/e1.png" width="250px"></p>
+<p>在流形空间中，只有非常相邻的点，才可以用欧式距离进行度量远近关系，但是在流形空间上较远的点，其欧式距离可能很近，所以不适合用欧式距离进行度量</p>
+<p>一个直观的例子就是我们的地球，其本身可以展开形成二维空间，但是本身椭球体的存在，使得地球上的每个点，被嵌入到高维空间</p>
+<p>Manifold Learning就是用Neighbor Embedding技术，将高维空间中存在流形的点embedding 映射成一个平面；再映射成一个平面以后，可以很好的利用欧式距离做进一步的计算，比如：聚类／监督学习等</p>
+<p><img src="/2018/09/10/Embedding/e2.png" width="250px"></p>
+<h3 id="Locally-Linear-Embedding（LLE）"><a href="#Locally-Linear-Embedding（LLE）" class="headerlink" title="Locally Linear Embedding（LLE）"></a>Locally Linear Embedding（LLE）</h3><p>LLE是解决Manifold Learning的一个很好的方法</p>
+<p>LLE是局部线性嵌入算法，局部线性的意思就是 在这个那个数据集的某个小范围内，数据是线性的</p>
+<p>LEE考虑的是数据点x附近的几个邻居数据点，算法本身存在两个假设， 就是数据点x和其邻居数据点，在高维空间和低维空间中的关系是一样的</p>
+<p><img src="/2018/09/10/Embedding/e3.png" width="250px"></p>
+<p>既然在局部线性存在，那么每个数据点都可以用其周围的邻居节点进行线性表示</p>
+<p>如图所示，对于数据点$x^i$，选择与其相近的k个邻居数据点，$x^i$和其邻居$x^j$之间的关系用权重$w_{ij}$表示；</p>
+<p>$w_{ij}$是通过计算学习得到，其目标是，得到的$w_ij$可以使得误差最小，即：</p>
+<p>$\sum_i||x^i-\sum_jw_{ij}x^j||_2$</p>
+<p>根据得到的$w_{ij}$ 找到数据点x在低维空间对应的数据点z，即现在已知$w_{ij}$，希望数据点在低维空间和高维空间中的关系是一致的，即：</p>
+<p>$\sum_i||z^i-\sum_jw_{ij}z^j||_2$</p>
+<p><img src="/2018/09/10/Embedding/e4.png" width="250px"></p>
+<p>💡这种方式有一个优势就是，我们可以完全不用知道原始数据的分布或者具体是什么，只需要知道数据点之间的关系$w_{ij}$即可</p>
+<p>这其实有点像  “在天愿作比翼鸟，在地愿为连理枝”：</p>
+<p><img src="/2018/09/10/Embedding/e5.png" width="250px"></p>
+<p>前面有提到，一个数据点选择几个邻居节点是一个超参数：如果邻居数据点选择太少，则无法很好的表达数据点之间的关系；如果邻居点选择太多，则传统的欧式距离计算将会失效（因为数据点呈流线型分布，应该用测地距离）</p>
+<h3 id="Laplacian-Eigenmaps"><a href="#Laplacian-Eigenmaps" class="headerlink" title="Laplacian Eigenmaps"></a>Laplacian Eigenmaps</h3><p>在前面的半监督学习中，有提到Smoothness Assumption</p>
+<h4 id="Recap-Smoothness-Assumption"><a href="#Recap-Smoothness-Assumption" class="headerlink" title="Recap Smoothness Assumption"></a>Recap Smoothness Assumption</h4><p>假设表明，如果两个样本在高密度区域是相连的／相似的，两个数据点才是真正的相似</p>
+<p>基于这个假设，我们可以根据原数据空间中点的关系，构建一个图，其中，相邻的点之间有边，边的权重与数据点间的距离／数据点间的相似度相关（数据点间的距离越近／相似度越高，边的权重越高）；如果数据点不相连，则权重为0</p>
+<p>💡至于一个数据点选择几个邻居数据点，这是一个超参数</p>
+<p>$w_{ij} = \left\{\begin{matrix}<br>similarity &amp;  if\;connected\\<br>0 &amp; otherwise<br>\end{matrix}\right.$</p>
+<p>构造的优化损失函数为：</p>
+<p>$L = \sum_{x^r}C(y^r,\hat y^r )+\lambda S $</p>
+<p>其中，损失函数的前一项，表明有标记数据的训练误差尽可能小，S可以作为一个正则化项，$S = \frac{1}{2}w_{i,j}(y^i-y^j)^2 = y^TLy$，表明样本之间的标记尽可能smooth平滑</p>
+<p>$L = D -W$ 是一个（R+U）*（R+U）的矩阵，称为Graph Laplacian矩阵</p>
+<h4 id="Laplacian-Eigenmaps-in-Dimension-Reduction"><a href="#Laplacian-Eigenmaps-in-Dimension-Reduction" class="headerlink" title="Laplacian Eigenmaps in Dimension Reduction"></a>Laplacian Eigenmaps in Dimension Reduction</h4><p>在降维中，如果两个数据点在高维空间中存在high density的相似性，则在降低到低维空间时，应该同样具有相似性，对应的约束目标函数为：</p>
+<p>$S = \frac{1}{2}\sum_{i,j}w_{i,j}||z^i-z^j||_2$</p>
+<p>希望高维空间相似的数据点，在低维空间中是相邻的（因为高维空间中数据点越相似，则数据点间的权重越大，只有在低维空间中，数据点是相邻的，才会让两个二者乘积最小）</p>
+<p>这个优化函数有一个问题，即 如果使其最小，则可以让所有的z都等于0，则S是最小的</p>
+<p>因此，我们需要加入另外一个约束：</p>
+<p>希望数据点降维到低维空间中是可以铺满整个空间的，即假设z是M维的，$Span\{z^1,z^2,z^3…z^N\} = R^M$</p>
+<p>💡在半监督学习中为什么没考虑这个问题？💭</p>
+<p>因为半监督学习中，有一个约束是训练误差最小，这个约束保证了不可能所有的数据点标记都为0，只要有不为0的数据点标记，就需要进行Smoothness Regularization</p>
+<p>💡如果在经过这样降维之后的数据z上进行聚类，叫做Spectral Clustering</p>
+<p>💡这个方法为什么叫做Laplacian Eigenmap呢？因为降维得到的数据点z，其实是Laplacian矩阵L的较小特征值对应的特征向量</p>
+<h3 id="T-distributed-Stochastic-Neighbor-Embedding（t-SNE）"><a href="#T-distributed-Stochastic-Neighbor-Embedding（t-SNE）" class="headerlink" title="T-distributed Stochastic Neighbor Embedding（t-SNE）"></a>T-distributed Stochastic Neighbor Embedding（t-SNE）</h3><p>LLE和Laplacian Eigenmaps两个方法存在一个问题，只假设了相邻数据点应该具有怎样的关系，但是没有考虑不相邻数据点之间 在低维空间中的关系</p>
+<p>比如Laplacian Eigenmaps，因为原始优化函数中，如果两个数据点是不相邻的，数据点之间的权重$w_{ij}$会很小，则降维到低维空间时，两个不相邻的数据点可以任意分布</p>
+<h4 id="t-SNE的计算逻辑"><a href="#t-SNE的计算逻辑" class="headerlink" title="t-SNE的计算逻辑"></a>t-SNE的计算逻辑</h4><p>（1）计算原始空间中数据点之间的相似度$S(x^i,x^j)$，并scale归一化成概率：</p>
+<p>$P(x^j|x^i) = \frac{S(x^i,x^j)}{\sum_{k\neq i}S(x^i,x^k)}$</p>
+<p>（2）计算原始空间中数据点之间的相似度$S(z^i,z^j)$，并scale归一化成概率：</p>
+<p>$Q(z^j|z^i) = \frac{S(z^i,z^j)}{\sum_{k\neq i}S(z^i,z^k)}$</p>
+<p>计算两个分布之间KL散度，希望两个分布越接近越好：</p>
+<p>$L = \sum_iKL(P(<em>|x^i)||Q(</em>|z^i))$</p>
+<pre><code>$ = \sum_i\sum_jP(x^j|x^i)log\frac{P(x^j|x^i)}{Q(z^j|z^i)}$
+</code></pre><p>💡这里进行归一化操作的意义就是高维空间数据点和低维空间数据点的相似性度量可能不同，二者可能在不同的量纲上，所以需要scale一下</p>
+<h4 id="t-SNE的相似性度量"><a href="#t-SNE的相似性度量" class="headerlink" title="t-SNE的相似性度量"></a>t-SNE的相似性度量</h4><p>原始高维空间的数据点可以采用径向基RBF函数  $S(x^i,x^j) = exp(-||x^i-x^j||_2)$</p>
+<p>💡采用RBF函数以后，只有距离非常相近的点，数据点的相似性才比较高</p>
+<p>SNE的相似性度量：</p>
+<p>$S(z^i,z^j) = exp(-||z^i-z^j||_2)$</p>
+<p>t-SNE的相似性度量：</p>
+<p>$S(z^i,z^j) = \frac{1}{1+||z^i-z^j||_2}$</p>
+<p><img src="/2018/09/10/Embedding/e6.png" width="450px"></p>
+<p>如上图横坐标是数据点之间的距离，纵坐标是相似性</p>
+<p>采用径向基函数和采用t-SNE的度量，可以看出是不同的：采用径向基函数，如果两个数据点距离较远，则相似性较小，如果是同一个相似性指标，在t-SNE的相似性度量里，数据点之间的距离会更大</p>
+<p>💡t-SNE保留的是数据点之间的相似性，两个空间中，数据点之间的相似性 这个指标越相近，则表明降维越好</p>
+<p>💡t-SNE的计算量较大， 一般先采用其他方法将原始空间中的数据点进行降维处理（比如，利用PCA将数据降到50维，再利用t-SNE降低到2维）</p>
+<p>💡t-SNE通常用来做数据的可视化</p>
+<p>LLE／Laplacian Eigenmap／t-SNE的在线学习算法需要进一步讨论。</p>
+<h2 id="📎"><a href="#📎" class="headerlink" title="📎"></a>📎</h2><p>Todo…</p>
+<p>几种常见的距离：</p>
+<p>（1）欧式距离</p>
+<p>（2）测地距离</p>
+<p>（3）闵可夫距离</p>
+<p>LLE推导 <a href="https://www.cnblogs.com/pinard/p/6266408.html" target="_blank" rel="noopener">https://www.cnblogs.com/pinard/p/6266408.html</a></p>
+<p>向量Span</p>
+<p>Spectral Clustering</p>
+<p>t-分布</p>
+<p><a href="http://www.datakit.cn/blog/2017/02/05/t_sne_full.html#11%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86" target="_blank" rel="noopener">http://www.datakit.cn/blog/2017/02/05/t_sne_full.html#11%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/30/Generation/" rel="next" title="Generation">
+                <i class="fa fa-chevron-left"></i> Generation
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/23/Transfer-Learning/" rel="prev" title="Transfer Learning">
+                Transfer Learning <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Neighbor-Embedding"><span class="nav-number">1.</span> <span class="nav-text">Neighbor Embedding</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Manifold-Learning"><span class="nav-number">1.1.</span> <span class="nav-text">Manifold Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Locally-Linear-Embedding（LLE）"><span class="nav-number">1.2.</span> <span class="nav-text">Locally Linear Embedding（LLE）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Laplacian-Eigenmaps"><span class="nav-number">1.3.</span> <span class="nav-text">Laplacian Eigenmaps</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Recap-Smoothness-Assumption"><span class="nav-number">1.3.1.</span> <span class="nav-text">Recap Smoothness Assumption</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Laplacian-Eigenmaps-in-Dimension-Reduction"><span class="nav-number">1.3.2.</span> <span class="nav-text">Laplacian Eigenmaps in Dimension Reduction</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#T-distributed-Stochastic-Neighbor-Embedding（t-SNE）"><span class="nav-number">1.4.</span> <span class="nav-text">T-distributed Stochastic Neighbor Embedding（t-SNE）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#t-SNE的计算逻辑"><span class="nav-number">1.4.1.</span> <span class="nav-text">t-SNE的计算逻辑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#t-SNE的相似性度量"><span class="nav-number">1.4.2.</span> <span class="nav-text">t-SNE的相似性度量</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#📎"><span class="nav-number">2.</span> <span class="nav-text">📎</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

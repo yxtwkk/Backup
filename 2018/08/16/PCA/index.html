@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在之前的监督学习里，我们有数据输入+学习得到的模型+模型输出；但是在无监督学习里，数据输入和模型输出中，总有一端是缺失的： （1）Dimension Reduction &amp;amp; Clustering：数据降维 &amp;amp; 聚类 ///化繁为简 我们输入各种各样不同树的形态，希望模型输出一个普通的简单的树🌲（我们只有输入的各种不同类型的树） （2）Generation：///无中生有 我们输入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PCA">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/08/16/PCA/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="在之前的监督学习里，我们有数据输入+学习得到的模型+模型输出；但是在无监督学习里，数据输入和模型输出中，总有一端是缺失的： （1）Dimension Reduction &amp;amp; Clustering：数据降维 &amp;amp; 聚类 ///化繁为简 我们输入各种各样不同树的形态，希望模型输出一个普通的简单的树🌲（我们只有输入的各种不同类型的树） （2）Generation：///无中生有 我们输入">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p2.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p4.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p5.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p6.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p7.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p8.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p9.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p10.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p11.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/c12.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p12.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p13.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p14.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p17.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p18.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p20.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p23.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p21.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p22.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p25.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p26.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p27.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p28.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p29.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p30.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p31.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p15.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p32.png">
+<meta property="og:updated_time" content="2018-10-10T11:33:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PCA">
+<meta name="twitter:description" content="在之前的监督学习里，我们有数据输入+学习得到的模型+模型输出；但是在无监督学习里，数据输入和模型输出中，总有一端是缺失的： （1）Dimension Reduction &amp;amp; Clustering：数据降维 &amp;amp; 聚类 ///化繁为简 我们输入各种各样不同树的形态，希望模型输出一个普通的简单的树🌲（我们只有输入的各种不同类型的树） （2）Generation：///无中生有 我们输入">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/08/16/PCA/p1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/08/16/PCA/"/>
+
+
+
+
+
+  <title>PCA | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/08/16/PCA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PCA</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T19:37:43+08:00">
+                2018-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在之前的监督学习里，我们有数据输入+学习得到的模型+模型输出；但是在无监督学习里，数据输入和模型输出中，总有一端是缺失的：</p>
+<p>（1）Dimension Reduction &amp; Clustering：数据降维 &amp; 聚类 ///化繁为简</p>
+<p>我们输入各种各样不同树的形态，希望模型输出一个普通的简单的树🌲（我们只有输入的各种不同类型的树）</p>
+<p>（2）Generation：///无中生有</p>
+<p>我们输入不同的数字，希望模型能够输出对应的树🌲（我们只有输出的不同的树，但是没有对应的输入）</p>
+<a id="more"></a>
+<h2 id="Clustering-聚类"><a href="#Clustering-聚类" class="headerlink" title="Clustering 聚类"></a>Clustering 聚类</h2><p>最传统的方法就是<strong>k-means</strong></p>
+<p>将现有数据$X = \{x^1,…,x^n,…x^N\}$聚合成k个类：</p>
+<p>（1）首先随机初始化k个聚类中心$c^i$，i=1,2,3..,k </p>
+<p>（2）根据初始化聚类中心，重复如下过程：</p>
+<p>a. 对于训练数据，将其聚合到离其最近的那个聚类中：</p>
+<p>$b^n_i =1 $ 标明第n个数据$x^n$离第i个聚类中心$c^i$最近，否则$b^n_i =0 $</p>
+<p>b. 根据a得到的聚类重新更新聚类中心（对所有的数据点进行计算）：</p>
+<p>$c^i = \frac{\sum b^n_ix^n}{\sum b^n_i}$</p>
+<p>💡初始化选择k个聚类中心的方式除了从现有数据里随机选择之外，还可以通过kmeans++／在之前的文章Clustering by fast search and find of density peaks里提到的通过计算数据密度的方式得到</p>
+<p>另一种典型的聚类算法是<strong>HAC</strong>：Hierarchical Agglomerative Clustering</p>
+<p>HAC是一种层次聚类的方式，最底层为所有的原始数据，首先选择最相近的两个数据聚成一类A，然后在原始数据中除去最相近的两个数据，加入新聚合的聚类A，再选择最近的数据聚合在一起</p>
+<p><img src="/2018/08/16/PCA/p1.png" width="350px"></p>
+<p>//todo：层次聚类的距离计算公式</p>
+<p>聚类算法的一个缺陷就是每个数据都是hard label，他只能属于某一个聚类，但是现实世界里的数据并不总是只属于某一个类别，我们需要对其进行<strong>distributed representation</strong></p>
+<p>一种常见的distributed representation的方式就是进行Dimension Reduction</p>
+<h2 id="Dimension-Reduction-降维"><a href="#Dimension-Reduction-降维" class="headerlink" title="Dimension Reduction 降维"></a>Dimension Reduction 降维</h2><p><img src="/2018/08/16/PCA/p2.png" width="350px"></p>
+<p>假设在手写数字识别中，每个数字图像都由28*28维的向量表示，但是多数的28*28维的向量其实不是手写数字，并且很多手写数字可以用更低维度的向量进行表示</p>
+<p><img src="/2018/08/16/PCA/p3.png" width="350px"></p>
+<p>上图中的只需要中间的3用一个28*28维的向量表示，其余的都可以通过一个角度变化来表示</p>
+<p>降维就是通过一个机器学习模型，将高纬度的数据降低到低维度</p>
+<p>最简单的方式就是特征选择 <strong>Feature Selection</strong></p>
+<p>如果数据在两个维度x1和x2中是如下分布，则可以只选择x2这个维度表示数据即可</p>
+<p><img src="/2018/08/16/PCA/p4.png" width="150px"></p>
+<p>更复杂的一种方式是进行<strong>主成分分析 PCA</strong></p>
+<h2 id="PCA"><a href="#PCA" class="headerlink" title="PCA"></a>PCA</h2><p>主成分分析是一种线性变化：</p>
+<p>$z = Wx$</p>
+<p>输入数据为x，通过一个变换矩阵，将其进行降维为z</p>
+<p>假设我们将高维数据x映射到$w^1$的方向上，映射结果为$z_1$，是一个一维的标量/纯量scalar，即：</p>
+<p>$z_1 = w^1·x$ (数据x和$w^1$做内积，$w^1$和x要么是两个列向量，要么是两个行向量)</p>
+<p>并且假定$w^1$是一个单位向量，即$||w^1||_2 = 1$</p>
+<p>💡假定$w^1$是单位向量的原因是，这样两个向量的内积就是高维数据x在$w^1$方向上的投影</p>
+<p><img src="/2018/08/16/PCA/p5.png" width="220px"></p>
+<p>那么，高维数据经过投影以后，希望在对应维度上越分散越好</p>
+<p>一个度量数据分散程度的指标就是方差 $Var(z_1)$:</p>
+<p>$Var(z_1) = \frac{1}{N}\sum_{z_1}(z_1-\overline z_1)^2$ </p>
+<p>现在将问题延伸：如果将高维数据投影到多维：</p>
+<p>$z_1 = w^1·x$    $||w^1||_2 = 1$   $Var(z_1) = \frac{1}{N}\sum_{z_1}(z_1-\overline z_1)^2$</p>
+<p>$z_2 = w^2·x$    $||w^2||_2 = 1$   $Var(z_2) = \frac{1}{N}\sum_{z_2}(z_1-\overline z_2)^2$   $w^1·w^2 = 0$</p>
+<p>💡将数据投影到第一维，则保证投影后数据在这个维度上的方差越大越好；将数据投影到第二维，除了 要保证数据在这个维度上方差越大越好，还要保证这个维度和上一个维度垂直（如果没有这个约束，则找到的维度和第一维相同）</p>
+<p>💡将高维数据投影到多维时，我们希望这几个投影后的维度关联性越小越好，关联性越小，代表两个维度表征的相同信息量越少</p>
+<p>则通过这种方式找到的wi可以构成一个正交矩阵：</p>
+<p>$W = \begin{bmatrix} (w^1)^T\\  (w^2)^T\\  …\end{bmatrix}$</p>
+<h4 id="下面我们通过数学推导找到最合适的投影方向："><a href="#下面我们通过数学推导找到最合适的投影方向：" class="headerlink" title="下面我们通过数学推导找到最合适的投影方向："></a>下面我们通过数学推导找到最合适的投影方向：</h4><p>$z_1 = w^1·x$</p>
+<p>$\overline z_1 = \frac{1}{N}z_1 = \frac{1}{N}\sum w^1 ·x = w^1·\frac{1}{N}\sum x = w^1·x$</p>
+<p>$Var(z_1) = \frac{1}{N} \sum_{z_1}(z_1 - \overline z_1)^2​$</p>
+<pre><code>           $= \frac{1}{N}\sum_x(w^1·x-w^1·\overline x)^2$  = $\frac{1}{N}\sum(w^1·(x-\overline x))^2$
+
+       $= \frac{1}{N}\sum(w^1)^T(x-\overline x)(x-\overline x)^Tw^1$  
+
+       $= (w^1)^T\frac{1}{N}\sum(x-\overline x)(x-\overline x)^Tw^1$
+           $ = (w^1)^TCov(x)\;w^1    $
+</code></pre><p>令 $S = Cov(x)$，则数据x确定，S即是确定的</p>
+<p>则，我们优化目标是：</p>
+<p>找到投影方向最大的方差 $Var(z_1)​$ =&gt; 找到一个合适的$w^1​$使得$  (w^1)^TCov(x)\;w^1​$最大</p>
+<p>💡$\frac{1}{N}\sum(x-\overline x)(x-\overline x)^T = Cov(x) = S$</p>
+<p>是一个对称矩阵／是半正定矩阵／矩阵的特征值非负</p>
+<p>💡$(a·b)^2 =(a^Tb)^2$  两个列向量的内积 = 将列向量看作n*1的矩阵，则 第一个列向量的转置和第二个列向量做矩阵乘法，得到的结果是一个1*1的标量；既然是一个标量，则$a^Tb =(a^Tb)^T $</p>
+<p>💡$(a^Tb)^2 = a^Tba^Tb = a^Tb(a^Tb)^T = a^Tbb^Ta$</p>
+<p><strong>优化问题现在为</strong>：找到一个合适的$w^1$使得$  (w^1)^TCov(x)\;w^1$最大  目标约束为 $(w^1)^Tw^1=1$</p>
+<p>根据拉格朗日乘子法，构建优化函数：</p>
+<p>$g(w^1) = (w^1)^TSw^1-\alpha((w^1)^Tw^1-1)$</p>
+<p>投影方向$w^1$有多维（与原始数据维度一致），所以需要对$w^1$的每个分量分别作偏微分：</p>
+<p>$\left.\begin{matrix} \frac{\partial g(w^1))}{\partial w^1_1} =0\\  \\ \frac{\partial g(w^1))}{\partial w^1_2}=0\\  …\end{matrix}\right\}$ =&gt;    $Sw^1 -\alpha\; w^1 = 0$   =&gt; $Sw^1 = \alpha w^1$</p>
+<p>因此，$\alpha$是协方差矩阵$S$的特征值，$w^1$是协方差矩阵的特征向量</p>
+<p> $(w^1)^TSw^1 = \alpha (w^1)^Tw^1 = \alpha$</p>
+<p>💡因此，优化目标（数据投影后，在$z^1$方向上的方差）的值为$\alpha$，而$\alpha$恰好是协方差矩阵S的一个特征值，则我们只需要找到最大的特征值即可</p>
+<p>💡对应的$w^1$就是和最大的特征值对应的特征向量</p>
+<p>同样，现在需要找到$w^2$的投影方向，$w^2$的优化目标和$w^1$相同，但是$w^2$的约束要比$w^1$要多：</p>
+<p>优化目标：maximize $(w^2)^TSw^2$</p>
+<p>约束：$(w^2)Tw^2 = 1$ $(w^2)^Tw^1 = 0$</p>
+<p>根据拉格朗日乘子法，构建优化函数：</p>
+<p>$g(w^2) = (w^2)^TSw^2-\alpha((w^2)^Tw^2-1)-\beta((w^2)^Tw^1-0)$</p>
+<p>$\left.\begin{matrix} \frac{\partial g(w^2))}{\partial w^2_1} =0\\  \\ \frac{\partial g(w^2))}{\partial w^2_2}=0\\  …\end{matrix}\right\}$ =&gt;    $Sw^2 -\alpha\; w^2-\beta w^1 = 0$   =&gt;$(w^1)^TSw^2 -\alpha\;(w^1)^T w^2-\beta(w^1)^T w^1 = 0$  </p>
+<p>=&gt; $0-\alpha \times  0 - \beta \times1 = 0$  </p>
+<p>=&gt; $\beta = 0$</p>
+<p>💡$((w^1)^TSw^2)^T = (w^2)^TS^Tw^1 = (w^2)^T\lambda_1w^1 = \lambda_1(w^2)^Tw^1 = 0 $</p>
+<p>因此，$Sw^2 -\alpha\; w^2-\beta w^1 = 0$  =&gt;$Sw^2 -\alpha\; w^2= 0$  =&gt; $Sw^2 =\alpha\; w^2$</p>
+<p>与$w^1$的最终优化目标相同，但是得到的$w^2$即不能是$w^1$(因为是另外一个方向)，还需要和$w^1$垂直（需要找到一个与$w^1$方向不重合的方向）</p>
+<p>根据协方差矩阵S的性质，$\alpha$对应其第二大特征值，对应的特征向量即为$w^2$</p>
+<p>接下来我们需要证明，通过PCA线性降维以后，各个维度之间线性不相关（即协方差为0）</p>
+<p>$z=Wx$</p>
+<p>$Cov(z) = \frac{1}{N}\sum(z-\overline z)(z-\overline z)^T =  \frac{1}{N}\sum(Wx-W\;\overline x)(Wx-W\;\overline x)^T = \frac{1}{N} \sum W(x-\overline x)(W(x-\overline x))^T $</p>
+<p>$         = \frac{1}{N}\sum W(x-\overline x)(x-\overline x)^TW^T=WSW^T$</p>
+<p>💡$S = Cov(x) = \frac{1}{N} \sum (x-\overline x)(x-\overline x)^T$</p>
+<p>$Cov(z) = WSW^T = WS[w^1..w^k] = W[Sw^1..Sw^k] = W[\lambda_1w^1…\lambda_kw^k]$</p>
+<p> $= [\lambda_1Ww^1…\lambda_kWw^k] = [\lambda_1e_1…\lambda_ke_k ] = D$ 是一个对角矩阵，且非对角线元素的值为0</p>
+<p>💡W的每一行是协方差矩阵S的一个特征向量，其是正交矩阵，而$w^k​$恰好是W的第k行；即相乘以后，只有对应的对角线上的元素有值</p>
+<p><strong>z的协方差是对角矩阵，表明各个维度之间不相关，则降维以后的数据可以用更简单的模型进行学习</strong>  </p>
+<p><img src="/2018/08/16/PCA/p6.png" width="330px"></p>
+<hr>
+<p><strong>现在，我们从另外一个角度来看PCA</strong></p>
+<p>以手写数字识别为例：</p>
+<p>每个手写数字可以由不同的基础的componet组成：</p>
+<p><img src="/2018/08/16/PCA/p7.png" width="530px"></p>
+<p>以手写数字7为例：</p>
+<p><img src="/2018/08/16/PCA/p8.png" width="530px"></p>
+<p>则可以用一个列向量表示手写数字7，如果每一个元素代表是否包含对应的component（其实是一个vector向量），即：</p>
+<p>$x \approx  c_1u^1+c_2u^2+…+c_ku^k+\overline x$，</p>
+<p>其中，$u^1,u^2,….u^k$是基础的component；$c_1,c_2,…c_k$是对应的component的权重；$\overline x$ 是所有image的平均</p>
+<p>$x-\overline x \approx c_1u^1+ c_2u^2+…+c_ku^k = \hat x$</p>
+<p>我们希望，$x-\overline x$和$\hat x$之间的差距越小越好</p>
+<p>根据这个准则，我们可以构建最小化的reconstruction error来找到最合适的componet和c值</p>
+<p>reconstruction error = $||(x-\overline x) - \hat x||_2$</p>
+<p>$L = min_{u^1…u^k} \sum ||(x-\overline x) - (\sum_{k=1}^K c_ku^k)||_2$</p>
+<p>我们可以将$x-\overline x$拆解：</p>
+<p><img src="/2018/08/16/PCA/p9.png" width="530px"></p>
+<p>上标代表是第几个数据，有点类似分块矩阵乘法，每一个黄色矩阵向量代表一个数据，每个绿色的u代表一个基础的component</p>
+<p>我们可以通过svd找到矩阵$x-\overline x$的最佳分解</p>
+<p>根据SVD的定义和我们的预设：</p>
+<p>N表示共有N个数据，每个数据M维</p>
+<p>矩阵U的K表示K个向量，每个向量有M维，是$XX^T$的K个最大的特征值对应的特征向量（正交）</p>
+<p>我们这里的X其实是$X-\overline X$，所以U是$(X-\overline X)(X-\overline X)^T$的K个最大特征值对应的特征向量</p>
+<p>中间的 $\Sigma$矩阵可以归到前面的矩阵U或者后面的矩阵V</p>
+<p><strong>所以，U其实就是W，$\Sigma V$其实就是经过PCA线性变化后得到的Z</strong></p>
+<p><img src="/2018/08/16/PCA/p10.png" width="400px"></p>
+<hr>
+<p>第一个思路在证明PCA的正确性，第二个思路在暗示一个合适的PCA的求解思路，现在我们再从神经网络的角度看PCA</p>
+<p>💡PCA像是只有一个隐藏层的神经网络，其激活函数为线性激活函数 linear activation function</p>
+<p>在第二个角度看PCA里，我们得出，可以将数据表示成几个基础的component的线性和，而这些基础的component对应在第一个角度里就是得到的协方差矩阵的特征向量</p>
+<p>即 $\{w^1,w^2…w^K\} &lt;=&gt;\{u^1,u^2…u^K\}$是等价的</p>
+<p>$\hat x = \sum_{k=1}^Kc_kw^k$  &lt;=&gt; $x-\overline x$  我们希望根据得到的componet线性组合得到的数据和原始的数据是一致的</p>
+<p>💡因为每个w都是正交的，且模为1，那么，在得到k个componet以后，可以通过$c_k = (x-\overline x)·w^k$（向量点乘）得到最终的降维表示（上面👆那个等价式左右同乘$w^k$）</p>
+<p>假设我们的基础componet个数为K=2，我们可以构建这样的神经网络：</p>
+<p>$w^1_2$代表第一个componet的第二维</p>
+<p>中间的激活函数是线性的</p>
+<p>K=2 代表最终得到的降维表示有两维（$c_1,c_2$）</p>
+<p>降维以后可以通过与权重相乘再相加得到“原始数据”，希望“原始数据”和输入的差越小越好</p>
+<p><img src="/2018/08/16/PCA/p11.png" width="400px"></p>
+<p><img src="/2018/08/16/PCA/c12.png" width="400px"></p>
+<p>这个神经网络就是<strong>AutoEncoder</strong>，我们可以通过梯度下降的方式学习得到w</p>
+<p>但是这样找到的w和我们通过PCA找到的w是不同的：</p>
+<p>（1）PCA找到的w是相互正交的</p>
+<p>（2）PCA的求解需要用到SVD，而SVD可以构建最小的construction error</p>
+<p>以上这两点，AutoEncoder都无法满足</p>
+<p>但是神经网络可以做到deep，即进行Deep AutoEncoder</p>
+<hr>
+<h3 id="PCA的劣势"><a href="#PCA的劣势" class="headerlink" title="PCA的劣势"></a>PCA的劣势</h3><p>（1）PCA是进行无监督学习，以下图为例，将数据投影到一维，PCA会找到投影后方差最大的那个维度进行投影，但是也许现有的数据是属于两个类，投影后的数据点可能会被混在一起</p>
+<p><img src="/2018/08/16/PCA/p12.png" width="250px"></p>
+<p>（2）PCA是线性映射，无法处理非线性的问题，比如流形数据的降维</p>
+<h3 id="PCA应用"><a href="#PCA应用" class="headerlink" title="PCA应用"></a>PCA应用</h3><p>我们仍然用pokemon的数据为例：现在有800只pokemon，每只pokemon有6个维度来描述，那么用几个主成分来表征这些数据呢？</p>
+<p>（1）可以根据数据的具体用途来确定，比如我们需要对数据进行可视化分析，可以将数据降维到2维，即选择2个主成分principle component</p>
+<p>（2）还可以通过特征值ratio来确定选择几个主成分</p>
+<p>每个特征值对应一个特征向量，特征向量表示投影的方向；而特征值本身就是数据投影后所在方向的方差，特征值越大，表示这个方向上有更多的信息</p>
+<p>原始数据为6维，则降维后的维度一定不会超过6（哈哈，为什么要写这句话），那么我们可以这样定义ratio:</p>
+<p>$ratio = \frac{\lambda_i}{\lambda_1+\lambda_2+\lambda_3+\lambda_4+\lambda_5+\lambda_6}$</p>
+<p>💡因为PCA是对原始数据去均值后的数据协方差进行SVD分解（协方差矩阵是实对称矩阵），假设原始数据有k维，则得到的协方差矩阵是k*k维，则必有k个特征向量</p>
+<p>假设计算得到的结果如下所示，则我们可以选择前四个作为主成分</p>
+<p><img src="/2018/08/16/PCA/p13.png" width="450px"></p>
+<p>如果我们用PCA做手写数字辨识的实验，发现得到的30个componet如下图：</p>
+<p><img src="/2018/08/16/PCA/p14.png" width="450px"></p>
+<p>我们其实发现，得到的并不是那么basic的componet，有些甚至可以辨识出数字</p>
+<p>PCA做的是线性变换，即对componet进行相加或者相减（weight可以是任何值），这样会导致componet未必是一个非常基础的笔画，可以是一个较复杂的component加加减减一些简单的component</p>
+<p>💡如果在做PCA以后，得到的component／特征向量有负值，无法图像化表示，可以对负值和正值整体平移得到图像化</p>
+<p>一个较好的解决方案，可以采用NMF（Non-negative matrix factorization 非负矩阵分解）：</p>
+<p>（1）得到的权重必须是非负的，保证只能进行component相加，无法进行相减</p>
+<p>（2）得到的components／特征向量必须是非负的，这样保证每一个component更加basic</p>
+<h2 id="📎-矩阵运算"><a href="#📎-矩阵运算" class="headerlink" title="📎 矩阵运算"></a>📎 矩阵运算</h2><p>整理一些，在公式推导中用到的矩阵／向量运算，作为附件材料喽</p>
+<p><strong>协方差矩阵是对称矩阵，所以其特征向量两两正交</strong></p>
+<p>证明：</p>
+<p>假设A是一个对称矩阵，$x_i$ 和 $x_j$是A的两个特征向量：</p>
+<p>$Ax_i = \lambda_ix_i$ =&gt; $X^T_jAx_i = \lambda_ix^T_jx_i$  </p>
+<p>=&gt; $X^T_jAx_i = X^T_jA^Tx_i = (Ax_j)^Tx_i $</p>
+<p>$Ax_j = \lambda_jx_j$</p>
+<p>$(Ax_j)^Tx_i =( \lambda_jx_j) ^T x_i = \lambda_jx_j^Tx_i$  </p>
+<p>$X^T_jAx_i = \lambda_jx_j^Tx_i =  \lambda_ix^T_jx_i$</p>
+<p>$ (\lambda_j-\lambda_i)x_j^Tx_i = 0 $</p>
+<p>因此，$x_j^Tx_i $ = 0，二者相互正交</p>
+<hr>
+<p><strong>正定矩阵和半正定矩阵的理解</strong>：</p>
+<p>半正定矩阵：$X^TMX  \geq 0 $ 其中，X是向量，M是变换矩阵</p>
+<p>$MX$相当于对向量X进行变换，假设变换后的向量为Y，即 $Y =MX $</p>
+<p>半正定矩阵定义写为：$X^TY \geq 0$  即为两个向量的内积</p>
+<p>$cos(\theta) = \frac{X^TY}{||X||\times||Y||}$</p>
+<p>因此，半正定的含义就是，一个向量，经过变化后的向量和原向量之间的夹角小于等于90度</p>
+<p>半正定矩阵一定是实对称矩阵</p>
+<p>正定矩阵是n阶方阵</p>
+<hr>
+<p><strong>方差越大为什么能够表征信息越多？</strong></p>
+<p>一条信息的信息量和其不确定性有着直接的关系。如果想要了解一个非常不了解的事情（非常不确定的事）就需要很大的信息量。从这个角度来看，信息量就是不确定性多少</p>
+<p>而方差就可以度量这种不确定性，方差表示数据偏离平均值的波动，方差越大，数据越分散，越波动，越不稳定，信息量越大；</p>
+<p>同样，信息熵也可以表达不确定性$H(x) = -\sum p_ilog(p_i)$</p>
+<p>💡信息熵中不考虑数据的量级，数据大小不影响熵的值，只有数据出现的概率影响熵</p>
+<p>当数据的分布有“多峰”（也可以理解为非凸）时，方差描述信息不确定度的能力降低，这个时候应该用熵来描述不确定度，这种时候可能熵增大时方差减小</p>
+<p>结尾想吐槽一下，PCA我真的写了好久… </p>
+<h2 id="AutoEncoder"><a href="#AutoEncoder" class="headerlink" title="AutoEncoder"></a>AutoEncoder</h2><p>本来想单开一个写AutoEncoder，后来觉得这和PCA很像，就准备写在一起了</p>
+<p>在介绍AutoEncoder之前，我们需要介绍Encoder和Decoder</p>
+<p><strong>NN Encoder：</strong></p>
+<p>对网络的输入进行压缩表示；假设输入是28*28维的图像，将其压缩表示成一个code</p>
+<p><strong>NN Decoder：</strong></p>
+<p>对网络的输入进行重建还原；假设输入的是一个code，将其重建还原成一个28*28维的图像</p>
+<p><img src="/2018/08/16/PCA/p17.png" width="450px"></p>
+<p>但是对于Encoder来说，我们只有图像，没有对应的coder；对于Decoder来说，我们只有code，但是没有对应输出的图像，而AutoEncoder则是将NN Encoder和NN Decoder放在一起训练</p>
+<p>如果我们将PCA表示成一个网络的话：</p>
+<p>首先将图像压缩得到componet weight，中间隐藏层的输入／输出（线性激活函数）就是图像的低维表示，且是basic component的权重，而encode的权重其实就是每一个component</p>
+<p>根据得到的component weight，再乘以basic component（decode过程），得到重建还原后的图像</p>
+<p>我们希望重建后的图像和原始图像误差越小越好</p>
+<p><img src="/2018/08/16/PCA/p18.png" width="450px"></p>
+<p>💡这里省略了原始图像的处理过程:$x-\overline x$，因为在实际过程中，我们一般都会对数据进行normalize的过程，即均值为0，方差为1</p>
+<hr>
+<p>之前提到，AutoEncoder比PCA的优势就是，AutoEncoder可以做成Deep AutoEncoder：</p>
+<p>训练的目标就是输出的$\hat x$和$x$越相近越好，中间最低维的layer为code层，是一个bottle-neck layer</p>
+<p>从Input Layer 到 bottle-neck layer是encoder层，从bottle-neck layer到最终的output layer是decoder层 </p>
+<p>当然了，bottle-neck层作为最终数据的表示，肯定会损失信息</p>
+<p><img src="/2018/08/16/PCA/p20.png" width="450px"></p>
+<p>PCA中，decode和encode层的weight是对称的，但是在Deep AutoEncoder里，encode和decode的weight可以是不同的；当然，如果是相同／对称的，则可以减少参数空间，减少模型训练的复杂度</p>
+<p>比较下PCA和Deep AutoEncoder的效果：</p>
+<p><img src="/2018/08/16/PCA/p23.png" width="350px"></p>
+<p>PCA的降维方式</p>
+<p><img src="/2018/08/16/PCA/p21.png" width="300px"></p>
+<p>Deep AutoEncoder的降维方式</p>
+<p><img src="/2018/08/16/PCA/p22.png" width="500px"></p>
+<h3 id="AutoEncoder的应用"><a href="#AutoEncoder的应用" class="headerlink" title="#AutoEncoder的应用"></a>#AutoEncoder的应用</h3><h4 id="Text-Retrieval-文本检索"><a href="#Text-Retrieval-文本检索" class="headerlink" title="##Text Retrieval 文本检索"></a>##Text Retrieval 文本检索</h4><p>在信息检索中，我们一般利用向量空间模型，将检索和文本转换成向量，比较两个向量之间的相似度（计算余弦相似度／距离）</p>
+<p>如果采用Bag-of-Word／词带模型，每个文本表示成一个词带向量，向量的长度是字典的长度，如果文本中存在这个词，则对应的维度为1，否则为0 // 可以利用tf-idf</p>
+<p>但是词带模型没有考虑语义信息</p>
+<p>=&gt; 将对应的词带模型输入AutoEncoder，得到低维的code输出，效果会更好</p>
+<h4 id="Similar-Image-Search-相似图片检索"><a href="#Similar-Image-Search-相似图片检索" class="headerlink" title="##Similar Image Search 相似图片检索"></a>##Similar Image Search 相似图片检索</h4><p>传统方法是根据图片的pixel intensity，计算其欧式距离，表征相似度，但是这种方式得到的检索结果效果并不好</p>
+<p>更好的方式是利用Deep AutoEncoder对图像进行处理</p>
+<p>💡在利用AutoEncoder进行图像处理时，一般先进行升维，再进行降维（有点类似padding）</p>
+<p><img src="/2018/08/16/PCA/p25.png" width="550px"></p>
+<h4 id="Pre-training-DNN-对网络参数进行预训练"><a href="#Pre-training-DNN-对网络参数进行预训练" class="headerlink" title="## Pre-training DNN 对网络参数进行预训练"></a>## <strong>Pre-training DNN</strong> 对网络参数进行预训练</h4><p>逐层贪婪预训练 Greedy Layer-wise Pre-trainining</p>
+<p>假设我们需要训练的网络如下：</p>
+<p><img src="/2018/08/16/PCA/p26.png" width="300px"></p>
+<p>对于每一层网络的参数，按encoder-code-decoder三层网络进行训练：</p>
+<p>对于第一个隐藏层，首先由784维的输入升维至1000维，然后再从1000维降维至784维，目标是输入和输出的误差尽可能小</p>
+<p><img src="/2018/08/16/PCA/p27.png" width="300px"></p>
+<p>这样得到第一个隐藏层的参数$w^1$</p>
+<p>💡在隐藏层进行升维时，需要慎重，如果为了减少误差，则升维处理时，网络可能只需要记住输入（1000维中记住784维），而不需要进行任何学习。</p>
+<p>💡一个改进的学习方法是，加一个很强的正则化项。比如，加入L1正则化，保证维度是稀疏的</p>
+<p>同样在进行第二个隐藏层预训练时，采用同样的策略：固定第一个隐藏层确定的参数，同样用encoder-code-decoder的方式进行训练第二个隐藏层的参数</p>
+<p><img src="/2018/08/16/PCA/p28.png" width="300px"></p>
+<p>这样逐层确定好以后，最后利用反向传播backpropagation 进行微调 fine-tune</p>
+<p><img src="/2018/08/16/PCA/p29.png" width="300px"></p>
+<p>💡这种预训练+微调的方式适合半监督学习，当无标记样本较多时，可以利用无标记样本进行encoder-code-decoder的网络参数确定，然后再用有标记样本对网络参数进行微调fine-tune</p>
+<h4 id="De-noise-Auto-Encoder"><a href="#De-noise-Auto-Encoder" class="headerlink" title="##De-noise Auto-Encoder"></a>##De-noise Auto-Encoder</h4><p>为了加强Auto Encoder的效果，可以采用这样的方式：</p>
+<p>首先对input进行加噪声处理，然后对加入噪声的数据进行enocder-code-decoder</p>
+<p>训练的目标是网络的输出和未加入噪声的输入越相近越好</p>
+<p><img src="/2018/08/16/PCA/p30.png" width="450px"></p>
+<p>Contractive Auto-Encoder：希望Input有微小变化时，降维后的code变化小</p>
+<h4 id="Auto-Encoder-for-CNN"><a href="#Auto-Encoder-for-CNN" class="headerlink" title="##Auto-Encoder for CNN"></a>##Auto-Encoder for CNN</h4><p>CNN对图像的处理是对图像进行卷积+池化的操作</p>
+<p>Auto-Encoder的CNN应该是图像经过多个卷积+池化操作以后，再进行unpooling+ deconvolution的对应多个操作，得到的最终图像和原始图像越接近越好</p>
+<p><img src="/2018/08/16/PCA/p31.png" width="400px"></p>
+<p><strong>Unpooling</strong></p>
+<p>pooling是对图像的像素进行采样，假设进行的是max-pooling，为了之后进行unpooling，需要记得选择max location，在进行unpooling的时候，需要根据记录的max location，对其周围的点补0</p>
+<p>💡在keras的实现中，实现了简化的版本，可以不记录max pooling的location，只是根据现在的值复制4份</p>
+<p><img src="/2018/08/16/PCA/p15.png" width="550px"></p>
+<p><strong>Deconvolution</strong></p>
+<p>Deconvolution和Convolution其实是一样的：</p>
+<p>原始数据经过padding之后，通过改变权重的顺序，和 convolution是一样的</p>
+<p><img src="/2018/08/16/PCA/p32.png" width="500px"></p>
+<hr>
+<p>我们可以用训练好的Auto—Encoder产生新的图像=利用decoder部分可以产生新的图像</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/12/ClusteringByDensity/" rel="next" title="Clustering by fast search and find of density peaks">
+                <i class="fa fa-chevron-left"></i> Clustering by fast search and find of density peaks
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/30/Generation/" rel="prev" title="Generation">
+                Generation <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Clustering-聚类"><span class="nav-number">1.</span> <span class="nav-text">Clustering 聚类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dimension-Reduction-降维"><span class="nav-number">2.</span> <span class="nav-text">Dimension Reduction 降维</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCA"><span class="nav-number">3.</span> <span class="nav-text">PCA</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#下面我们通过数学推导找到最合适的投影方向："><span class="nav-number">3.0.1.</span> <span class="nav-text">下面我们通过数学推导找到最合适的投影方向：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PCA的劣势"><span class="nav-number">3.1.</span> <span class="nav-text">PCA的劣势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PCA应用"><span class="nav-number">3.2.</span> <span class="nav-text">PCA应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#📎-矩阵运算"><span class="nav-number">4.</span> <span class="nav-text">📎 矩阵运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AutoEncoder"><span class="nav-number">5.</span> <span class="nav-text">AutoEncoder</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AutoEncoder的应用"><span class="nav-number">5.1.</span> <span class="nav-text">#AutoEncoder的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Text-Retrieval-文本检索"><span class="nav-number">5.1.1.</span> <span class="nav-text">##Text Retrieval 文本检索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Similar-Image-Search-相似图片检索"><span class="nav-number">5.1.2.</span> <span class="nav-text">##Similar Image Search 相似图片检索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Pre-training-DNN-对网络参数进行预训练"><span class="nav-number">5.1.3.</span> <span class="nav-text">## Pre-training DNN 对网络参数进行预训练</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#De-noise-Auto-Encoder"><span class="nav-number">5.1.4.</span> <span class="nav-text">##De-noise Auto-Encoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Auto-Encoder-for-CNN"><span class="nav-number">5.1.5.</span> <span class="nav-text">##Auto-Encoder for CNN</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

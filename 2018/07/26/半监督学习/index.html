@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="半监督学习的意义在于，我们其实不缺少样本，我们缺少的是有标记的样本，如果能将有限的有标记样本和无限的未标记样本结合起来，这样可以对模型训练有很大的帮助； 半监督学习又分为直推式学习（Transductive Learning）和归纳式学习（Inductive Learning） 直推式学习是未标记样本就是测试样本；归纳式学习就是未标记样本不是测试样本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Semi-supervid Learning">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/07/26/半监督学习/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="半监督学习的意义在于，我们其实不缺少样本，我们缺少的是有标记的样本，如果能将有限的有标记样本和无限的未标记样本结合起来，这样可以对模型训练有很大的帮助； 半监督学习又分为直推式学习（Transductive Learning）和归纳式学习（Inductive Learning） 直推式学习是未标记样本就是测试样本；归纳式学习就是未标记样本不是测试样本">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s2.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s4.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s5.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s6.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s7.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s8.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s9.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s10.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s11.png">
+<meta property="og:updated_time" content="2018-09-27T13:14:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Semi-supervid Learning">
+<meta name="twitter:description" content="半监督学习的意义在于，我们其实不缺少样本，我们缺少的是有标记的样本，如果能将有限的有标记样本和无限的未标记样本结合起来，这样可以对模型训练有很大的帮助； 半监督学习又分为直推式学习（Transductive Learning）和归纳式学习（Inductive Learning） 直推式学习是未标记样本就是测试样本；归纳式学习就是未标记样本不是测试样本">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/07/26/半监督学习/s1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/07/26/半监督学习/"/>
+
+
+
+
+
+  <title>Semi-supervid Learning | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/07/26/半监督学习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Semi-supervid Learning</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-26T10:02:26+08:00">
+                2018-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>半监督学习的意义在于，我们其实不缺少样本，我们缺少的是有标记的样本，如果能将有限的有标记样本和无限的未标记样本结合起来，这样可以对模型训练有很大的帮助；</p>
+<p>半监督学习又分为直推式学习（Transductive Learning）和归纳式学习（Inductive Learning）</p>
+<p>直推式学习是未标记样本就是测试样本；归纳式学习就是未标记样本不是测试样本</p>
+<a id="more"></a>
+<p>监督学习的输入样本是训练样本特征+样本的类别标签；即$\{(x^r,\hat{y}^r)\}^R_{r=1}$</p>
+<p>半监督学习的输入样本是有标记样本和无标记样本，且无标记样本的数量远大于有标记样本的数量；即：</p>
+<p>$\{(x^r,\hat{y}^r)\}^R_{r=1}$,$\{x^u\}^{R+U}_{u=R}$    (U&gt;&gt;R)</p>
+<p>半监督学习在引入未标记样本以后，会对模型的训练有很大的帮助，而这种帮助是在引入一些假设前提的情况下</p>
+<p>比如，无标记样本可能会表征数据的分布</p>
+<p>💡半监督学习是否有效和我们的假设非常相关</p>
+<h2 id="Generative-Model-with-Semi-supervised-Learning"><a href="#Generative-Model-with-Semi-supervised-Learning" class="headerlink" title="Generative Model with Semi-supervised Learning"></a>Generative Model with Semi-supervised Learning</h2><h3 id="Supervised-Generative-Model"><a href="#Supervised-Generative-Model" class="headerlink" title="Supervised Generative Model"></a>Supervised Generative Model</h3><p>考虑一个二分类问题$C_1;C_2$，如果需要构建生成模型，则需要根据现有数据估计先验概率$P(C_1)$和概率密度$P(x|C_1)$</p>
+<p>其中，类条件概率密度$P(x|C_1)$需要根据数据估计协方差$\Sigma$和均值$\mu^i$</p>
+<p>💡考虑到模型的泛化能力，一般采用两个类别概率密度共用协方差</p>
+<p>最终的生成模型的判断是$P(x|C_1) = \frac{P(x|C_1)P(C_1)}{P(x|C_1)P(C_1)+P(x|C_2)P(C_2)}$</p>
+<p>而引入未标记样本以后，可以重新估计$P(C_1),P(C_2),\mu^1,\mu^2,\Sigma$</p>
+<p>我们假设数据服从高斯分布，同样将假设推广到数据来自多个高斯分布</p>
+<p><img src="/2018/07/26/半监督学习/s1.png" width="300px"></p>
+<p>如果引入未标记样本，则原始的参数估计和分类界面可能会发生变化</p>
+<p><img src="/2018/07/26/半监督学习/s2.png" width="300px"></p>
+<h3 id="Semi-supervised-Generative-Model"><a href="#Semi-supervised-Generative-Model" class="headerlink" title="Semi-supervised Generative Model"></a>Semi-supervised Generative Model</h3><h4 id="Initialization："><a href="#Initialization：" class="headerlink" title="Initialization："></a>Initialization：</h4><p>初始化各个参数$\theta = \{p(C_i),\mu_i,\Sigma\}$</p>
+<p>初始化的方法可以采用随机初始化，或者根据已有的标记样本进行估计</p>
+<p>💡初始化的参数会影响收敛结果</p>
+<h4 id="E-Step："><a href="#E-Step：" class="headerlink" title="E-Step："></a>E-Step：</h4><p>根据当前模型估计未标记样本$x_j$属于第i个高斯混合成分的概率：（即，根据参数估计后验概率）</p>
+<p>$r_{j,i} = \frac{\alpha_i\;p(x_j|\mu_i,\Sigma_i)}{\sum^N_{i=1}\alpha_i\;p(x_j|\mu_i,\Sigma_i)}$</p>
+<p>其中，$\alpha_i$为选择第i个高斯成分的概率，即初始化中的$p(C_i)$</p>
+<p>根据估计的参数计算未标记样本的后验概率$P_\theta(C_1|x^u)$，根据后验概率的大小为未标记样本进行标记</p>
+<h4 id="M-Step："><a href="#M-Step：" class="headerlink" title="M-Step："></a>M-Step：</h4><p>根据得到的未标记样本的标记，更新模型</p>
+<p>$\alpha_i = p(C_i) = \frac{N_i+\sum_{x^u}r_{j,i}}{N}$</p>
+<p>$\mu_i = \frac{\sum_{x^u}r_{j,i}x_j + \sum_{y_j = c_i} x_j}{N+\sum_{x^u}r_{j,i}}$</p>
+<p>$\Sigma_i =\frac{\sum_{x^u}r_{j,i}(x_j-\mu_i)(x_j-\mu_i)^T + \sum_{y_j = c_i}(x_j-\mu_i)(x_j-\mu_i)^T }{N+\sum_{x^u}r_{j,i}} $</p>
+<h2 id="Low-Density-Separation"><a href="#Low-Density-Separation" class="headerlink" title="Low Density Separation"></a>Low Density Separation</h2><p>💡这个世界 是一个非黑即白的世界</p>
+<p><img src="/2018/07/26/半监督学习/s3.png" width="300px"></p>
+<p>蓝色和橙色点是有标记样本，绿色点是无标记样本，如果不考虑无标记样本，可能右边的分类界面是好的，但是如果考虑无标记样本，则左边的分类界面更好。</p>
+<p>因为这个世界是非黑即白的世界，分类界面不可能穿过样本区域，分类界面应该在low density的低密度区域</p>
+<h3 id="Self-Training"><a href="#Self-Training" class="headerlink" title="Self-Training"></a>Self-Training</h3><p>假设有标记样本集合 $\{(x^r,y^r)\}^R_{r=1}$，无标记样本集合 $\{x^u\}^{R+U}_{u=R}$</p>
+<p>自学习过程如下：</p>
+<p>（1）根据有标记样本学习出一个函数 $f^*$</p>
+<p>（2）根据学习得到的函数$f^*$为无标记样本进行标记，</p>
+<p>（3）从已经标记好的无标记样本中，筛选出一些样本，并加入有标记样本，重复（1）过程</p>
+<p>💡选择哪些无标记样本加入训练样本需要自己设定筛选原则，比如，可以为每个无标记样本设定权重：有多大的准确度表明这个无标记样本的标记正确性</p>
+<p>💡自学习对回归regeression问题是没有用的。考虑一维情况，根据现有的数据拟合一条曲线y=wx+b，根据有标记样本学习得到的曲线，然后利用得到的曲线去找无标记样本的y值，则 无标记样本一直在曲线上，对曲线的改变没有任何影响</p>
+<p>同样的问题，考虑在神经网络中的hard label和soft label问题：</p>
+<p>在自学习中，我们对无标记样本进行硬指派，即hard label；在半监督学习的生成模型中，我们对无标记样本进行软指派，即soft label</p>
+<p>如果在神经网络中进行半监督学习，对于无标记样本需要进行hard label。</p>
+<p>考虑二分类情况，神经网络最后一层输出的激活函数是softmax，输出为样本在两类上的概率；如果不进行样本的hard label，则加入的softmax标记是之前参数已经可以做到的事情，对参数的更新没有影响</p>
+<h3 id="Entropy-based-Regularization"><a href="#Entropy-based-Regularization" class="headerlink" title="Entropy-based Regularization"></a>Entropy-based Regularization</h3><p>在low density的假设下，我们需要保证对于无标记样本的输出越集中越好，以五分类为例：</p>
+<p>估测未标记样本输入类别1或者类别5都可以，但是如果认为样本属于每个类别的概率为1/5则不合适</p>
+<p><img src="/2018/07/26/半监督学习/s4.png" width="200px"></p>
+<p>可以采用熵的概念来定量描述：</p>
+<p>$E(y^u) = - \sum^5_{m=1}y_m^uln(y_m^u)$</p>
+<p><strong>熵越小，表明输出越集中，则越好</strong></p>
+<p>根据这个原则，我们可以在半监督学习中重新定义损失函数：</p>
+<p>$L = \sum_{x^r}C(y^r,\hat y^r) + \lambda \sum_{x^u}E(y^u)$</p>
+<p>第一项是对于标记样本，训练误差越小越好；第二项是，对于未标记样本，输出标记越集中越好；</p>
+<p>第二项相当于 <strong>entropy-based regularization</strong></p>
+<h3 id="Semi-supervised-SVM"><a href="#Semi-supervised-SVM" class="headerlink" title="Semi-supervised SVM"></a>Semi-supervised SVM</h3><p>SVM的目标是寻找最大的分类margin和最小的分类误差，当引入半监督学习时，我们需要对无标记样本穷举所有可能的标记，然后找到最合适的分类边界</p>
+<p>原始数据如下，蓝色和橙色为标记样本，灰色为无标记样本，如果不考虑无标记样本，则分类边界可以是这条红线</p>
+<p><img src="/2018/07/26/半监督学习/s5.png" width="200px"></p>
+<p>穷举所有的可能情况：</p>
+<p>（1）<img src="/2018/07/26/半监督学习/s6.png" width="200px"></p>
+<p>（2）<img src="/2018/07/26/半监督学习/s7.png" width="200px"></p>
+<p>（3）<img src="/2018/07/26/半监督学习/s8.png" width="200px"></p>
+<p>在穷举的三种情况中，第二种最好</p>
+<p>💡实际操作中，穷举所有的可能情况耗时耗力，可以采用自学习的策略，先利用有标记样本学习得到一个分类界面，再根据这个界面对无标记样本进行标记，然后找到最有可能标记错误的两个样本，交换它们的标记，重新学习</p>
+<h2 id="Smoothness-Assumption"><a href="#Smoothness-Assumption" class="headerlink" title="Smoothness Assumption"></a>Smoothness Assumption</h2><p>💡近朱者赤，近墨者黑</p>
+<p>相似的x应该有相似的标记y =&gt; 如果x分布不均匀，x1和x2应该在高密度区域有较高的相似性，则x1和x2应该有相似的标记</p>
+<p><strong>Smoothness Assumption</strong> 基于的假设是两个相似样本应该在高密度区域相连／相似，那么这两个样本才是真正的相似</p>
+<p>如下图的三个样本，x2和x3更相似，应该会有更相似的标记，但是二者之间并没有high density path，而x1和x2之间有high density path，则x1和x2应该会有更相似的标记</p>
+<p><img src="/2018/07/26/半监督学习/s9.png" width="300px"></p>
+<h3 id="Cluster-and-then-label"><a href="#Cluster-and-then-label" class="headerlink" title="Cluster and then label"></a>Cluster and then label</h3><p>利用全部样本（有标记／无标记）进行聚类，然后根据每个类别里有标记样本来为整个聚类进行投票并标记</p>
+<p><img src="/2018/07/26/半监督学习/s10.png" width="450px"></p>
+<h3 id="Graph-based-Approach"><a href="#Graph-based-Approach" class="headerlink" title="Graph-based Approach"></a>Graph-based Approach</h3><p>可以将样本表示成图的形式，可以采用graph based的方式来衡量两个样本在high density region是否是相近的</p>
+<p>有些数据本身自带图的形式：网页之间的链接／论文之间的引用等，但更多的时候，我们需要自己构建图graph</p>
+<p>（1）定义数据之间的相似性度量 $s(x^i,x^j)$</p>
+<p>（2）将每个数据视为一个顶点，在顶点之间添加边 /// 添加边的方式有几种：</p>
+<p><strong>a. K Nearnest Neighbor</strong> </p>
+<p>找到离数据点最近的k个邻居，并为其添加边</p>
+<p><strong>b. e-Neighborhood</strong></p>
+<p>选择与数据点之间相似度大于e，并为其添加边</p>
+<p>💡边之间的权重是和数据之间的相似度成正比</p>
+<p>一般可以选择Gaussian Radial Basis Function（高斯径向基函数）作为相似性度量</p>
+<p>$s(x^i,x^j) = exp(-\gamma ||x^i-x^j||^2)$   /// 计算的是两个数据点之间的欧氏距离</p>
+<p><strong>采用RBF作为相似性度量指标，保证只有非常相近的点，他们之间的相似度才会比较大</strong></p>
+<p>Graph-based Approach 在数据足够多的情况下，可以保证类别的传递性 <strong>propagate through the graph</strong>，有标记样本通过图 影响其邻居的无标记样本</p>
+<p>Entropy-based Regularization 强调 在low density separation 的假设下，无标记样本的类别标记越集中越好</p>
+<p>L1 ／ L2 Regularization 强调 学习得到的参数越稀疏越好 ／越光滑越好</p>
+<p>那么，在smoothness assumption的假设下，如何保证无标记样本得到的标记满足这个假设呢？</p>
+<p>类似地，我们可以定义基于图 传播 标记的样本越光滑越好：</p>
+<p>$S = \frac{1}{2}\sum_{i,j}w_{i,j}(y^i-y^j)^2$</p>
+<p>$w_{i,j}$ 两个数据点之间边的权重</p>
+<p>S是在所有样本（有标记／无标记样本）上进行计算，s越小，表明整个基于图的传播 的无标记样本的样本标记越好</p>
+<p><img src="/2018/07/26/半监督学习/s11.png" width="450px"></p>
+<p>如上图的两种标记情况，每个点表示一个数据，点之间的边上的数值代表边的权重，根据S的计算公式，可以看出，左边的标记方式优于右边，更符合smoothness assumption的假设</p>
+<h4 id="引入Graph-Laplacian"><a href="#引入Graph-Laplacian" class="headerlink" title="引入Graph Laplacian"></a>引入Graph Laplacian</h4><p>$S = \frac{1}{2}\sum_{i,j}w_{i,j}(y^i-y^j)^2 = y^TLy$</p>
+<p>$y = [… y^i…y^j…]^T$ 是 R+U维的向量，是样本的一种标记，R是有标记样本，U是无标记样本</p>
+<p>$L  = D - W $ 是(R+U)*(R+U)维的矩阵</p>
+<p>$W$ 是各个边的权重</p>
+<p>$D$ 是一个对角矩阵，对角线上的值为W中，对应那一行的权重之后；非对角线上的元素为0</p>
+<p>如上图的情况</p>
+<p>$W  =\begin{bmatrix} 0 &amp; 2 &amp; 3 &amp; 0\\  2 &amp; 0 &amp; 1 &amp; 0\\  3 &amp; 1 &amp; 0 &amp;1 \\  0 &amp; 0 &amp; 1 &amp; 0\end{bmatrix}$  $D =\begin{bmatrix} 5 &amp; 0 &amp; 0 &amp; 0\\  0 &amp; 3 &amp; 0 &amp; 0\\  0 &amp; 0 &amp; 5 &amp;0 \\  0 &amp; 0 &amp; 0 &amp; 1\end{bmatrix}$</p>
+<h4 id="Graph-based-Regularization"><a href="#Graph-based-Regularization" class="headerlink" title="Graph-based Regularization"></a>Graph-based Regularization</h4><p>本来以为这个名字是没有的，结果google了一下，发现很多前辈写了 hhhh</p>
+<p>我们可以基于smoothness assumption重新设计损失函数：</p>
+<p>$L = \sum_x^r C(y^r,\hat y^r) + \lambda S$</p>
+<p>第一项是有标记样本的训练误差要足够小，第二项保证 有标记样本和无标记样本之间的传播标记要尽可能平滑</p>
+<h2 id="Better-Representation"><a href="#Better-Representation" class="headerlink" title="Better Representation"></a>Better Representation</h2><p>💡去芜存菁，化繁为简</p>
+<p>我们观察到的现象可能会比较复杂，但是现象背后的实质会比较简单。则可以进行better  representation</p>
+<p>这部分将在无监督学习里详细说明。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/19/基于题库数据的难度和知识点分类模型/" rel="next" title="基于题库数据的难度和知识点分类模型">
+                <i class="fa fa-chevron-left"></i> 基于题库数据的难度和知识点分类模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/12/ClusteringByDensity/" rel="prev" title="Clustering by fast search and find of density peaks">
+                Clustering by fast search and find of density peaks <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Generative-Model-with-Semi-supervised-Learning"><span class="nav-number">1.</span> <span class="nav-text">Generative Model with Semi-supervised Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Supervised-Generative-Model"><span class="nav-number">1.1.</span> <span class="nav-text">Supervised Generative Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Semi-supervised-Generative-Model"><span class="nav-number">1.2.</span> <span class="nav-text">Semi-supervised Generative Model</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Initialization："><span class="nav-number">1.2.1.</span> <span class="nav-text">Initialization：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#E-Step："><span class="nav-number">1.2.2.</span> <span class="nav-text">E-Step：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#M-Step："><span class="nav-number">1.2.3.</span> <span class="nav-text">M-Step：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Low-Density-Separation"><span class="nav-number">2.</span> <span class="nav-text">Low Density Separation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Self-Training"><span class="nav-number">2.1.</span> <span class="nav-text">Self-Training</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Entropy-based-Regularization"><span class="nav-number">2.2.</span> <span class="nav-text">Entropy-based Regularization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Semi-supervised-SVM"><span class="nav-number">2.3.</span> <span class="nav-text">Semi-supervised SVM</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Smoothness-Assumption"><span class="nav-number">3.</span> <span class="nav-text">Smoothness Assumption</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cluster-and-then-label"><span class="nav-number">3.1.</span> <span class="nav-text">Cluster and then label</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Graph-based-Approach"><span class="nav-number">3.2.</span> <span class="nav-text">Graph-based Approach</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引入Graph-Laplacian"><span class="nav-number">3.2.1.</span> <span class="nav-text">引入Graph Laplacian</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Graph-based-Regularization"><span class="nav-number">3.2.2.</span> <span class="nav-text">Graph-based Regularization</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Better-Representation"><span class="nav-number">4.</span> <span class="nav-text">Better Representation</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

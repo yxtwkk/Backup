@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="分类问题和回归问题是机器学习中非常常见的两个学习任务，通常情况下，如果目标输出$y$ 是连续值，则为回归问题；如果目标输出$y$是类别标签，则为分类问题 分类问题的应用场景很多： （1）信用卡申请：根据申请人的个人情况判断是否给予其信用卡：accept/refuse =&amp;gt;二分类问题 （2）疾病检测：根据病人的身体特征判断其所患疾病 =&amp;gt; 多分类问题 （3）手写体识别 （4）面部识别">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Classification">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/06/16/分类Classification/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="分类问题和回归问题是机器学习中非常常见的两个学习任务，通常情况下，如果目标输出$y$ 是连续值，则为回归问题；如果目标输出$y$是类别标签，则为分类问题 分类问题的应用场景很多： （1）信用卡申请：根据申请人的个人情况判断是否给予其信用卡：accept/refuse =&amp;gt;二分类问题 （2）疾病检测：根据病人的身体特征判断其所患疾病 =&amp;gt; 多分类问题 （3）手写体识别 （4）面部识别">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c2.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c6.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c4.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c5.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c7.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c8.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c9.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c10.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c11.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c12.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c13.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c14.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c18.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c15.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c16.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c17.png">
+<meta property="og:updated_time" content="2018-10-08T14:37:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Classification">
+<meta name="twitter:description" content="分类问题和回归问题是机器学习中非常常见的两个学习任务，通常情况下，如果目标输出$y$ 是连续值，则为回归问题；如果目标输出$y$是类别标签，则为分类问题 分类问题的应用场景很多： （1）信用卡申请：根据申请人的个人情况判断是否给予其信用卡：accept/refuse =&amp;gt;二分类问题 （2）疾病检测：根据病人的身体特征判断其所患疾病 =&amp;gt; 多分类问题 （3）手写体识别 （4）面部识别">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/06/16/分类Classification/"/>
+
+
+
+
+
+  <title>Classification | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/06/16/分类Classification/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Classification</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-16T10:40:05+08:00">
+                2018-06-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>分类问题和回归问题是机器学习中非常常见的两个学习任务，通常情况下，如果目标输出$y$ 是连续值，则为回归问题；如果目标输出$y$是类别标签，则为分类问题</p>
+<p>分类问题的应用场景很多：</p>
+<p>（1）信用卡申请：根据申请人的个人情况判断是否给予其信用卡：accept/refuse =&gt;二分类问题</p>
+<p>（2）疾病检测：根据病人的身体特征判断其所患疾病 =&gt; 多分类问题</p>
+<p>（3）手写体识别</p>
+<p>（4）面部识别</p>
+<a id="more"></a>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><h4 id="分类-vs-回归："><a href="#分类-vs-回归：" class="headerlink" title="分类 vs 回归："></a>分类 vs 回归：</h4><p>（1）每一个多分类问题都可以转换成一个二分类问题</p>
+<p>（2）每一个二分类问题又可以转换成一个回归问题：</p>
+<p>训练过程：Class 1对应的回归值是1，Class 2对应的回归值是-1；</p>
+<p>测试过程：如果输出接近1，则测试样本的类别为1，如果输出接近-1，则测试样本的类别为2</p>
+<p>可是这回带来一个问题：</p>
+<p><strong>用regreesion训练模型，损失函数loss function会去惩罚“非常正确”的点</strong></p>
+<p><img src="/2018/06/16/分类Classification/c1.png" width="300px"></p>
+<p>假设特征空间为2维$(x1,x2)$，蓝色为class 1，红色为class 2，训练过程中，要求class 1的点的输出尽可能为1，class 2的输出尽可能为-1（进行充分拟合），对于这种聚合很好的分类问题，用回归来进行分类学习是可以实现的，但是，如何类别样本的数据比较分散，则会出现问题：</p>
+<p><img src="/2018/06/16/分类Classification/c2.png" width="300px"></p>
+<p>如果还是使用绿色这条线代表Regression的模型，则对于右下角的模型，其输出会远大于1，但是其目标输出为1，则Regression模型就会惩罚这些点，最后的模型会向这些远大于1的点倾斜为紫色这一条</p>
+<p><strong>对于Regression，紫色的模型是一个合适的模型；对于Classification，绿色的模型是一个合适的模型</strong></p>
+<p>另外，对于多分类问题，Class 1的回归值为1，Class 2的回归值为2，Class 3的回归值为3 =&gt;这会错误的传达出一个信息，即 Class 3和Class 2有关，Class 2和Class 1有关（因为其回归值近似）</p>
+<hr>
+<h3 id="分类模型"><a href="#分类模型" class="headerlink" title="分类模型"></a>分类模型</h3><p>函数模型：$f(x)$  =&gt; 输出class 1／class 2…</p>
+<p>损失函数：$L(f) = \sum_{n} \delta (f(x^n) \neq\hat{y})$ (即，分类错误的样本数)</p>
+<h4 id="概率角度："><a href="#概率角度：" class="headerlink" title="概率角度："></a>概率角度：</h4><p><img src="/2018/06/16/分类Classification/c3.png" width="400px"></p>
+<p>现在有一个蓝色小球，判断其来自Box1的概率为：</p>
+<p><img src="/2018/06/16/分类Classification/c6.png" width="400px"></p>
+<p>更一般的，将Box 1和Box 2堪看成两个类别Class 1 和 Class 2，我们可以得出概率公式为：</p>
+<p><img src="/2018/06/16/分类Classification/c4.png" width="300px"></p>
+<p>小球$p(x)$的全概率为其生成模型：</p>
+<p><img src="/2018/06/16/分类Classification/c5.png" width="300px"></p>
+<p>计算公式中的 $p(x|C_1) $   $p(x|C_2)$  $p(C_1)$  $p(C_2)$ 都可以从训练样本中估计得到</p>
+<hr>
+<h4 id="高斯判别分析-GDA"><a href="#高斯判别分析-GDA" class="headerlink" title="高斯判别分析 GDA"></a>高斯判别分析 GDA</h4><p>以pokerman的训练数据为例，假设水系的pokerman可以通过$ <sp defense,="" defense="">$两个特征来表示</sp></p>
+<p>训练样本选取了79只，现在有一个新来的样本$ <sp defense="103,">$ </sp></p>
+<p>如何知道从水系的pokerman中选出这个样本的概率 $p(x|水系)$ </p>
+<p><img src="/2018/06/16/分类Classification/c7.png" width="400px"></p>
+<p><strong>一般情况下，会假设训练样本（如图所示为79个训练样本点）是从一个高斯分布（Gassion Distribution）中抽样得到</strong> </p>
+<p>=&gt; 问题转换成 如何根据训练样本，学习得到这个高斯分布</p>
+<p>多维高斯概率密度函数<img src="/2018/06/16/分类Classification/c8.png" width="400px"></p>
+<p>其参数有两个：$\mu$：均值   $\Sigma$：协方差矩阵 =&gt;概率密度函数由这两个参数决定</p>
+<p>=&gt; 问题转换成 如何估计这两个参数</p>
+<h5 id="极大似然估计-Maximum-Likelihood-Estimate"><a href="#极大似然估计-Maximum-Likelihood-Estimate" class="headerlink" title="极大似然估计 Maximum Likelihood Estimate"></a>极大似然估计 Maximum Likelihood Estimate</h5><p>对于训练样本的79个点，任何一个高斯分布都可以生成这样79个点，只不过是不同分布生成这些点的概率不同，则如果已知某一个高斯分布的$\mu$ $\Sigma$，我们就可以知道其产生这79个点的likelihood：</p>
+<p>（所有的79个点是独立被采样得到，所以可以通过乘积计算）</p>
+<p><img src="/2018/06/16/分类Classification/c9.png" width="400px"></p>
+<p>💡注意此处的L和loss function的L不是一个L！！</p>
+<p>穷尽不同的$\mu$ $\Sigma$，得到使得$L(\mu,\Sigma)$最大的参数：</p>
+<p><img src="/2018/06/16/分类Classification/c10.png" width="200px"></p>
+<p>=&gt;通过微分求极值，得到的结果为：</p>
+<script type="math/tex; mode=display">\mu^* = \frac{1}{79}\sum_{n=1}^{79}x^n</script><script type="math/tex; mode=display">\Sigma^* = \frac{1}{79}\sum_{n=1}^{79}(x^n-\mu^*)(x^n-\mu^*)^T</script><p>$x^n$ :每一个训练样本</p>
+<p>举个例子🌰：</p>
+<p>假设现在从两个不同的高斯分布中采样得到两种类型的神奇宝贝：79只水系神奇宝贝和61只正常的神奇宝贝，则根据上面所述的极大似然估计，可以得到水系神奇宝贝的高斯分布和正常神奇宝贝的高斯分布</p>
+<p><img src="/2018/06/16/分类Classification/c11.png" width="400px"></p>
+<p>则分类问题</p>
+<p>$P(C_1|x) = \frac{P(x|C_1)P(C_1)}{P(x|C_1)P(C_1) +P(x|C_2)P(C_2)}$</p>
+<p>$P(x|C_1)$ ：根据估计得到的高斯密度公式，可以求得</p>
+<p>$P(C_1)= \frac{79}{79+61}= 0.56$ </p>
+<h4 id="如何提高准确率"><a href="#如何提高准确率" class="headerlink" title="如何提高准确率"></a>如何提高准确率</h4><p>（1）增加训练样本数目</p>
+<p>（2）增加训练样本维度，前面是在二维情况下分类，但是低维不可分的情况，在高维也许是可分的；在高纬不可分的情况下， 在低维也许是可分的</p>
+<p>如何在训练样本有限的情况下，如何提高测试样本的测试准确率？</p>
+<p><strong>不同的类别共用相同的协方差矩阵</strong> ，因为协方差矩阵是和样本特征维度的平方成正比的，当样本特征维度很高时，协方差矩阵很大，这会导致模型参数过多，会造成模型过拟合=&gt; variance过大 </p>
+<p><strong>具体方法</strong>：继续沿用上面的例子，假设有79只神奇宝贝来自水系，61只神奇宝贝为正常的</p>
+<p>$L(\mu^1,\mu^2,\Sigma) = f_{\mu^1,\Sigma}(x^1)f_{\mu^1,\Sigma}(x^2)…f_{\mu^1,\Sigma}(x^{79})*f_{\mu^2,\Sigma}(x^{80})…f_{\mu^2,\Sigma}(x^{140})$</p>
+<p>对函数求导之后可以得到：</p>
+<p>$\mu_1^* = \frac{1}{79}\sum_{n=1}^{79}x^n$</p>
+<p>$\mu_2^* = \frac{1}{61}\sum_{n=80}^{140}x^n$</p>
+<script type="math/tex; mode=display">\Sigma = P(C_1)*\Sigma^1 + P(C_2)*\Sigma^2 =\frac{79}{79+61}*\Sigma^1 + \frac{61}{79+61}*\Sigma^2</script><p>💡<strong>为什么使用高斯分布估计样本的分布？</strong></p>
+<p>可以使用任何的概率分布模型，这是一个超参数，需要提前设定</p>
+<hr>
+<h4 id="朴素贝叶斯分类"><a href="#朴素贝叶斯分类" class="headerlink" title="朴素贝叶斯分类"></a>朴素贝叶斯分类</h4><p>训练样本$x=[x_1,x_2,x_3…x_k]$</p>
+<p>💡假设每一个维度的产生是独立的，则可以将似然写成：（将每个维度估计成1-D Gaussian 正太分布）</p>
+<p>$P(x|C_1) = P(x_1|C_1)P(x_2|C_1)…P(x_k|C_1)$</p>
+<p>如果不考虑维度之间的协方差关系，则这种模型为朴素贝叶斯模型 <strong>Naive Bayes Classifier</strong>，即</p>
+<p>$P(C_1|x) \;oc\; P(x|C_1)P(C_1) =P(x_1|C_1)P(x_2|C_1)…P(x_k|C_1)P(C_1) $</p>
+<p>分类器好坏和假设的强弱正相关！</p>
+<p>💡如果某个属性是binary的，比如是或不是，或者0／1</p>
+<p>则可以假设这个属性是伯努利分布Bernoulli Distribution</p>
+<p>💡对后验概率进行处理，则可以得到Sigmoid function：</p>
+<p><img src="/2018/06/16/分类Classification/c12.png" width="400px"></p>
+<p><img src="/2018/06/16/分类Classification/c13.png" width="200px"></p>
+<p><strong>Sigmoid function</strong>：</p>
+<p><img src="/2018/06/16/分类Classification/c14.png" width="200px"></p>
+<p>z趋近于正无穷大的时候，其output趋近于1；z趋近于负无穷大的时候，其output趋近于0</p>
+<hr>
+<h4 id="P-C-1-x-sigma-z"><a href="#P-C-1-x-sigma-z" class="headerlink" title="$P(C_1|x) = \sigma (z)$"></a>$P(C_1|x) = \sigma (z)$</h4><script type="math/tex; mode=display">z = ln\frac{|\Sigma^2|^{1/2}}{|\Sigma^1|^{1/2}} - \frac{1}{2}x^T(\Sigma^1)^{-1}x + (\mu^1)^T(\Sigma^1)^{-1}x - \frac{1}{2}(\mu^1)^T(\Sigma^1)^{-1}\mu^1 + \frac{1}{2}x^T(\Sigma^2)^{-1}x - (\mu^2)^T(\Sigma^2)^{-1}x + \frac{1}{2} (\mu^2)^T(\Sigma^2)^{-1}\mu^2 +ln\frac{N_1}{N_2}</script><p>因为假设两个类别共用一个协方差矩阵，则z可以写成，并提取x：</p>
+<p><img src="/2018/06/16/分类Classification/c18.png" width="400px"></p>
+<p>因此，$P(C_1|x) = \sigma (z)= \sigma (w·x+b)$</p>
+<p>因此，当共用协方差矩阵时，分类界面是线性的</p>
+<p>参数w和b可以通过$N_1$   $N_2$   $\mu^1$  $\mu^2$ $\Sigma$</p>
+<p><strong>附推导过程</strong></p>
+<p><img src="/2018/06/16/分类Classification/c15.png" width="400px"></p>
+<p><img src="/2018/06/16/分类Classification/c16.png" width="400px"></p>
+<p><img src="/2018/06/16/分类Classification/c17.png" width="400px"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/31/Gradient-Descent/" rel="next" title="Gradient Descent">
+                <i class="fa fa-chevron-left"></i> Gradient Descent
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/20/逻辑回归Logistic-Regression/" rel="prev" title="Logistic Regression">
+                Logistic Regression <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分类-vs-回归："><span class="nav-number">1.1.</span> <span class="nav-text">分类 vs 回归：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分类模型"><span class="nav-number">2.</span> <span class="nav-text">分类模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#概率角度："><span class="nav-number">2.1.</span> <span class="nav-text">概率角度：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高斯判别分析-GDA"><span class="nav-number">2.2.</span> <span class="nav-text">高斯判别分析 GDA</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#极大似然估计-Maximum-Likelihood-Estimate"><span class="nav-number">2.2.1.</span> <span class="nav-text">极大似然估计 Maximum Likelihood Estimate</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何提高准确率"><span class="nav-number">2.3.</span> <span class="nav-text">如何提高准确率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#朴素贝叶斯分类"><span class="nav-number">2.4.</span> <span class="nav-text">朴素贝叶斯分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#P-C-1-x-sigma-z"><span class="nav-number">2.5.</span> <span class="nav-text">$P(C_1|x) = \sigma (z)$</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

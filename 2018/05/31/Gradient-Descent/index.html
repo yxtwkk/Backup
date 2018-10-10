@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="终于有时间整理梯度下降的问题了！ 梯度下降是一种常用的优化方法，但是批式的梯度下降方法存在一些可以改进的地方： （1）学习率的问题 （2）随机梯度下降 （3）特征缩放问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradient Descent">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="终于有时间整理梯度下降的问题了！ 梯度下降是一种常用的优化方法，但是批式的梯度下降方法存在一些可以改进的地方： （1）学习率的问题 （2）随机梯度下降 （3）特征缩放问题">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g2.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g4.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g5.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g6.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g7.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g8.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g9.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g10.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/个.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g12.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g13.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g14.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g23.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g24.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g25.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g26.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g15.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g16.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g17.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g18.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g19.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g20.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g21.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g22.png">
+<meta property="og:updated_time" content="2018-10-08T14:34:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradient Descent">
+<meta name="twitter:description" content="终于有时间整理梯度下降的问题了！ 梯度下降是一种常用的优化方法，但是批式的梯度下降方法存在一些可以改进的地方： （1）学习率的问题 （2）随机梯度下降 （3）特征缩放问题">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/"/>
+
+
+
+
+
+  <title>Gradient Descent | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Gradient Descent</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-31T17:24:48+08:00">
+                2018-05-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>终于有时间整理梯度下降的问题了！</p>
+<p>梯度下降是一种常用的优化方法，但是批式的梯度下降方法存在一些可以改进的地方：</p>
+<p>（1）学习率的问题</p>
+<p>（2）随机梯度下降</p>
+<p>（3）特征缩放问题</p>
+<a id="more"></a>
+<p>在利用梯度下降进行损失函数的优化损失函数时：</p>
+<p>$\Theta ^* = argmin_{\Theta }L(\Theta)$</p>
+<p>$\Theta$ ：需要优化的模型参数</p>
+<p>$L(\Theta)$：损失函数</p>
+<p>假设模型参数有两个，$\Theta_1$和$\Theta_2$，初始化参数：$\Theta ^0$</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+\Theta^0_1\\ \Theta^0_2
+
+\end{bmatrix}</script><p>参数更新方式：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g1.png" width="300px"></p>
+<p>可以简写成：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g2.png" width="200px"></p>
+<p>其中，$\eta $为学习率，是一个超参数，需要学习或者指定；$\bigtriangledown L(\Theta )$为梯度</p>
+<hr>
+<p>这里面有几个问题：</p>
+<p>（1）按照梯度下降的优化方式，我们默认优化后的loss要比优化前的loss更小，但是实际情况不一定是这样，这与学习率有关；</p>
+<p>（2）在学习率合适的情况下，梯度下降的优化方式为什么成立？</p>
+<p>首先，解决第一个问题：</p>
+<h3 id="学习率问题"><a href="#学习率问题" class="headerlink" title="学习率问题"></a>学习率问题</h3><p><strong>Tuning your learning rate</strong></p>
+<p>（1）如果学习率设定的足够小，那么我们总能在迭代多步以后，将参数更新到使得loss足够小的程度，但是学习率太小会使整个优化时间过长；</p>
+<p>（2）如果学习率设定的过大，有可能造成更新后的参数使得loss更大；</p>
+<p>在多维空间中，我们无法可视化loss function的具体函数形态，但是我们可以监控loss-parameter之间的关系，</p>
+<p>图中横轴代表参数的更新次数，纵轴代表loss，每条曲线对应不同的学习率：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g3.png" width="300px"></p>
+<p>通过上面的分析，我们可以得到一个直观的结论，我们希望<strong>随着参数的更新， 学习率越来越小，即是一个动态变化的学习率</strong>：</p>
+<p>在最开始优化的阶段，由于此时loss足够大，我们可以设定一个较大的学习率，加快参数更新；当更新到一定程度时，我们需要小心谨慎的调小我们的学习率，以保证可以持续的降低loss=&gt;学习率是依赖于时间（参数更新次数）</p>
+<p>$\eta ^t = \eta /\sqrt{t+1}$</p>
+<p>当然，这并不能满足我们对于学习率的需求，对于<strong>不同的参数，我们应该设定不同的学习率</strong>，即：</p>
+<h4 id="Adagrad"><a href="#Adagrad" class="headerlink" title="Adagrad"></a><strong><u>Adagrad</u></strong></h4><p>$w^{t+1} &lt;- w^t - \frac{\eta  ^t}{\sigma ^t}g^t$</p>
+<h4 id="Vanilla-Gradient-descent"><a href="#Vanilla-Gradient-descent" class="headerlink" title="Vanilla Gradient descent"></a><strong><u>Vanilla Gradient descent</u></strong></h4><p>$w^{t+1} &lt;= w^t - \eta ^tg^t$   </p>
+<p>其中：</p>
+<p>$w$是其中一个参数</p>
+<p>$\eta ^t = \eta /\sqrt{t+1}$</p>
+<p>$g^t = \frac{\partial L(\Theta ^t)}{\partial w}$</p>
+<p>$\sigma ^t=\sqrt{\frac{1}{t+1}\sum_{i=0}^{t}(g^i)^2}$</p>
+<p>公式表达太抽象，以参数$w$为例🌰，计算它的更新过程：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g4.png" width="400px"></p>
+<p>$\eta ^t$和$\sigma ^t$都有$\sqrt{t+1}$这一项，所以可以约去，将公式Adagrad公式写成：</p>
+<script type="math/tex; mode=display">
+w^{t+1} <=   w^t - \frac{\eta  ^t}{\sqrt\sum_{i=0}^{t}(g^i)^2}g^t</script><p>💡传统的参数更新方式Vanilla Gradient descent表明，参数的梯度$g^t$越大，参数更新越快；Adagrad参数更新部分，$\sqrt\sum_{i=0}^{t}(g^i)^2$表明参数梯度越大，参数更新越慢（在分母上），而$g^t$在分子上，这是不是造成矛盾？</p>
+<p>Adagrad强调的是梯度变化的反差，即过去梯度的变化和当前梯度变化的差异</p>
+<p>💡考虑函数$y=ax^2+bx+c$，假设其为损失函数，函数的最小值在$x=-\frac{b}{2a}$处取得（假设a&gt;0），对于某一点$x_0$，其距离损失函数最小值的点的距离为：</p>
+<p>$\left | x_0+\frac{b}{2a} \right | = \frac{\left | 2ax_0+b \right |}{2a}$</p>
+<p>则最好的step为$\frac{\left | 2ax_0+b \right |}{2a}$，如果我们对于参数的更新可以与最好的step成比例，则有可能更快达到最优点</p>
+<p>即，对参数x求一阶导，可以得到$\left | \frac{\partial y}{\partial x} \right | = \left | 2ax+b \right |$，所以，对于单一参数而言，更大的一阶导数意味着参数离函数的最小值点更远</p>
+<p>但是，Adagrad强调不同的参数应该有不同的学习率，对于存在多个参数的loss function，一阶导数已经不能满足对于参数离最优点的远近标准了：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g5.png" width="400px"></p>
+<p>假设两个参数$w_1$和$w_2$，图示为等高线图，越往里圈意味着loss function的loss越小，分别从w1和w2的角度看，其变化和loss变化的关系，可以得到如下的图示：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g6.png" width="200px"></p>
+<p>从图中可以看出，对于一阶导数来说，<strong>w2在c点的一阶导数要大于w1在a点的一阶导数</strong>（一阶导数的数学解释为函数在该点的斜率），但是对于loss function的最小值点，<strong>a点距离最优点的距离明显要比c点更远</strong>（这与之前描述的一阶导数可以表征参数离最小值点的距离远近矛盾），为此，我们需要继续去求二阶导数：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g7.png" width="500px"></p>
+<p>还是考虑$y=ax^2+bx+c$，假设其为损失函数，函数的最小值在$x=-\frac{b}{2a}$处取得（假设a&gt;0），对于某一点$x_0$，其距离损失函数最小值的点的距离为：</p>
+<p>$\left | x_0+\frac{b}{2a} \right | = \frac{\left | 2ax_0+b \right |}{2a}$</p>
+<p>之前在一阶导数的讨论中，没有讨论分母的影响，因为对于单一参数来说，分母为定值，但是对于多个参数，分母为函数的二阶导数$\frac{\partial^2 y}{\partial x^2} = 2a$，所以对于存在多个参数的loss function来说，最好的step应该是：</p>
+<p>|函数的一次微分 first derivative| / 函数的二次微分</p>
+<h5 id="😌Adagrad是如何表征一次微分和二次微分的关系的？"><a href="#😌Adagrad是如何表征一次微分和二次微分的关系的？" class="headerlink" title="😌Adagrad是如何表征一次微分和二次微分的关系的？"></a>😌Adagrad是如何表征一次微分和二次微分的关系的？</h5><p>Adagrad希望通过一次导数的平均平方和来表征二次导数的变化情况：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g8.png" width="500px"></p>
+<p>如果一个函数有较小的二阶导数，则通过sample多个点，对其一阶导数求平均平方和，可以看出，二阶导数大的，对应的一阶导数也比较大=&gt;这样是为了不增加额外的计算量，当然，也可以对Adagrad公式进行改进，将分母改成对应的二阶导数</p>
+<hr>
+<h3 id="加快训练速度"><a href="#加快训练速度" class="headerlink" title="加快训练速度"></a>加快训练速度</h3><h4 id="随机梯度下降-SGD-Stochastic-Gradient-Descent"><a href="#随机梯度下降-SGD-Stochastic-Gradient-Descent" class="headerlink" title="随机梯度下降 SGD(Stochastic Gradient Descent)"></a>随机梯度下降 SGD(Stochastic Gradient Descent)</h4><p>原始的梯度下降算法，是要计算在所有样本上的loss，然后对参数进行更新（参数更新时，梯度前面有一个1/n，n为样本数）；</p>
+<p><img src="/2018/05/31/Gradient-Descent/g9.png" width="300px"></p>
+<p><img src="/2018/05/31/Gradient-Descent/g10.png" width="300px"></p>
+<p>而随机梯度下降是每次更新时，随机选取一个或者几个样本，进行参数更新=&gt;对于深度学习中，loss function非凸时，这种优化方式更有效</p>
+<p><img src="/2018/05/31/Gradient-Descent/个.png" width="300px"></p>
+<p><img src="/2018/05/31/Gradient-Descent/g12.png" width="200px"></p>
+<h4 id="特征缩放Feature-Scaling"><a href="#特征缩放Feature-Scaling" class="headerlink" title="特征缩放Feature Scaling"></a>特征缩放Feature Scaling</h4><p>在进行拿到训练样本进行机器学习之前，应该先做特征工程，特征工程中有一步就是进行特征缩放，而特征缩放的目的是于梯度下降优化有关的</p>
+<p> 以函数$y=b+w_1x_1+w_2x_2$为例来进行说明：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g13.png" width="300px"></p>
+<p>其对应的loss-参数的等高线图为</p>
+<p><img src="/2018/05/31/Gradient-Descent/g14.png" width="300px"></p>
+<p>可以发现，w2的变化对于y的影响更大，w1的变化对于y的影响更小=&gt;w2对于loss的影响更大， w1对于loss的影响更小=&gt;因此，对于每个参数需要调节不同的学习率！</p>
+<p>如果进行特征缩放后，则参数的更新会变得容易很多</p>
+<p>💡另外，在计算欧式距离时，如果一个特征比其它的特征有更大的范围值，那么距离将会被这个特征值所主导</p>
+<p>特征缩放的几种方法：</p>
+<p>（1）调节比例 Rescaling：将数据特征缩放到[0,1]或者[-1,1]之间</p>
+<p><img src="/2018/05/31/Gradient-Descent/g23.png" width="200px"></p>
+<p>（2）标准化：将特征处理为0均值和单位方差：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g24.png" width="200px"></p>
+<p><img src="/2018/05/31/Gradient-Descent/g25.png" width="300px"></p>
+<p>（3）缩放到单位长度：除以向量的欧拉长度</p>
+<p><img src="/2018/05/31/Gradient-Descent/g26.png" width="100px"></p>
+<hr>
+<h3 id="梯度下降理论"><a href="#梯度下降理论" class="headerlink" title="梯度下降理论"></a>梯度下降理论</h3><p>我们接下来要讨论一下梯度下降的正确性✅</p>
+<p>假设有两个参数$\Theta_1$和$\Theta_2$，初始化参数：$\Theta ^0 =${$\Theta^0_1,\Theta^0_2$} 总能在初始化点的周围的一定范围内，找到与其相邻的参数值，使得loss变小 </p>
+<p><img src="/2018/05/31/Gradient-Descent/g15.png" width="400px"> </p>
+<p>图示横轴代表参数$\Theta_2$ 纵轴代表参数$\Theta_2$，等高线 表示里圈的loss小于外圈的loss</p>
+<p>梯度下降理论可以从泰勒展开式的角度进行解释：</p>
+<p>函数h(x)总可以在给定x=x0时，将函数展开成（其中，k代表微分次数）：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g16.png" width="400px"></p>
+<p>当x-&gt;x0时（x十分接近x0时），$（x-x_0）&gt;（x-x_0）^2&gt;（x-x_0）^3&gt;…&gt;（x-x_0）^n$</p>
+<p>可以将展开式越等于：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g17.png" width="300px"></p>
+<p>🌰以正弦函数为例（令x=π/4）：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g18.png" width="500px"></p>
+<p>k取得越多，根据泰勒展开式得到的sin(X)越接近真实的函数（橙黄色线表示真实的函数）</p>
+<p>当k=1时，是一条直线，sin(X) = $\frac{1}{\sqrt{2}}$ , X越接近π/4, 表明函数值越准确</p>
+<p>对于<strong>多元的泰勒展开式</strong>，可以写成函数对x的一阶偏导以及对y的一阶偏导，加对x和y的二阶偏导：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g19.png" width="500px"></p>
+<p>同样，当x-&gt;x0 和 y-&gt;y0时，h(x,y)可以近似写成：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g20.png" width="500px"></p>
+<p>对于有两个参数的loss function来说，当$\Theta_1=a,\Theta_2=b$时，我们可以将loss function展开写成：</p>
+<p><img src="/2018/05/31/Gradient-Descent/g21.png" width="400px"></p>
+<p>为了方便表示，我们令：</p>
+<p>$s=L(a,b)$</p>
+<p>$u=\frac{\partial L(a,b)}{\partial \Theta _1}$</p>
+<p>$v=\frac{\partial L(a,b)}{\partial \Theta _2}$</p>
+<p>这样，在给定(a,b)以后，s，u，v都是定值</p>
+<p>=&gt; $L(\Theta) \approx s+u(\Theta_1 - a) + v(\Theta_2 -b)$</p>
+<p>=&gt;$L(\Theta)  \approx s+ \overrightarrow{(u,v)} \cdot \overrightarrow{((\Theta_1 - a) ,(\Theta_2 - b) )}$</p>
+<p>=&gt;$L(\Theta) = s+ \overrightarrow{(u,v)} \cdot \overrightarrow{(\Delta \Theta _1, \Delta \Theta _2)}$</p>
+<p>$\Delta \Theta _1 = (\Theta_1 - a)$</p>
+<p>$\Delta \Theta _2 = (\Theta_2 - b)$</p>
+<p>根据泰勒展开式，则在(a,b)两点，我们可以找到一个范围，使得L变小：</p>
+<p>$(\Theta_1 -a)^2+(\Theta_2-b)^2 \leq d ^2$</p>
+<p>在s时定值的情况下，L的变化是与后面的向量内积有关，在长度一定的情况下，两个向量共线反向时，可以取得最小值（圆形图案为参数可以在(a,b)周围变化的范围，中心红点为(a,b)）</p>
+<p><img src="/2018/05/31/Gradient-Descent/g22.png" width="300px"></p>
+<p>即，$\overrightarrow{(\Delta \Theta _1, \Delta \Theta _2)}$ = $-\eta \overrightarrow{(u,v)} $</p>
+<p>=&gt;$\overrightarrow{(\Theta _1, \Theta _2)} = \overrightarrow{(a, b)} -\eta \overrightarrow{(u,v)}$</p>
+<p>因此可以得到：</p>
+<p>$\Theta _1 = a - \eta u = a - \eta \frac{\partial L(a,b)}{\partial \Theta_1}$</p>
+<p>$\Theta _2 = a - \eta u = a - \eta \frac{\partial L(a,b)}{\partial \Theta_2}​$</p>
+<p>💡需要注意：</p>
+<p>（1）$\eta$表征的是调节$\overrightarrow{(\Delta \Theta _1, \Delta \Theta _2)}$长度，使得其可以顶到范围的边缘（因为参数的变化可以圆内任何一点变化，当其与$\overrightarrow{(u,v)}$反向共线且达到圆边缘时，可以得到最小值 ）</p>
+<p>（2）以上所有推导是在$L(\Theta) \approx s+u(\Theta_1 - a) + v(\Theta_2 -b)$这个条件成立的时候，而这个约等式成立的条件是$(\Theta_1 -a)^2+(\Theta_2-b)^2 \leq d ^2$范围足够小，即d足够小，而学习率$\eta$又与d有关，所以学习率也要足够小</p>
+<p>（3）当然，我们可以考虑二阶展开式，这样对于学习率的约束会小一点=&gt;牛顿法进行优化，但是这样会带来更大的计算量，需要权衡</p>
+<p>//todo:Adam算法</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/23/偏差方差分解/" rel="next" title="Bias-Variance Decompostion">
+                <i class="fa fa-chevron-left"></i> Bias-Variance Decompostion
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/16/分类Classification/" rel="prev" title="Classification">
+                Classification <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#学习率问题"><span class="nav-number">1.</span> <span class="nav-text">学习率问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Adagrad"><span class="nav-number">1.1.</span> <span class="nav-text">Adagrad</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vanilla-Gradient-descent"><span class="nav-number">1.2.</span> <span class="nav-text">Vanilla Gradient descent</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#😌Adagrad是如何表征一次微分和二次微分的关系的？"><span class="nav-number">1.2.1.</span> <span class="nav-text">😌Adagrad是如何表征一次微分和二次微分的关系的？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加快训练速度"><span class="nav-number">2.</span> <span class="nav-text">加快训练速度</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#随机梯度下降-SGD-Stochastic-Gradient-Descent"><span class="nav-number">2.1.</span> <span class="nav-text">随机梯度下降 SGD(Stochastic Gradient Descent)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特征缩放Feature-Scaling"><span class="nav-number">2.2.</span> <span class="nav-text">特征缩放Feature Scaling</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度下降理论"><span class="nav-number">3.</span> <span class="nav-text">梯度下降理论</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="卷机神经网络 CNN（Convolutional Neural Network）在图像识别和特征提取方面有很大的优势，也正是因为其强大的网络结构，也相继出现如text-cnn之类的类cnn网络用于文本特征提取。 CNN也代表着我们可以根据自己的需求，设计不同的神经网络 （我们可以通过设定不同的参数值来使得全连接神经网络做各种不同的变形，类似于，全连接神经网络是一个大的函数空间Function Se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Convolutional Neural Network">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="卷机神经网络 CNN（Convolutional Neural Network）在图像识别和特征提取方面有很大的优势，也正是因为其强大的网络结构，也相继出现如text-cnn之类的类cnn网络用于文本特征提取。 CNN也代表着我们可以根据自己的需求，设计不同的神经网络 （我们可以通过设定不同的参数值来使得全连接神经网络做各种不同的变形，类似于，全连接神经网络是一个大的函数空间Function Se">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c2.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c4.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c5.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c6.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c7.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c8.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c9.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c10.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c11.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c13.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c14.png">
+<meta property="og:updated_time" content="2018-09-27T13:14:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Convolutional Neural Network">
+<meta name="twitter:description" content="卷机神经网络 CNN（Convolutional Neural Network）在图像识别和特征提取方面有很大的优势，也正是因为其强大的网络结构，也相继出现如text-cnn之类的类cnn网络用于文本特征提取。 CNN也代表着我们可以根据自己的需求，设计不同的神经网络 （我们可以通过设定不同的参数值来使得全连接神经网络做各种不同的变形，类似于，全连接神经网络是一个大的函数空间Function Se">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/"/>
+
+
+
+
+
+  <title>Convolutional Neural Network | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Convolutional Neural Network</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-08T19:48:16+08:00">
+                2018-07-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>卷机神经网络 CNN（Convolutional Neural Network）在图像识别和特征提取方面有很大的优势，也正是因为其强大的网络结构，也相继出现如text-cnn之类的类cnn网络用于文本特征提取。</p>
+<p>CNN也代表着我们可以根据自己的需求，设计不同的神经网络</p>
+<p>（我们可以通过设定不同的参数值来使得全连接神经网络做各种不同的变形，类似于，全连接神经网络是一个大的函数空间Function Set，而不同的神经网络模型／深度学习模型都是函数空间中的一个函数，而这个函数又自身可以代表一个Function Set，通过设定不同的网络权值，得到不同的函数）</p>
+<a id="more"></a>
+<h2 id="背景Background"><a href="#背景Background" class="headerlink" title="背景Background"></a>背景Background</h2><p>（1）我们其实不需要观察整个图像，就可以识别其中的一些特征；比如，我们可以只看一部分，就可以判断出图像是否包含鸟喙，而不需要观察整张图像</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c1.png" width="400px"></p>
+<p>（2）在一幅图像中，同样的pattern可能出现在不同的位置上，所以并不需要在每个位置上都设置参数/权重，在相同pattern的地方可以使用同样的参数</p>
+<p>（3）下采样Subsampling不会改变image的形状</p>
+<p>通过下采样的方式使得图片的pixel（像素点）更小，这样我们需要用到的参数也就更少</p>
+<p>CNN网络的网络结构就是基于以上三点设计的</p>
+<h2 id="CNN网络结构"><a href="#CNN网络结构" class="headerlink" title="CNN网络结构"></a>CNN网络结构</h2><p><img src="/2018/07/08/卷积神经网络-CNN/c2.png" width="400px"></p>
+<p>CNN主要分为卷积层（Convolution），池化层（Max Pooling），Flatten层，全连接层；其中卷积层和池化层可以重复多次</p>
+<p>卷积层（Convolution）：我们不需要观察整个图像，就可以发现其中的pattern；一些pattern会在图像的多个位置出现</p>
+<p>池化层（MaxPooling）：下采样并不会影响我们对图像的判断</p>
+<p>卷积层和池化层主要用来提取特征，全连接层利用提取到的特征进行学习（分类／回归）</p>
+<h2 id="卷积层-Convolution"><a href="#卷积层-Convolution" class="headerlink" title="卷积层 Convolution"></a>卷积层 Convolution</h2><p>假设有一个6*6的图像（以单通道图像为例），每个位置代表一个像素点pxiel值</p>
+<p>卷积层是通过filter在图像上扫过，形成feature map用来提取图像特征；</p>
+<p>每个filter是一个矩阵（假设3*3），需要设定步长stride（用来表示一个filter在图像上移动的距离），filter移动过程中要和所覆盖的位置的图像的像素点组成的矩阵做内积（即，对应位置相乘并相加）；</p>
+<p>当一个filter对整个图像完成一次扫描以后，就会得到一个feature map；多个filter就会得到多个feature map</p>
+<p>如图所示，假设我们利用这样一个filter提取image特征，这个filter所提取的特征就是斜对角线为1的pattern（斜对角线为1，输出的feature更大）</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c4.png" width="150px"></p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c3.png" width="435px"></p>
+<p>完成一次filter以后，可以发现，利用相同的filter，可以在图像的不同位置发现一样的pattern，比如，在左上角和左下角的pattern是一样的</p>
+<p>💡filter层也可以称之为kernel层，其实就是我们需要学习的参数</p>
+<p>💡感受野（Receptive Field）：在卷积神经网络CNN中，决定某一层输出结果中一个元素所对应的输入层的区域大小，被称作感受野receptive field</p>
+<p>💡对于多通道图像而言，比如RGB图像，每个pixel位置点有三个值来表示（R/G/B，分别代表RGB的强度，每个值为一个channel），则对应的filter也需要有三个通道来表示</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c5.png" width="435px"></p>
+<p>💡对于多通道图像来说，每个filter会对应的变成一个方体结构，在对图像进行特征提取时，也是进行内积运算，即对应位置相乘之后再相加</p>
+<p>💡一般而言，卷积网络中，靠近输入图像的卷积层filter个数较少，靠近输出层／flatten层的卷积层filter个数应该较多。因为一般靠近输入图像提取的是一些简单的图像pattern特征，所以不需要更多的filter个数</p>
+<hr>
+<h3 id="卷积层-vs-全连接层"><a href="#卷积层-vs-全连接层" class="headerlink" title="卷积层 vs 全连接层"></a>卷积层 vs 全连接层</h3><p>我们可以将上面的6*6的image拉成一个一维的向量放入全连接网络中进行特征提取；</p>
+<p>一个卷积层的filter的每一个位置上对应的就是一个参数，如果是3*3的filter，其实就是9个参数，比照全连接网络，以上面的filter 1为例</p>
+<p>（1）对于下一层的输入，其只连接上一层的几个位置（像素点），而不是连接多个像素点</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c6.png" width="235px"></p>
+<p>（2）图示中相同颜色的边代表的是相同的权重（即filter 1对应的一个位置），利用相同的权重参数，但是改变不同的输入（不同位置的像素点），得到不同的输出</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c7.png" width="235px"></p>
+<p>CNN通过这种方式得到更少的参数！！</p>
+<h2 id="Pooling"><a href="#Pooling" class="headerlink" title="Pooling"></a>Pooling</h2><p>池化就是选择一些元素代表其中一个元素，可以用Max Pooling或者Average Pooling</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c8.png" width="235px"></p>
+<p>以上面的网络为例，filter 1经过图像以后形成的feature map，每4个pixel可以选择其中最大的作为代表，形成一个更小的图片</p>
+<p>💡卷积层的每个filter会形成一个channel</p>
+<p>💡原始图像经过一 次卷积一次池化以后，会得到更小的图像</p>
+<h2 id="Flatten"><a href="#Flatten" class="headerlink" title="Flatten"></a>Flatten</h2><p>flatten层是将经过卷积和池化之后的图像拉直成一个向量，输入全连接层进行分类／回归学习</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c9.png" width="335px"></p>
+<h2 id="What-does-machine-learn"><a href="#What-does-machine-learn" class="headerlink" title="What does machine learn"></a>What does machine learn</h2><p>我们如何判断机器学习学习到的内容？</p>
+<p>对于分类或者回归问题，我们可以建立一个baseline，随机对训练样本进行赋值／标记类别，如果得到的结果比用训练好的模型赋值／标记类别的结果更好，则表明模型没有学习到什么东西</p>
+<p>对于神经网络问题而言，我们可以采用如下的方法：</p>
+<p>（1）对于第一层卷积层，我们可以通过将其卷积后得到的结果输出（即特征提取结果），这样就可以看出第一层卷积后学习到的特征</p>
+<p>💡我们可以通过这种方法，利用学习好的模型，进行迁移学习和特征提取</p>
+<p>（2）对于高层的卷积层higher layer，将其卷积层输出是无法人为观察得到一些可以理解的特征，但是我们可以找到什么样的输入会使得卷积层的更被激活</p>
+<p>“更被激活”这个判定条件可以这样表示：</p>
+<p>我们假定，图像经过经过第k个filter之后，得到的是11*11的矩阵，则第k个卷积层被激活的程度可以这样表示：</p>
+<p><em>Ref：Ross Girshick, Jeff  Donahue, Trevor  Darrell, Jitendra Malik, “Rich feature hierarchies for accurate object detection and semantic segmentation”, CVPR, 2014</em> </p>
+<p>$a^k = \sum_{i=1}^{11}\sum_{j=1}^{11}a^k_{ij}$</p>
+<p>$a^k$表征第k个filter被激活的程度，则对于第k个filter，我们可以找到一个image x使得$a^k$最大</p>
+<p>$x^* =  arg\underset{x}{max}\;a^k$</p>
+<p>可以通过固定参数，通过改变x，找到使得$a^k$最大的图像</p>
+<p>以下是每个filter找到的使其被最激活的输入的图像，比如，对于第一排第三个filter，当输入图像全部是斜条纹时，其最被激活</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c10.png" width="335px"></p>
+<p>（3）我们可以用同样的方法找到全连接层的神经元学习到的内容</p>
+<p>对于全连接层而言，虽然其输入的维度要远小于原始图像，但是其本质上看到的是整个图像</p>
+<p>我们可以找到一个输入的原生图像，使得全连接第j个神经元$a_j$的输出可以得到最大值</p>
+<p>（4）假设全连接层的最后输出是图像的类别，是基于softmax的一个概率向量</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c11.png" width="210px"></p>
+<p>分类任务是图像数字识别，通过上述方式找到的可以使$y_i$最大的输入图像如下图所示：</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c13.png" width="210px"></p>
+<p>💡由此可见，深度学习网络是很容易被“愚弄的”</p>
+<p><em>Ref：<a href="https://www.youtube.com/watch?v=M2IebCN9Ht4" target="_blank" rel="noopener">https://www.youtube.com/watch?v=M2IebCN9Ht4</a></em> </p>
+<p>当然，这种被“愚弄”的地方有一个好处就是，深度学习可以找到一些我们无法观察到的特征，可以学习到我们无法学习到的可能有用的信息</p>
+<p>我们可以采用正则化的方法解决这个问题：</p>
+<p>通过这种方法找到的x，$x^* =  arg\underset{x}{max}\;y^i$，可以通过加入正则项的方法优化：</p>
+<p>$x^* =  arg\underset{x}{max}\;（y^i-\sum_{i,j}|x_{ij}|）$</p>
+<p>💡对图像x的一些pixel作出一些限制，x的某些pixel虽然可以让$y_i$最大，但其存在使得图像不是数字，数字只有在某些图像区域有笔画</p>
+<p>💡加入的优化是1范式正则化，即找出的图像绝大部分是没有笔画的</p>
+<p>💡也可以加入其他的一些约束，比如相邻的pixel应该是同样的颜色等</p>
+<p>通过这样的正则化约束，可以得到轮廓更明确的图像：</p>
+<p><img src="/2018/07/08/卷积神经网络-CNN/c14.png" width="210px"></p>
+<h2 id="CNN的其他应用"><a href="#CNN的其他应用" class="headerlink" title="CNN的其他应用"></a>CNN的其他应用</h2><p>Deep Dream</p>
+<p>Deep Style</p>
+<p>Playing Go</p>
+<p>Text CNN</p>
+<p>Speech CNN</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/02/数据库概述/" rel="next" title="数据库概述">
+                <i class="fa fa-chevron-left"></i> 数据库概述
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/17/神经网络优化/" rel="prev" title="Tips for Deep Learning">
+                Tips for Deep Learning <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景Background"><span class="nav-number">1.</span> <span class="nav-text">背景Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CNN网络结构"><span class="nav-number">2.</span> <span class="nav-text">CNN网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#卷积层-Convolution"><span class="nav-number">3.</span> <span class="nav-text">卷积层 Convolution</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#卷积层-vs-全连接层"><span class="nav-number">3.1.</span> <span class="nav-text">卷积层 vs 全连接层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pooling"><span class="nav-number">4.</span> <span class="nav-text">Pooling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flatten"><span class="nav-number">5.</span> <span class="nav-text">Flatten</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-does-machine-learn"><span class="nav-number">6.</span> <span class="nav-text">What does machine learn</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CNN的其他应用"><span class="nav-number">7.</span> <span class="nav-text">CNN的其他应用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

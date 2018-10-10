@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="今天来写迁移学习 Transfer Learning 迁移学习是指 训练数据的训练任务和真实的任务之间是没有直接相关性的 比如，我们需要进行猫与狗的分类问题，但是我们现在的数据并不是猫🐱和狗🐶 Similar Domain，Different Tasks （1）数据可能来自相同的分布，但是却是不同的任务：比如，数据是真实世界的大象🐘和老虎🐯 Different Domain，Similar">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transfer Learning">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="今天来写迁移学习 Transfer Learning 迁移学习是指 训练数据的训练任务和真实的任务之间是没有直接相关性的 比如，我们需要进行猫与狗的分类问题，但是我们现在的数据并不是猫🐱和狗🐶 Similar Domain，Different Tasks （1）数据可能来自相同的分布，但是却是不同的任务：比如，数据是真实世界的大象🐘和老虎🐯 Different Domain，Similar">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t4.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t5.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t6.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t7.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t8.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t9.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t10.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t11.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t12.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t14.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t15.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t16.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t17.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t18.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t19.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t20.png">
+<meta property="og:updated_time" content="2018-10-07T14:34:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Transfer Learning">
+<meta name="twitter:description" content="今天来写迁移学习 Transfer Learning 迁移学习是指 训练数据的训练任务和真实的任务之间是没有直接相关性的 比如，我们需要进行猫与狗的分类问题，但是我们现在的数据并不是猫🐱和狗🐶 Similar Domain，Different Tasks （1）数据可能来自相同的分布，但是却是不同的任务：比如，数据是真实世界的大象🐘和老虎🐯 Different Domain，Similar">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/t1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/"/>
+
+
+
+
+
+  <title>Transfer Learning | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Transfer Learning</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-23T15:40:17+08:00">
+                2018-09-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>今天来写迁移学习 Transfer Learning</p>
+<p>迁移学习是指 训练数据的训练任务和真实的任务之间是没有直接相关性的</p>
+<p>比如，我们需要进行猫与狗的分类问题，但是我们现在的数据并不是猫🐱和狗🐶</p>
+<p><strong>Similar Domain，Different Tasks</strong></p>
+<p>（1）数据可能来自相同的分布，但是却是不同的任务：比如，数据是真实世界的大象🐘和老虎🐯</p>
+<p><strong>Different Domain，Similar Tasks</strong></p>
+<p>（2）数据可能是相同的任务，但是是不同的分布：比如，数据是漫画版的猫和狗</p>
+<p>现实世界中，无标记的数据很多，有标记的数据很少，我们可以用这些数据组合做无监督或者半监督学习；同样，对应任务的有标记数据不多，但是与任务不直接相关的数据很，我们可以用这些并不直接相关的数据做迁移学习</p>
+<a id="more"></a>
+<p>我们可以将数据分成两类：</p>
+<p>（1）Source Data：这些数据是与学习任务不直接相关的数据</p>
+<p>（2）Target Data：这些数据是与学习任务直接相关的数据</p>
+<p>而每种数据又分有标记和无标记</p>
+<h3 id="Model-Fine-tuning"><a href="#Model-Fine-tuning" class="headerlink" title="Model Fine-tuning"></a>Model Fine-tuning</h3><h4 id="💡Labelled-Source-Data，Labelled-Target-Data"><a href="#💡Labelled-Source-Data，Labelled-Target-Data" class="headerlink" title="💡Labelled Source Data，Labelled Target Data"></a>💡Labelled Source Data，Labelled Target Data</h4><p>假设我们现在的任务表示如下：</p>
+<p>Target Data： $(x^t,y^t)$  =&gt; 非常少</p>
+<p>Source Data：$(x^s,y^s)$ =&gt; 很多</p>
+<p>以语音辨识为例，我们希望将某一个用户的语音识别成文字，现有的数据是特定用户的语音和识别后的文字信息，更多的数据是其他用户的语音信息和文字信息</p>
+<p>直观的做法是，先用source data训练一个模型，（可以当作训练过程的初始值），然后用target data对这个模型进行调整</p>
+<p>💡如果只有少量的target data，并把source data 训练得到的模型只当作模型的初始值，最终 容易造成模型过拟合</p>
+<h4 id="Tip-1-：Conservative-Training"><a href="#Tip-1-：Conservative-Training" class="headerlink" title="Tip 1 ：Conservative Training"></a>Tip 1 ：Conservative Training</h4><p>如果将source data训练得到的模型作为模型初始化，可以在用target data训练时，可以加入一些限制</p>
+<p>假设用source data得到的模型为$Model_1$,用target data fine tune得到的模型为$Model_2$</p>
+<p>限制 1：从output的角度，希望两个模型在看到相似data的时候，得到的输出结果是相似的</p>
+<p>限制2：从参数的角度，希望两个模型的参数相近，比如，L2正则化越相似越好</p>
+<p><img src="/2018/09/23/Transfer-Learning/t1.png" width="520px"></p>
+<h4 id="Tip-2：Layer-Transfer"><a href="#Tip-2：Layer-Transfer" class="headerlink" title="Tip 2：Layer Transfer"></a>Tip 2：Layer Transfer</h4><p>可以从source data 得到的模型中拿出几个layer作为target data模型对应的layer，然后利用target data训练其余即可</p>
+<p>（1）如果target data很少的话，可以只训练模型中没有被复制得到的基层</p>
+<p>（2）如果target data很多的话，可以在transfer + train的基础上，进行fine tune</p>
+<p>对于不同的任务，可以进行tranfer的layer其实是不同的，以下只是一个经验之谈：</p>
+<p>（1）语音辨识任务，可以transfer后面几层；语音辨识的一般过程是，声音信号 -&gt; 去除发音方式，得到一个普通的机器可以识别的“信号”-&gt;根据这个信号进行辨识</p>
+<p>所以，从“信号”-&gt;到辨识的这个过程是可以通用的，但是从声音信号到“信号”的这个过程是specific的</p>
+<p>（2）图像识别任务，可以transfer前面几层；图像识别中，网络的前面几层是做简单的特征提取（pattern recognition）而后面几层是根据前面得到的pattern来判断是什么target；所以前面几层的特征处理是可以“通用的”</p>
+<p><img src="/2018/09/23/Transfer-Learning/t3.png" width="520px"></p>
+<h4 id="Experiment"><a href="#Experiment" class="headerlink" title="Experiment"></a>Experiment</h4><p><strong>Jason Yosinski, Jeff Clune, Yoshua Bengio, Hod Lipson, “How transferable are features in deep neural networks?”, NIPS, 2014</strong></p>
+<p><img src="/2018/09/23/Transfer-Learning/t4.png" width="620px"></p>
+<p>横轴表示，transfer layer的数量，0表示进行layer transfer，1表示transfer第一层layer，2表示transfer第二层layer…</p>
+<p>数据来源是ImageNet，将数据按类别划分，500个类的数据属于souce data，500个类的数据属于target data</p>
+<p>最左侧黑框框圈起来的点，表示不用transfer learning，只用target data进行训练，得到的Top-1 accuracy（作为baseline进行对比）</p>
+<p>箭头指向的<strong>only train the rest layers</strong>表示，用source data进行训练得到模型，然后进行transfer learning，copy第一个／前二个／前三个..layer，然后用target data去训练后面几层的layer得到的结果</p>
+<p>从top-1 accuracy的曲线上可以看出，在只进行前面几层的transfer layer时，效果很好，但是layer数目多了结果会坏掉，即representation specificity</p>
+<p>箭头指向的<strong>fine-tune the whole network</strong>表示，在only train the rest layer的基础上，再用target data去fine tune整个网络得到的top-1 accuracy</p>
+<p>💡<strong>这条曲线表明，在数据量很大的情况下，layer transfer + fine tune依然可以得到很好的效果</strong></p>
+<p>中间的两条曲线，其中靠下的那条曲线表示，如果用target data训练整个网络，然后先fix住前1层／前2层／前3层…然后再用target data去train后面几层layer得到的结果，</p>
+<p>从结果中可以看出，虽然这种方式看起来与用全部的target data训练整个网络是类似的，<strong>但是这种训练方式会导致网络的前半部分layer和后半部分layer不匹配，无法达到很好的效果</strong>；但是如果进行fine tune（即 中间两条曲线中上面那条）可以得到较好的结果</p>
+<p><img src="/2018/09/23/Transfer-Learning/t5.png" width="620px"></p>
+<p>在另外一个实验中，最上面的红线是第一个实验中，only train the rest layer这条线，其表示，source data和target data是随机选择的；但是下面这条橙黄色的线表示source data和target data不是随机选择的，是均分的，即source data和target data的domain可能没有一点交集</p>
+<p>在这种情况下进行transfer learning，transfer 前面几个layer依然可以得到较好的效果</p>
+<hr>
+<h3 id="Multitask-Learning"><a href="#Multitask-Learning" class="headerlink" title="Multitask Learning"></a>Multitask Learning</h3><p>💡<strong>Labelled Source Data，Labelled Target Data</strong></p>
+<p>Fine tuning只考虑模型在target data上的表现，而multitask learning同时考虑模型在target domain和source domain上的表现</p>
+<p>多层的神经网络结构使得神经网络很适合进行multitask learning</p>
+<p><img src="/2018/09/23/Transfer-Learning/t6.png" width="250px"><img src="/2018/09/23/Transfer-Learning/t7.png" width="250px"></p>
+<p>（1）如果两个学习任务的训练数据具有相同的特征，那么两个任务可以在网络的前面几层共用data和layer，在后面几层layer进行不同output输出的训练</p>
+<p>（2）如果两个学习任务的训练数据的特征不同，那么可以先将两个任务的数据transform到一个相同的domain上，然后中间几层layer可以共同学习，之后再进行不同的output输出的训练</p>
+<p>Multitask Learning一个重要的应用在Multilingual Speech Recognition 多语言辨识</p>
+<p><img src="/2018/09/23/Transfer-Learning/t8.png" width="450px"></p>
+<p>无论哪种语言都是先提取其acoustic feature，所以可以先共用数据和layer，然后之后再进行不同的task</p>
+<p>如下图所示，横轴表示中文训练语料的时长，纵轴表示识别的误差，随着语料时长增加，识别误差越来越小；</p>
+<p>如果可以引入欧洲语言的语料进行transfer learning，则达到同等小的识别误差，引入欧洲语料进行transfer learning只需要50个小时的普通话语料（vs 不进行transfer learning 需要100小时）</p>
+<p>Ref :<strong>Huang, Jui-Ting, et al. “Cross-language knowledge transfer using multilingual deep neural network with shared hidden layers.” ICASSP, 2013</strong></p>
+<p><img src="/2018/09/23/Transfer-Learning/t9.png" width="550px"></p>
+<h4 id="Progressive-Neural-Networks"><a href="#Progressive-Neural-Networks" class="headerlink" title="Progressive Neural Networks"></a>Progressive Neural Networks</h4><p>multitask learning的问题在于，很多时候不太能够知道两个任务是否能够进行transfer learning；很有可能进行transfer learning后反而影响力单独分别训练的模型性能</p>
+<p>一种改进的策略是进行<strong>progressive neural network</strong></p>
+<p><img src="/2018/09/23/Transfer-Learning/t10.png" width="450px"></p>
+<p>网络结构是针对每个学习任务构建一个模型，后一个模型需要在某些网络层中引入前一个模型中，对应前一层的输出，比如，task 1的模型第一层的输出，可以作为task 2模型的第二层的输入，task2在学习的时候相当于借用了task1的一些信息</p>
+<p>💡模型之间是互不影响的，task 2的训练首先不会影响到task 1，并且，task 1的输出作为task 2的输入，task 2的模型可以将对应的输入边的权重设置为0，这样保证原始模型不受影响</p>
+<hr>
+<h3 id="Domain-adversarial-Training"><a href="#Domain-adversarial-Training" class="headerlink" title="Domain-adversarial Training"></a>Domain-adversarial Training</h3><p>💡<strong>Labelled Source Data，Unlabelled Target Data</strong></p>
+<p>现在的任务是source data是有标记的，target data是无标记的，这其实很像传统的学习任务：训练数据是有标记的，测试数据是无标记的；</p>
+<p>但是传统学习任务中，<strong>训练数据和测试数据是来自相同分布的</strong>（可以进行半监督学习），但是在transfer learning中，source data和target data是来自不同的分布／domain</p>
+<p>比如，souce data来自minist手写数字，是有标记的；target data来自minit-m，是无标记的</p>
+<p><img src="/2018/09/23/Transfer-Learning/t11.png" width="450px"></p>
+<p>如果从神经网络的角度考虑，我们可以将神经网络分成两部分：</p>
+<p>前面几层是进行特征提取，Feature Extractor</p>
+<p>后面几层是进行分类，Classifer；但是Classifer是看不到原始图片的， 对他来说，其输入是Feature Extractor的输出</p>
+<p>Classifer是可以进行图像的特征提取，我们用Classifer多minist和minist-m的数据进行特征提取，然后用t-sne进行降维，可以发现，两个数据集不在相同的domain上，二者分布是不同的（下图中的红色／蓝色），如果将提取的特征送入classifer直接分类，并不会得到非常好的结果</p>
+<p><img src="/2018/09/23/Transfer-Learning/t12.png" width="550px"></p>
+<p>所以，Domain-adversarial training要做的事情就是去除domain的信息，即与domain进行对抗</p>
+<p>💡或者，可以理解为，不同domain的数据经过feature extractor以后，能够映射到同样的分布上</p>
+<p>Domain-adversarial training的网络结构是三部分，</p>
+<p>（1）Feature Extractor：对输入图像进行特征提取，抽取得到的特征作为label predictor和domain classifer的输入</p>
+<p>（2）Label Predictor：进行分类，比如手写数字辨识等</p>
+<p>（3）Domain Classifier：进行domain的分类，根据提取的特征判断原始图像来自哪个domain，比如，上面的例子就是两个domain（minist／minist-m）</p>
+<p>💡Feature Extractor输出的特征，对于label predictor和domain classifer的功能是不同的</p>
+<p>对于domain classifer来说，feature extractor的输出特征需要尽可能的迷惑domain classifer，要让domain classifer无法判断原始图像是来自哪个domain；这其实比较容易做到，feature extractor的输出的feature是随机值或者直接输出0，这样就可以迷惑domain classifier</p>
+<p><img src="/2018/09/23/Transfer-Learning/t14.png" width="630px"></p>
+<p>但是 feature extractor同样输出足够多重要的信息，保证label predictor可以利用这些信息进行正确的分类</p>
+<p>综上，总结一下</p>
+<p><strong>label predictor的目标是最大化label predict的准确率</strong></p>
+<p><strong>domain classifer的目标是最大化domain classify的准确率</strong></p>
+<p><strong>feature extractor的目标是其输出的特征，既可以满足label predictor的需求，又可以“骗”过domain classifer</strong></p>
+<h4 id="参数训练"><a href="#参数训练" class="headerlink" title="参数训练"></a>参数训练</h4><p>根据以上目标，采用反向传播方法进行参数训练，但是在domain classifier和feature extractor之间需要加上一层 gradient reversal layer，即，domian classifer回传的误差，在feature extractor更新参数时，是按相反的逻辑进行更新</p>
+<p>（正常更新的梯度是$\lambda\frac{\partial L_d}{\partial \theta_f}$，加入gradient reversal layer后的梯度是$-\lambda\frac{\partial L_d}{\partial \theta_f}$）</p>
+<p>在参数训练过程中，domain classifer需要有力一些，如果domain classifer太弱，很容易被feature extractor欺骗住，那么feature extractor就无法很好的去除domain（“adversarial的思想”）</p>
+<hr>
+<h3 id="Zero-shot-Learning"><a href="#Zero-shot-Learning" class="headerlink" title="Zero-shot Learning"></a>Zero-shot Learning</h3><p>💡<strong>Labelled Source Data，Unlabelled Target Data</strong></p>
+<p>Domain-adversarial training应对的问题是，source data和target data虽然来自不同的domain，但是处理的任务是相似的；而zero-shot learning解决的问题是 source data和target data处理的任务也是不同的</p>
+<p>比如，source data解决的问题是分辨猫和狗的的类别， 但是target data需要解决的问题是判断是不是草泥马</p>
+<p><img src="/2018/09/23/Transfer-Learning/t15.png" width="630px"></p>
+<p>在语音识别中，不同word其实都是一个类，训练预料没有办法覆盖每一个word，所以，在语音辨识中，模型的主要任务不是识别语音是哪个word，而是识别语音属于哪个phone（类似音标的概念）</p>
+<p>然后根据先验知识构建一个look-up，包括每个phone对应的word有哪些，通过模型将语音转换成phone，然后根据phone查表得到word</p>
+<p><strong>图像处理中也可以采用类似的方法</strong></p>
+<h4 id="Tips-1：构建Map"><a href="#Tips-1：构建Map" class="headerlink" title="Tips 1：构建Map"></a>Tips 1：构建Map</h4><p>我们可以将每一个类别按其属性进行表示，并构建一个数据库：</p>
+<p><img src="/2018/09/23/Transfer-Learning/t16.png" width="330px"></p>
+<p>比如，狗有毛，有四条腿，有尾巴等等，通过属性特征表示狗，这样每个类别其实都转换到属性空间</p>
+<p>当然，需要cover的属性必须足够多，保证每个类别经过属性表示后都是独一无二的</p>
+<p>通过这种方式，模型的作用不再是识别图像属于哪个类别，而是提取图像所拥有的特征，根据特征从数据库中找到对应的类别</p>
+<h4 id="Tips-2：Attribute-Embeeding"><a href="#Tips-2：Attribute-Embeeding" class="headerlink" title="Tips 2：Attribute Embeeding"></a>Tips 2：Attribute Embeeding</h4><p>因为在构建map的时候需要足够多的维度，如果attribue的维度很高，那么可以进行embedding处理</p>
+<p>训练模型 $f(x)$ 和 $g(x)$</p>
+<p>f(x)将原始图像embedding到某一个空间</p>
+<p>g(x)将图像的特征embedding到相同的空间</p>
+<p>💡两个模型可以是网络模型，可以是普通的机器学习模型</p>
+<p>训练的目标是让同一幅图像的f(x)和g(x)的输出在embedding的空间上越相近越好</p>
+<p><img src="/2018/09/23/Transfer-Learning/t17.png" width="530px"></p>
+<h4 id="Tips-3：Attribute-Embedding-Word-Embedding"><a href="#Tips-3：Attribute-Embedding-Word-Embedding" class="headerlink" title="Tips 3：Attribute Embedding + Word Embedding"></a>Tips 3：Attribute Embedding + Word Embedding</h4><p>如果无法构建 图像类别-属性的map／database，可以利用word-embedding，将图像类别-word embedding map起来</p>
+<p>💡即，将图像类别的attribute替换成对应word 的word vector</p>
+<p><img src="/2018/09/23/Transfer-Learning/t18.png" width="530px"></p>
+<h4 id="Theroy-Proof"><a href="#Theroy-Proof" class="headerlink" title="Theroy Proof"></a>Theroy Proof</h4><p><script type="math/tex">f^*,g^*</script>   = $arg\;min_{f,g}\sum_n||f(x^n)-g(y^n)||_2$</p>
+<p>如果我们构建上述loss function求解模型参数，存在一个问题：</p>
+<p>上述loss function只考虑了相同的类别的输出要尽可能相似，<strong>但是没有考虑不相同的类别的输出要尽可能不同</strong></p>
+<p>💡所以，我们构建如下的loss function：</p>
+<p><script type="math/tex">f^*,g^*</script>   $= arg\;min_{f,g}\sum_nmax(0,k-f(x^n)·g(x^n) + max_{m\neq n}f(x^n)·g(y^m))$</p>
+<p>k是一个超参数，表示margin</p>
+<p>loss function 的最小值是0，如果要让其输出0，即要让</p>
+<p>$k-f(x^n)·g(x^n) + max_{m\neq n}f(x^n)·g(y^m) &lt;0$</p>
+<p>=&gt; $f(x^n)·g(x^n) - max_{m\neq n}f(x^n)·g(y^m) &gt; k$</p>
+<p>这表示，要让相似的类别的输出尽可能相似，不相似的类别输出尽可能不同</p>
+<h4 id="Tips-4：Convex-of-Semantic-Embedding"><a href="#Tips-4：Convex-of-Semantic-Embedding" class="headerlink" title="Tips 4：Convex of Semantic Embedding"></a>Tips 4：Convex of Semantic Embedding</h4><p>这种方式只需要off the shelf的模型就可以完成transfer learning</p>
+<p>首先根据识别分类模型，对输入的图片进行分类</p>
+<p>如下图片输入NN模型中，输出的是softmax的分类结果</p>
+<p><img src="/2018/09/23/Transfer-Learning/t19.png" width="130px"></p>
+<p>然后根据word2vector模型，找到最可能的类别</p>
+<p>根据分类得到的结果以及word2vector模型，找到lion和tiger对应的vector，最终的分类结果：</p>
+<p>target = 0.5V(tiget)+0.5V(lion) 的向量所代表的word</p>
+<p><img src="/2018/09/23/Transfer-Learning/t20.png" width="330px"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/10/Embedding/" rel="next" title="Embedding">
+                <i class="fa fa-chevron-left"></i> Embedding
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/23/statefulstream/" rel="prev" title="Stateful Stream">
+                Stateful Stream <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Model-Fine-tuning"><span class="nav-number">1.</span> <span class="nav-text">Model Fine-tuning</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#💡Labelled-Source-Data，Labelled-Target-Data"><span class="nav-number">1.1.</span> <span class="nav-text">💡Labelled Source Data，Labelled Target Data</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tip-1-：Conservative-Training"><span class="nav-number">1.2.</span> <span class="nav-text">Tip 1 ：Conservative Training</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tip-2：Layer-Transfer"><span class="nav-number">1.3.</span> <span class="nav-text">Tip 2：Layer Transfer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Experiment"><span class="nav-number">1.4.</span> <span class="nav-text">Experiment</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multitask-Learning"><span class="nav-number">2.</span> <span class="nav-text">Multitask Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Progressive-Neural-Networks"><span class="nav-number">2.1.</span> <span class="nav-text">Progressive Neural Networks</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Domain-adversarial-Training"><span class="nav-number">3.</span> <span class="nav-text">Domain-adversarial Training</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数训练"><span class="nav-number">3.1.</span> <span class="nav-text">参数训练</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Zero-shot-Learning"><span class="nav-number">4.</span> <span class="nav-text">Zero-shot Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Tips-1：构建Map"><span class="nav-number">4.1.</span> <span class="nav-text">Tips 1：构建Map</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tips-2：Attribute-Embeeding"><span class="nav-number">4.2.</span> <span class="nav-text">Tips 2：Attribute Embeeding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tips-3：Attribute-Embedding-Word-Embedding"><span class="nav-number">4.3.</span> <span class="nav-text">Tips 3：Attribute Embedding + Word Embedding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Theroy-Proof"><span class="nav-number">4.4.</span> <span class="nav-text">Theroy Proof</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tips-4：Convex-of-Semantic-Embedding"><span class="nav-number">4.5.</span> <span class="nav-text">Tips 4：Convex of Semantic Embedding</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

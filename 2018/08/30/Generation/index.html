@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在前面的PCA中我们引入了AutoEncoder，AutoEncoder有Encoder和Decoder两个部分，Decoder解码部分可以单独抽取出来作为一个生成器 Generation。我们可以输入一些code，通过Decoder产生原本没有的图像。 但是AutoEncoder的问题在于，其将输入转换为隐含空间（就是code的各个维度所在的空间）中的表达并不是连续的，使得其中的插值和扰动难以完">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Generation">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/08/30/Generation/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="在前面的PCA中我们引入了AutoEncoder，AutoEncoder有Encoder和Decoder两个部分，Decoder解码部分可以单独抽取出来作为一个生成器 Generation。我们可以输入一些code，通过Decoder产生原本没有的图像。 但是AutoEncoder的问题在于，其将输入转换为隐含空间（就是code的各个维度所在的空间）中的表达并不是连续的，使得其中的插值和扰动难以完">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g6.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g7.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g4.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g5.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g8.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g9.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g11.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g10.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g9.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g2.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g12.png">
+<meta property="og:updated_time" content="2018-10-07T14:33:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Generation">
+<meta name="twitter:description" content="在前面的PCA中我们引入了AutoEncoder，AutoEncoder有Encoder和Decoder两个部分，Decoder解码部分可以单独抽取出来作为一个生成器 Generation。我们可以输入一些code，通过Decoder产生原本没有的图像。 但是AutoEncoder的问题在于，其将输入转换为隐含空间（就是code的各个维度所在的空间）中的表达并不是连续的，使得其中的插值和扰动难以完">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/08/30/Generation/g1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/08/30/Generation/"/>
+
+
+
+
+
+  <title>Generation | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/08/30/Generation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Generation</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-30T21:06:34+08:00">
+                2018-08-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在前面的PCA中我们引入了AutoEncoder，AutoEncoder有Encoder和Decoder两个部分，Decoder解码部分可以单独抽取出来作为一个生成器 Generation。我们可以输入一些code，通过Decoder产生原本没有的图像。</p>
+<p>但是AutoEncoder的问题在于，其将输入转换为隐含空间（就是code的各个维度所在的空间）中的表达并不是连续的，使得其中的插值和扰动难以完成。</p>
+<p>在之前的AutoEncoder实验中，如果我们希望输入转换后的隐含空间是连续的，通常会在训练网络的时候，在中间的code层加入一个L2正则化，希望bottle-neck layer产生的code尽量紧凑。</p>
+<p>如果隐含空间不连续，那么在不同类别中间空白的地方采样后解码器就会出现非真实的输出。</p>
+<p>所以，我们需要讨论一些技术解决这个问题。保证模型生成数据的特性！</p>
+<a id="more"></a>
+<h2 id="VAE-变分自编码器"><a href="#VAE-变分自编码器" class="headerlink" title="VAE 变分自编码器"></a>VAE 变分自编码器</h2><p>VAE = Variational AutoEncoder 变分自编码器</p>
+<p>首先我们先直观的看一VAE的原理。</p>
+<p>传统的AutoEncoder是输入input，通过encoder得到code，再通过decoder得到output，需要input和output的reconstruction error最小</p>
+<p><img src="/2018/08/30/Generation/g1.png" width="420px"></p>
+<p>比如，我有一张满月的图片，通过AutoEncoder得到一个低维的code；另有一张弦月的图片，通过AutoEncoder得到另一个低维的code；现在希望用两个低维code中间的code输出一张介于满月🌕和弦月之间的图片，AutoEncoder是很难做到的，因为code所在的隐含空间其实是不连续的</p>
+<p><img src="/2018/08/30/Generation/g6.png" width="220px"></p>
+<p>一个解决方案是，在中间的bottle-neck层输出的code上加入noise噪声信息，使得输出的code是在一个范围内变动，在这个范围内的code都需要对应到原始图片上，这样会使得满月和弦月的code所在的隐含空间变得连续，当用两个code之间的一个code喂给decoder时，可能会产生一张介于满月和弦月之间的图片</p>
+<p><img src="/2018/08/30/Generation/g7.png" width="320px"></p>
+<p>假设我们现在得到一个code维度为6的AutoEncoder，然后我们假设已知每个维度的意义，在AutoEncoder中，使用单个值来描述输入图像的潜在属性。</p>
+<p><img src="/2018/08/30/Generation/g3.png" width="750px"></p>
+<p>但是从Distributed Representation的角度来看，我们更倾向于将每个潜在属性表示为可能的范围。将给定输入的每个潜在属性表示为概率分布。当从潜在状态解码时，从每个潜在状态分布中随机采样，生成一个向量作为解码器模型的输入。</p>
+<p><img src="/2018/08/30/Generation/g4.png" width="850px"></p>
+<p>💡对于VAE，编码器模型有时被称为识别模型（recognition model）；解码器模型有时被称为生成模型</p>
+<p>通过构造编码器模型输出可能值的范围（统计分布），可随机采样这些值喂给解码器=&gt;其实完成了连续平滑的潜在空间表示；对于潜在分布的所有采样，预期目标是解码器模型能够准确重构输入。因此，在潜在空间中彼此相邻的值应该有非常相似的重构。</p>
+<p><img src="/2018/08/30/Generation/g5.png" width="950px"></p>
+<hr>
+<p>再从数学的角度来看：</p>
+<p>高斯混合模型 Gaussian Mixture Model</p>
+<p>对于任意一个分布，可以通过多个高斯分布的权重相加来模拟这个分布：</p>
+<p><img src="/2018/08/30/Generation/g8.png" width="450px"></p>
+<p>每一个高斯分布有一个自己的先验概率 $m$~$p(m)$，通过选定高斯分布后，再根据这个高斯分布产生x，即</p>
+<p>$p(x) = \sum_mp(m)p(x|m)$</p>
+<p>这种方式生成x，相当于x的每个维度都是固定的，但是VAE希望我们学习到的是每个维度的一个概率分布</p>
+<p>如果我们更换成如下的数据产生方式，可以满足这个需求：</p>
+<p>首先z满足正太分布$z$~$N(0,1)$</p>
+<p>我们从正太分布中随机得到一个z，然后通过一个函数得到$\mu(z)$和$\sigma(z)$，这两项作分别作为均值和方差产生一个分布，然后x从这个分布中随机选择，即$x|z$~$N(\mu(z),\sigma(z))$</p>
+<p>最终的$p(x) = \int_zp(z)p(x|z)dz$</p>
+<p>而根据z产生$\mu(z)$和$\sigma(z)$可以通过神经网络学习得到</p>
+<p><img src="/2018/08/30/Generation/g9.png" width="250px"></p>
+<p>💡因为神经网络的存在，可以保证我们可以学习到比较复杂的分布</p>
+<p>以上建立的其实是decoder部分，z是一个低维隐含空间的表示，根据z产生x，即根据将code喂给decoder，产生数据的过程</p>
+<p>AutoEncoder考虑的问题只包括以下两个方面：</p>
+<p>（1）对原始数据进行encode处理，得到其在低维空间的表示</p>
+<p>（2）如果衡量其在低维空间的表示是否合理呢？通过decoder来将低维空间的code还原到原始空间，使得还原后的数据和原始数据越相近越好</p>
+<p>AutoEncoder没有考虑在低维空间中，code应该有的限制。</p>
+<p>我们希望通过VAE得跟原始数据分布一样的数据。最直接的方式，就是如果能够找到原始数据的概率分布P(x)，根据这个概率分布进行采样，那得到的数据一定是和原始数据是相同的。</p>
+<p>可是在AutoEncoder中我们暂时不能找到原始数据的概率分布，但是我们已知的是原始数据通过Encoder得到的低维表示z，如果我们知道z的分布，再根据z产生x，这样也可以用来拟合P(x)</p>
+<p>即，$p(x) = \int_zp(z)p(x|z)dz$</p>
+<p>更确切的说，我们希望学习到z的分布，然后通过从z的分布中随机采样得到编码，然后再将随机采样得到的结果输入到decoder里得到原始图像</p>
+<p>基于此，我们对P(x)进行求解，我们希望通过P(x)的表达式，来找到合理的参数训练方案</p>
+<p>💡这里我们首先先假设p(z)是标准正态分布，z从$N(\mu = 0,\sigma=1)$中抽样产生，根据z可以得到x的分布：</p>
+<p>$p(x) = \int_zp(z)p(x|z)dz$</p>
+<p>优化目标：</p>
+<p>maximize $L = \sum_x log\;p(x)$</p>
+<p>$logp(x) = \int_zq(z|x)log\;p(x)dz$      </p>
+<p>  💡$q(z|x)$可以是任何分布</p>
+<p>$= \int_zq(z|x)log(\frac{p(z,x)}{p(z|x)})$          </p>
+<p>💡边缘概率，条件概率，联合概率，类条件概率密度，参考最后的附件</p>
+<p>$= \int_zq(z|x)log(\frac{p(z,x)}{q(z,x)}\frac{q(z|x)}{p(z|x)})$ </p>
+<p>💡恒等变换</p>
+<p>  $= \int_zq(z|x)log(\frac{p(z,x)}{q(z|x)})dz+ \int_zq(z|x)log(\frac{q(z|x)}{p(z|x)})$<br>$  \ge \int_zq(z|x)log(\frac{p(z,x)}{q(z|x)})dz$</p>
+<p>💡首先解释一下引入$q(z|x)$的原因，可以这样理解，在vae或者autoencoder模型中，我们能得到的最直接的信息是原始数据x，x进入encoder以后，得到低维的编码，我们需要得到q(z|x)的分布，这样才可以对其进行采样，保证低维表示空间是连续的</p>
+<p>💡最后一个不等号表示，是引入KL散度的概念；KL散度是衡量两个分布的相似程度，两个分布越相近，KL散度越小；KL=0表明两个分布是一致的；因此，KL散度是一个非负值</p>
+<p>$KL(q(z|x)||p(z|x)) = \int_zq(z|x)log(\frac{q(z|x)}{p(z|x)}) $</p>
+<p>💡 $  \int_zq(z|x)log(\frac{p(z,x)}{q(z|x)})dz = Lower\;\;Bound \;\;L_b$ ；我们期望通过优化这个lower bound来优化我们的p(x)</p>
+<p>但是这个优化的前提是：我们已知lower bound和p(x)之间的差距，lower bound的提升并不会直接带来原始优化目标的提升，可能只是缩短了lower bound和原始目标之间的差距</p>
+<p>我们从以下两个式子来讨论优化的问题：</p>
+<p>（1）$p(x) = \int_zp(z)p(x|z)dz$</p>
+<p>（2） $L_b = \int_z q(z|x)log(\frac{p(x|z)p(z)}{q(z|x)}) = \int_zq(z|x)log(\frac{p(z,x)}{q(z|x)})dz$</p>
+<p>（1）式是我们的原始优化目标，（2）式是Lower Bound；这里我们发现原始的优化目标与$q(z,x)$是没有任何关系的，也就是说，我们可以通过调整$q(z|x)$使得Lower Bound不断接近原始优化目标</p>
+<p><img src="/2018/08/30/Generation/g11.png" width="450px"></p>
+<p>再通过调整$p(x|z)$使得Lower Bound升高，进而保证原始优化目标的提升</p>
+<p>当然，随着Lower Bound不断接近原始优化目标，KL散度会变小</p>
+<p><strong>=&gt;q(z|x)和p(z|x)的分布越接近越好，我们这里可能只把其看作是一个在给定x以后p(z)的分布</strong></p>
+<hr>
+<p>现在我们可以讨论如何优化Lower Bound</p>
+<p>$L_b = \int_z q(z|x)log(\frac{p(x|z)p(z)}{q(z|x)}) $</p>
+<p>$= \int_q(z|x)log(\frac{p(z)}{q(z|x)})dz+\int_zq(z|x)logp(x|z)dz$<br>$= -KL(q(z|x)||p(z))+\int_zq(z|x)logp(x|z)dz$</p>
+<p>则Maximize Lower Bound变成两个目标：</p>
+<p>（1）Maximize $\int_zq(z|x)logp(x|z)dz$</p>
+<p> $\int_zq(z|x)logp(x|z)dz$ = $E_q(z|x)[logp(x|z)]$</p>
+<p>相当于给定x，其实会得到q(z|x)，即可以得到无数个z（x的低维表示），我们希望无论我采样得到哪个z，都可以很好的还原回原始的数据x，则用分布的期望表示一个平均值</p>
+<p>（2）Minimize $KL(q(z|x)||p(z))$</p>
+<p>先验知识是p(z)是标准正态分布，所以只需要q(z|x)与正太分布越接近越好</p>
+<hr>
+<p>以上的数学推导和VAE有什么联系呢？</p>
+<p>我们希望原始数据通过VAE的encoder学习到低维表示z的概率分布</p>
+<p>然后从z中采样得到一个低维code，然后将这个code送入decoder，还原得到原始数据</p>
+<p>上述数学推导中的$q(z|x)$ 即是encoder</p>
+<p><img src="/2018/08/30/Generation/g10.png" width="250px"></p>
+<p>而对应的decoder就是p(x|z)</p>
+<p><img src="/2018/08/30/Generation/g9.png" width="250px"></p>
+<p>在变分自编码器VAE中，具体的实现方式是，输入通过encoder不再产生一个向量，而是产生两个相同维度的向量，分别记为$m$和$\sigma$（其实就是均值和方差），以及会从标准正态分布中sample出一个相同维度的向量$e$（其实是噪声），三者进行$c_i = exp(\sigma_i)\times e_i+m_i$得到中间的code，中间的code再输入decoder，得到output</p>
+<p>💡这里假设bottle-neck layer的输出是3维的code，所以对应产生的都是3维的向量</p>
+<p><img src="/2018/08/30/Generation/g2.png" width="450px"></p>
+<p>这里面有两个约束条件：</p>
+<p>（1）Minimize reconstruction error</p>
+<p>（2）Minimize $\sum_{i=1}^3(exp(\sigma_i)-(1+\sigma_i)+(m_i)^2)$</p>
+<p>💡从神经网络中学习到的$\sigma$可正可负，对$\sigma$进行exp计算，保证方差为正</p>
+<p>💡前面提到，希望q(z|x)与标准正态分布靠近，第二个优化项就是做这件事</p>
+<p>先看前两项，$exp(\sigma)-(1+\sigma)$，我们可以通过图示看到两个函数相减后的结果</p>
+<p><img src="/2018/08/30/Generation/g12.png" width="250px"></p>
+<p>图示红线是$1+\sigma$，图示蓝线是$exp(\sigma)$，二者相减为绿线，所以，当$exp(\sigma)-(1+\sigma)$最小时，应该是$\sigma$=0，$\exp(sigma) = 1$时</p>
+<p>而后面的$m^2$项，就是L2正则化，保证均值不要太大</p>
+<p>💡为什想要q(z|x)与标准正态分布靠近？</p>
+<p>如果生成的高斯分布方差越大，表示生成的bottle-neck层的噪声越多=&gt;方差大，表示采样得到z的波动就更大</p>
+<p>💡根据数学公式推导过程中，我们希望从q(z|x)中采样得到z，但是这在神经网络中没办法反向传播求导优化了，这里采用了reparameterization trick 重参数的技巧</p>
+<p>$q(z|x) =\frac{1}{\sqrt{2\pi\sigma^2}}exp(-\frac{(z-\mu)^2}{2\sigma^2})dz$</p>
+<p>$=\frac{1}{\sqrt{2\pi}}exp(-\frac{1}{2}(\frac{z-\mu}{\sigma})^2)d(\frac{z-\mu}{\sigma})$</p>
+<p>这表明$\varepsilon = \frac{z-\mu}{\sigma}$是符合均值为0，方差为1的正态分布</p>
+<p>这样，从$N(\mu,\sigma^2)$采样得到一个z，相当于从$N(0,1)$中采样一个$\varepsilon $，$z=\mu+\varepsilon \times \sigma$</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/16/PCA/" rel="next" title="PCA">
+                <i class="fa fa-chevron-left"></i> PCA
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/10/Embedding/" rel="prev" title="Embedding">
+                Embedding <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#VAE-变分自编码器"><span class="nav-number">1.</span> <span class="nav-text">VAE 变分自编码器</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

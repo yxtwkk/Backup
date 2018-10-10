@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近很多总结都是对传统机器学习或者深度学习网络的总结，先立个小小的flag🚩，在8月底之前，对机器学习部分有一个相对完整的总结！⛽️ 既然提到大数据系统，就不得不提数据库，大数据系统中很多的算法（有别于机器学习算法）和系统设计都是借鉴了数据库系统的一些方法，所以需要对数据库系统架构，事务处理等等问题做一个简单的概述和总结。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库概述">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/07/02/数据库概述/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="最近很多总结都是对传统机器学习或者深度学习网络的总结，先立个小小的flag🚩，在8月底之前，对机器学习部分有一个相对完整的总结！⛽️ 既然提到大数据系统，就不得不提数据库，大数据系统中很多的算法（有别于机器学习算法）和系统设计都是借鉴了数据库系统的一些方法，所以需要对数据库系统架构，事务处理等等问题做一个简单的概述和总结。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d2.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d4.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d5.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d6.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d7.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d8.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d9.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d10.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d11.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d12.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d13.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d14.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d15.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d16.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d17.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d18.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d19.png">
+<meta property="og:updated_time" content="2018-09-27T13:12:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据库概述">
+<meta name="twitter:description" content="最近很多总结都是对传统机器学习或者深度学习网络的总结，先立个小小的flag🚩，在8月底之前，对机器学习部分有一个相对完整的总结！⛽️ 既然提到大数据系统，就不得不提数据库，大数据系统中很多的算法（有别于机器学习算法）和系统设计都是借鉴了数据库系统的一些方法，所以需要对数据库系统架构，事务处理等等问题做一个简单的概述和总结。">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/07/02/数据库概述/d1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/07/02/数据库概述/"/>
+
+
+
+
+
+  <title>数据库概述 | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/07/02/数据库概述/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">数据库概述</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-02T17:40:11+08:00">
+                2018-07-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/大数据系统/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近很多总结都是对传统机器学习或者深度学习网络的总结，先立个小小的flag🚩，在8月底之前，对机器学习部分有一个相对完整的总结！⛽️</p>
+<p>既然提到大数据系统，就不得不提数据库，大数据系统中很多的算法（有别于机器学习算法）和系统设计都是借鉴了数据库系统的一些方法，所以需要对数据库系统架构，事务处理等等问题做一个简单的概述和总结。</p>
+<a id="more"></a>
+<h2 id="关系型数据模型"><a href="#关系型数据模型" class="headerlink" title="关系型数据模型"></a>关系型数据模型</h2><p>有关系型数据模型，就会有对应的非关系型数据模型（no-sql)，针对非关系型数据模型，会统一放在后面的大数据系统中总结。</p>
+<p>关系型数据模型主要有以下几个概念：</p>
+<p>（1）列：一个属性，有明确的数据类型，且必须是原子类型，不能再进一步进行分割</p>
+<p>💡原子类型，即内部无嵌套的结构，比如struct/class/array/list/set/map等，这些都不是原子类型</p>
+<p>（2）行：一个记录，记录之间是无序的</p>
+<p>（3）表：是一个记录的集合，通常是一个瘦长的表，有几列到几十列，但是有成千上万行</p>
+<p>（4）schema：类型，一个表的类型是由每个列的类型决定的</p>
+<p>（5）instance：具体取值，具体存储的数据和记录，由具体应用决定</p>
+<p>💡schema定义一次，对应多个instance</p>
+<p>（6）key：键，包括主键和外键，取值是唯一的</p>
+<p>💡主键是唯一确定本表中的一个记录 primary key</p>
+<p>💡外键是另一个表的主键，可以唯一确定另一个表的记录 foreign key</p>
+<p>（7）关系运算和关系表达式</p>
+<p>SQL语言提供了对关系型表的定义，插入、删除、修改，以及一些关系型运算</p>
+<p>主要的关系运算包括选择，投影，连接等</p>
+<p>SQL语句的公式：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 列名,...,列名           投影</span><br><span class="line"><span class="keyword">from</span> 表,...,表                选择，连接</span><br><span class="line"><span class="keyword">where</span> 条件                    选择，连接</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> 列名,...,列名         分组统计</span><br><span class="line"><span class="keyword">having</span> 条件                   分组后选择</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> 列名,...,列名         结果排序</span><br></pre></td></tr></table></figure>
+<h2 id="数据库系统架构"><a href="#数据库系统架构" class="headerlink" title="数据库系统架构"></a>数据库系统架构</h2><p>Database Management System：数据库管理系统</p>
+<p>RDBMS：Relationnal Database Management System 关系型数据库系统</p>
+<p>通常的系统为典型的Client-server架构，即client通过sql语句与RDBMS Server进行交互</p>
+<p><img src="/2018/07/02/数据库概述/d1.png" width="400px"></p>
+<h3 id="RDBMS的系统架构"><a href="#RDBMS的系统架构" class="headerlink" title="RDBMS的系统架构"></a>RDBMS的系统架构</h3><p><img src="/2018/07/02/数据库概述/d2.png" width="400px"></p>
+<h4 id="SQL-Parser"><a href="#SQL-Parser" class="headerlink" title="SQL Parser"></a>SQL Parser</h4><p>SQL语句程序，通过parsing tree等，解析为内部表达，解析过程包括语法解析，语法检查，表名、类名、类型检查</p>
+<h4 id="Query-Optimizer"><a href="#Query-Optimizer" class="headerlink" title="Query Optimizer"></a>Query Optimizer</h4><p>解析好的SQL语句（即，SQL内部表达），通过Query Optimizer，转换成Query Plan执行方案，根据Query Plan的运行时间和空间代价，在多个可行的Query Plans中选择最佳的Query Plan</p>
+<h4 id="Execution-Engine"><a href="#Execution-Engine" class="headerlink" title="Execution Engine"></a>Execution Engine</h4><p>根据query plan，完成相应的运算和操作（比如，数据访问，关系型运算的实现等）</p>
+<h4 id="Data-Storage-and-Indexing"><a href="#Data-Storage-and-Indexing" class="headerlink" title="Data Storage and Indexing"></a>Data Storage and Indexing</h4><p>负责在硬盘上存储数据，以及高效地访问硬盘上的数据</p>
+<h4 id="Buffer-Pool"><a href="#Buffer-Pool" class="headerlink" title="Buffer Pool"></a>Buffer Pool</h4><p>用来在内存中缓存硬盘上的数据</p>
+<h4 id="Transaction-Management"><a href="#Transaction-Management" class="headerlink" title="Transaction Management"></a>Transaction Management</h4><p>进行事务管理，主要实现的ACID，进行logging写日志，locking加锁，保证并行transactions事务的正确性</p>
+<h2 id="Data-Storage-and-Indexing-1"><a href="#Data-Storage-and-Indexing-1" class="headerlink" title="Data Storage and Indexing"></a>Data Storage and Indexing</h2><h3 id="数据在硬盘上的存储"><a href="#数据在硬盘上的存储" class="headerlink" title="数据在硬盘上的存储"></a>数据在硬盘上的存储</h3><p>（1）硬盘最小存储访问单位为一个扇区 512B</p>
+<p>（2）文件系统访问硬盘的单位通常为4KB</p>
+<p>（3）RDBMS最小的存储单位是database page size</p>
+<p>database page size 可以设置为1-多个文件系统的page，比如4KB,8KB,16KB</p>
+<h3 id="Page内部结构"><a href="#Page内部结构" class="headerlink" title="Page内部结构"></a>Page内部结构</h3><p>page指的是database page</p>
+<p>数据在硬盘上存储是以page为单位进行存储，每个page有一个一维的地址空间，每个page的内部结构如下图所示：</p>
+<p><img src="/2018/07/02/数据库概述/d3.png" width="400px"></p>
+<p>其中，每个tuple存储的是一个记录，tuple长度不固定，方便存储变长的记录；slot用来记录tuple的首地址</p>
+<p>每个tuple的结构如下：以有两个变长的列为例</p>
+<p><img src="/2018/07/02/数据库概述/d4.png" width="500px"></p>
+<p>对应的实例为：</p>
+<p><img src="/2018/07/02/数据库概述/d5.png" width="500px"></p>
+<p><img src="/2018/07/02/数据库概述/d6.png" width="540px"></p>
+<h3 id="数据的访问方式"><a href="#数据的访问方式" class="headerlink" title="数据的访问方式"></a>数据的访问方式</h3><h4 id="数据的顺序访问"><a href="#数据的顺序访问" class="headerlink" title="数据的顺序访问"></a>数据的顺序访问</h4><p>以student表为例</p>
+<p>（1）顺序读取student表的每个page</p>
+<p>（2）对于每个page，顺序访问每个tuple</p>
+<p>（3）检查sql表达式是否成立</p>
+<p>（4）对于使得表达式成立的tuple，选择对应的列</p>
+<h4 id="有选择性的访问-Selective-Data-Access"><a href="#有选择性的访问-Selective-Data-Access" class="headerlink" title="有选择性的访问 Selective Data Access"></a>有选择性的访问 Selective Data Access</h4><p><strong>使用index索引的方式</strong>：</p>
+<p>（1）Tree Based index：有序的索引，支持点查询和范围查询</p>
+<p>💡HashTable</p>
+<p>（2）Hash Based index：无序的索引，只支持点查询</p>
+<p>💡B+ Tree</p>
+<p><strong>使用主索引(Clustered index)和二级索引(Secondary index)</strong>：</p>
+<p>主索引Clustered index：记录存在index中，记录顺序就是index 顺序</p>
+<p>二级索引Secondary index：记录顺序不是index顺序，index中存储page ID和in-page-tuple slot ID</p>
+<p>以student表为例，正常情况下，建立的主索引是主键ID（学生学号），但是可以建立一个以major为key的二级索引，这样在查找时，可以直接索引找到major = ‘计算机’的tuples，而不需要在所有tuple里一个一个去匹配major = ‘计算机’</p>
+<p><strong>比较顺序访问和二级索引</strong>：</p>
+<p>顺序访问：</p>
+<p>需要处理每一个记录，顺序读取每一个page</p>
+<p>二级索引访问：</p>
+<p>有选择地处理记录，随机读取相关的page</p>
+<p><strong>Query Optimizer的任务之一就是选择采用何种方式访问</strong>：</p>
+<p>依据原则是selectivity（最终选中了多大比例的记录决定）</p>
+<p>根据预测的selectivity、硬盘顺序读和随机读的性能，估算两种方式的执行时间，选择执行时间小的方案</p>
+<h2 id="Buffer-Pool-1"><a href="#Buffer-Pool-1" class="headerlink" title="Buffer Pool"></a>Buffer Pool</h2><p>使用buffer pool的意义就是提高性能，减少I/O</p>
+<p><img src="/2018/07/02/数据库概述/d7.png" width="240px"></p>
+<p><strong>Locality：数据访问的局部性</strong></p>
+<p>（1）Temporal Locality：时间局部性</p>
+<p>同一个数据元素可能会在一段时间内被多次访问</p>
+<p>💡采用Buffer Pool缓冲池的方式</p>
+<p>（2）Spatial Locality：空间局部性</p>
+<p>位置相近的数据元素可能会被一起访问</p>
+<p>💡Page为单位进行读写</p>
+<p><strong>Buffer Pool的组成</strong></p>
+<p>Buffer Pool的内存空间分成page大小的单元 frame，每个frame可以缓冲硬盘中的一个page</p>
+<p>检查Page A是否在buffer pool中，如果命中 buffer pool hit，则直接访问buffer pool中的Page A；如果没有命中，则buffer pool miss，<strong>在buffer pool中找到一个可用的frame</strong>（需要合适的替换策略），从硬盘度page A，放入这个frame</p>
+<p><strong>Buffer Pool的替换策略</strong></p>
+<p>如果没有空闲的frame，需要找一个已经缓存好的page（Victim Page），替换掉</p>
+<p>💡如果这个page在buffer pool中已经被修改，那么需要将这个page写回硬盘</p>
+<p>替换策略的选择是尽可能减少I/O代价，希望victim page在近期不会再被访问=&gt;通常是LRU（Least Recently Used）的某种变形；常见的替换策略包括：Random（随机替换）；FIFO（First In First Out）替换最老的页；LRU最近最少使用</p>
+<p><strong>LRU及其变形算法</strong></p>
+<p>a. Buffer Head 记录访问时间的时间戳，找到时间戳最早／最小的page为victim page，替换操作的时间复杂度为O(N)</p>
+<p>b. 构建MRU（最近最常使用算法）和LRU</p>
+<p><img src="/2018/07/02/数据库概述/d8.png" width="440px"></p>
+<p>当某一页被访问时，将其移动到最前端；总是选择最后一个page为Victim，这样的时间复杂度为O(1)</p>
+<p>缺点就是修改队列的代价，以及多线程共享队头的问题</p>
+<p>c. Clock算法</p>
+<p><img src="/2018/07/02/数据库概述/d9.png" width="340px"></p>
+<p>每个page有一个标记R，如果访问了这个page，则将R赋值为 1；</p>
+<p>选择victim时，顺时针旋转，依次查看下一个页，如果R==1，则将R赋值为0；如果R==0，则选中为victim</p>
+<p>💡R=0意味着在旋转一圈的时间里，都没有被访问</p>
+<h2 id="Operator-Tree"><a href="#Operator-Tree" class="headerlink" title="Operator Tree"></a>Operator Tree</h2><p>Query Plan最终将表现为一棵Operator Tree</p>
+<p><img src="/2018/07/02/数据库概述/d10.png" width="440px"></p>
+<p>（1）每个节点代表一个运算</p>
+<p>（2）运算的输入来自孩子节点</p>
+<p>（3）运算的输出送往父亲节点</p>
+<p>具体的实现方法：</p>
+<p>（1）Operator at a time</p>
+<p>完全处理一个运算再处理下一个运行，会产生大量的中间结果</p>
+<p>（2）Pull（Tuple at a time）</p>
+<p>每个operator实现open／close／getNext等方法，父亲节点调用子节点的GetNext()取得下一个子节点的输出</p>
+<p>（3）Push：多线程</p>
+<p>子节点把输出放入中间结果缓冲，然后通知父亲节点去读</p>
+<h3 id="Join的三种实现"><a href="#Join的三种实现" class="headerlink" title="Join的三种实现"></a>Join的三种实现</h3><p>以表R和表S，在属性R.a和S.b上的等值连接为例</p>
+<h4 id="类Nest实现"><a href="#类Nest实现" class="headerlink" title="类Nest实现"></a>类Nest实现</h4><p>类Nest实现过程中，都无法避免的采用循环遍历的方式，优化时，需要用更小的时间和空间完成遍历和匹配</p>
+<p><strong>Nested Loop Join</strong></p>
+<p>（R有$M_R$个Page，S有$M_s$个Page，每个Page有B个记录）</p>
+<p>外循环读R，读一遍R；</p>
+<p>内循环读S，对R的每一个记录读所有的S，总共读取$BM_R$遍S</p>
+<p>总共读的page数：$M_R+BM_RM_S$</p>
+<p><img src="/2018/07/02/数据库概述/d11.png" width="340px"></p>
+<p><strong>Block Nested Loop Join</strong></p>
+<p>（内存大小为M，外循环每次读入M页的R，而不是一条R的记录，内循环读一遍S）</p>
+<p>外循环读R，读一遍R；</p>
+<p>内循环读S，总共读取$M_R/M$遍S</p>
+<p>总共读的page数：$M_R+M_RM_S/M$</p>
+<p><strong>Index Nested Loop Join</strong></p>
+<p>外循环读R，读一遍R；</p>
+<p>内循环读S，对R的每一个记录，根据索引index去S中找合适的记录s</p>
+<p>💡当有很少匹配的时候，效率较高</p>
+<p><img src="/2018/07/02/数据库概述/d12.png" width="340px"></p>
+<h4 id="类Hash实现"><a href="#类Hash实现" class="headerlink" title="类Hash实现"></a>类Hash实现</h4><p><strong>Simple Hash Join</strong></p>
+<p>读R，建立Hash Table；读S，访问Hash Table找到所有的匹配</p>
+<p><img src="/2018/07/02/数据库概述/d13.png" width="340px"></p>
+<p><strong>I/O Partitioning</strong></p>
+<p>当R比内存大时，可以把R和S划分成小块</p>
+<p><img src="/2018/07/02/数据库概述/d14.png" width="340px"></p>
+<p>PartitionID = hash(join key)% PartitionNumber</p>
+<p>Rj中记录的匹配只存在于相应的Sj中=&gt;匹配的记录hash(join key)必然是相同的</p>
+<p><strong>Grace Hash Join</strong></p>
+<p>（1）对R进行I/O partitioning</p>
+<p>（2）对S进行I/O partitioning</p>
+<p>对所有的PartitionNumber进行遍历，做等值链接</p>
+<p><img src="/2018/07/02/数据库概述/d15.png" width="240px"></p>
+<p>对R进行I/O partitioning：读$M_R$个Page，写$M_R$个Page</p>
+<p>对S进行I/O partitioning：读$M_S$个Page，写$M_S$个Page</p>
+<p>Simple Hash Join，读$M_R + M_S$个Page</p>
+<p>总代价：读$2M_R+2M_S$个Page，写$M_R+M_S$个Page</p>
+<h4 id="Sort-Merge-Join"><a href="#Sort-Merge-Join" class="headerlink" title="Sort Merge Join"></a>Sort Merge Join</h4><p>（如果把R按照R.a的顺序排序，把S按照S.b的顺序排序，可以进行Merge归并找出所有的匹配）</p>
+<p>Sort Merge Join有一个概念叫做 <strong>Generation</strong>，<strong>假设内存可以容纳M个Page</strong>，</p>
+<p>则，每一次从R中读入M个页到内存，在内存中对其进行排序，写出成为一个Run（Run Generation）</p>
+<p>这样R就被拆分成多个R_run，即$k_R = M_R/M$</p>
+<p><img src="/2018/07/02/数据库概述/d16.png" width="240px"></p>
+<p>同样，对S进行相同的操作，这样S被分成$k_S = M_S/M$</p>
+<p><img src="/2018/07/02/数据库概述/d17.png" width="240px"></p>
+<p>在内存中，利用<strong>堆方式</strong>进行归并；内存可以容纳M个Page，可以同时归并M-1个Run（其中，每个Run需要一个Page，输出需要一个Page）</p>
+<p>共有$\frac {M_R}{M}+ \frac {M_S}M$个Run，则需要$z = log_{M-1}(\frac {M_R}{M}+ \frac {M_S}M)$层才能完成全部归并</p>
+<p>如果希望一次归并完成join操作，则z&lt;=1，即$M_R + M_S &lt;=M(M-1) = M^2$</p>
+<p>💡Sort Merge Join通常代价比Hash Join稍差；当一个表已经有序的情况下，会被使用</p>
+<h2 id="Query-Optimization"><a href="#Query-Optimization" class="headerlink" title="Query Optimization"></a>Query Optimization</h2><p>根据统计信息进行查询优化，主要是根据SQL Parser解析好的SQL语句，根据统计信息，选出最优的Query Plan交予Execution Engine</p>
+<p>优化内容包括但不限于：访问方式（顺序扫描／索引）；采用何种算法（比如上面提到的Join）；多个连接的先后次序等等</p>
+<h2 id="Transaction-Management-1"><a href="#Transaction-Management-1" class="headerlink" title="Transaction Management"></a>Transaction Management</h2><p>事务处理主要ACID，并发控制和崩溃恢复</p>
+<p>事务处理主要应对的问题是大量的并发用户，少量的随机读写操作；</p>
+<p>一个事物Transaction可能包含多个操作，比如select／insert／delete／update等；</p>
+<p>在没用特殊设置的情况下，每个SQL语句都被认为是一个事务；</p>
+<p>此外，可以利用特殊的语句标记事务</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">成功的事务</span><br><span class="line"><span class="keyword">begin</span> <span class="keyword">transaction</span>;</span><br><span class="line">...</span><br><span class="line"><span class="keyword">commit</span> <span class="keyword">transaction</span>;</span><br><span class="line"></span><br><span class="line">可以用<span class="keyword">rollback</span>回卷事务</span><br><span class="line"><span class="keyword">begin</span> <span class="keyword">transaction</span>;</span><br><span class="line">...</span><br><span class="line"><span class="keyword">rollback</span> <span class="keyword">transaction</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h3><p>ACID是每个事务都要有的性质</p>
+<p><strong>Atomicity 原子性</strong></p>
+<p>每个事务要么完全执行，要么完全没有执行</p>
+<p><strong>Consistency 一致性</strong></p>
+<p>从一个正确的状态转移到另一个正确的状态</p>
+<p>（满足某种约束，比如，银行存款要求大于等于0）</p>
+<p><strong>Isolation 隔离性</strong></p>
+<p>每个事务与其他并发事务互不影响</p>
+<p><strong>Durability 持久性</strong></p>
+<p>事务提交以后 Transaction commit，结果持久有效，crash也不消失</p>
+<h3 id="数据竞争-Data-Race"><a href="#数据竞争-Data-Race" class="headerlink" title="数据竞争 Data Race"></a>数据竞争 Data Race</h3><p>数据竞争出现在，当一个数据被并发访问时，且并发访问的操作都是写，或者一个读一个写</p>
+<p>存在一个顺序，如果按照这个顺序依次串行执行这些Transactions，得到的结果与并行执行相同</p>
+<p>一个事务调度是可串行化的，是其并行执行的结果和按某个顺序串行执行的结果相同</p>
+<p>数据冲突引起的问题主要包括三个：</p>
+<p>（1）Read uncommitted data 读脏数据 =&gt;写读</p>
+<p>在T2 commit之前，T1读了T2已经修改了的数据</p>
+<p>💡当一个事务T2正在访问数据，并对数据进行了修改，但是这种修改还没有提交到数据库，而此时，事务T1访问并使用了这个数据</p>
+<p>（2）Unrepeatable reads 不可重复读 =&gt;读写</p>
+<p>在T2 commit之前，T1写了T2已经读的数据；如果T2再次读同一个数据，会发现值不同</p>
+<p>💡在一个事务T2内，多次读同一个数据，在T2还未结束之前，T1读了这个数据并修改提交</p>
+<p>（3）Overwrite uncommited data 更新丢失 =&gt; 写写</p>
+<p>在T2 commit之前，T1重写了T2已经修改的数据</p>
+<p>针对数据竞争的问题，提出两种解决方案：</p>
+<p><strong>悲观方案Pessimistic</strong></p>
+<p>假设数据竞争经常可能出现</p>
+<p>❗️防止：采用某种机制保证数据竞争不出现</p>
+<p>如果一个事务T1<strong>可能</strong>和其他正在运行的事务有冲突，则让T1等待，知道所有跟他有冲突的事务都完成，T1才开始执行</p>
+<p><strong>乐观方案Optimistic</strong></p>
+<p>假设数据竞争很少见</p>
+<p>❗️检查：先执行事务，在提前之前检查是否出现数据竞争</p>
+<p>允许✅所有事务都直接执行，但是事务部直接修改数据，而是把修改保留起来；当事务结束时，检查修改是否有数据竞争；如果没有竞争，则成功结束，真正修改数据；如果有竞争，则丢弃结果，重新计算</p>
+<h3 id="悲观方案"><a href="#悲观方案" class="headerlink" title="悲观方案"></a>悲观方案</h3><p>使用加锁协议实现；对于每个事务中的SQL语句，数据库系统自动检测其中的读、写数据，对事务中的读写数据进行加锁；通常采用两阶段加锁（2 Phase Locking）</p>
+<h4 id="2-Phase-Locking"><a href="#2-Phase-Locking" class="headerlink" title="2 Phase Locking"></a>2 Phase Locking</h4><p>这是一种悲观的并发控制 Pessimistic Concurrency control</p>
+<p>对每个访问的数据均需要加锁以后才能进行访问，算法的流程如下：</p>
+<p>（1）在事务开始之前，对每个需要访问的数据进行加锁，如果不能加锁，则等待直至加锁成功</p>
+<p>（2）执行事务</p>
+<p>（3）在事务提交之前，集中进行解锁</p>
+<p>（4）事务提交</p>
+<p>💡数据的加锁和解锁分别集中在两个阶段，因此称之为2PL</p>
+<p><img src="/2018/07/02/数据库概述/d18.png" width="340px"></p>
+<p><strong>2PL的实现细节</strong></p>
+<p>（1）读写锁不同</p>
+<p>锁共有两种：</p>
+<p>a. Shared lock(S) 共享锁：保护读操作</p>
+<p>b. Exclusive lock(X) 排他锁：保护写操作</p>
+<p><img src="/2018/07/02/数据库概述/d19.png" width="340px"></p>
+<p>已经加上共享锁的数据可以被其他事务读取，但是不能修改</p>
+<p>已经加上排他锁的数据既不可被其他事务读取，也不可以被其他事务修改</p>
+<p>（2）Lock Granularity 锁的粒度不同</p>
+<p>Intent Lock意向锁：如果对一个结点加意向锁，说明该结点的下层结点正在被加锁；对任意节点加锁，先对其上层加意向锁</p>
+<p>IS(a)：将对a下面更细粒度的数据元素进行读操作</p>
+<p>IX(a)：将对a下面更细粒度的数据元素进行写操作</p>
+<p>💡假设事务A锁住了表中</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/26/深度学习DeepLearning介绍/" rel="next" title="DeepLearning Introduction">
+                <i class="fa fa-chevron-left"></i> DeepLearning Introduction
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/08/卷积神经网络-CNN/" rel="prev" title="Convolutional Neural Network">
+                Convolutional Neural Network <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关系型数据模型"><span class="nav-number">1.</span> <span class="nav-text">关系型数据模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库系统架构"><span class="nav-number">2.</span> <span class="nav-text">数据库系统架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDBMS的系统架构"><span class="nav-number">2.1.</span> <span class="nav-text">RDBMS的系统架构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL-Parser"><span class="nav-number">2.1.1.</span> <span class="nav-text">SQL Parser</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Query-Optimizer"><span class="nav-number">2.1.2.</span> <span class="nav-text">Query Optimizer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Execution-Engine"><span class="nav-number">2.1.3.</span> <span class="nav-text">Execution Engine</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Data-Storage-and-Indexing"><span class="nav-number">2.1.4.</span> <span class="nav-text">Data Storage and Indexing</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Buffer-Pool"><span class="nav-number">2.1.5.</span> <span class="nav-text">Buffer Pool</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transaction-Management"><span class="nav-number">2.1.6.</span> <span class="nav-text">Transaction Management</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Storage-and-Indexing-1"><span class="nav-number">3.</span> <span class="nav-text">Data Storage and Indexing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据在硬盘上的存储"><span class="nav-number">3.1.</span> <span class="nav-text">数据在硬盘上的存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Page内部结构"><span class="nav-number">3.2.</span> <span class="nav-text">Page内部结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据的访问方式"><span class="nav-number">3.3.</span> <span class="nav-text">数据的访问方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据的顺序访问"><span class="nav-number">3.3.1.</span> <span class="nav-text">数据的顺序访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有选择性的访问-Selective-Data-Access"><span class="nav-number">3.3.2.</span> <span class="nav-text">有选择性的访问 Selective Data Access</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Buffer-Pool-1"><span class="nav-number">4.</span> <span class="nav-text">Buffer Pool</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Operator-Tree"><span class="nav-number">5.</span> <span class="nav-text">Operator Tree</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Join的三种实现"><span class="nav-number">5.1.</span> <span class="nav-text">Join的三种实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#类Nest实现"><span class="nav-number">5.1.1.</span> <span class="nav-text">类Nest实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类Hash实现"><span class="nav-number">5.1.2.</span> <span class="nav-text">类Hash实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sort-Merge-Join"><span class="nav-number">5.1.3.</span> <span class="nav-text">Sort Merge Join</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Query-Optimization"><span class="nav-number">6.</span> <span class="nav-text">Query Optimization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Transaction-Management-1"><span class="nav-number">7.</span> <span class="nav-text">Transaction Management</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ACID"><span class="nav-number">7.1.</span> <span class="nav-text">ACID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据竞争-Data-Race"><span class="nav-number">7.2.</span> <span class="nav-text">数据竞争 Data Race</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#悲观方案"><span class="nav-number">7.3.</span> <span class="nav-text">悲观方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Phase-Locking"><span class="nav-number">7.3.1.</span> <span class="nav-text">2 Phase Locking</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
