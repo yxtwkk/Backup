@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="支持向量机SVM（Support Vector Machine）是一个（二）分类模型，主要特点有两个： （1）针对分类问题损失函数 loss funcion不方便求导优化参数的问题，SVM采用Hinge Loss （2）针对线性分类模型的分类局限性，SVM引入Kernel的方法进行特征变化，进而进行分类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SVM">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/10/14/SVM/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="支持向量机SVM（Support Vector Machine）是一个（二）分类模型，主要特点有两个： （1）针对分类问题损失函数 loss funcion不方便求导优化参数的问题，SVM采用Hinge Loss （2）针对线性分类模型的分类局限性，SVM引入Kernel的方法进行特征变化，进而进行分类">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s.jpg">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s3.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s4.png">
+<meta property="og:updated_time" content="2018-10-21T13:25:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SVM">
+<meta name="twitter:description" content="支持向量机SVM（Support Vector Machine）是一个（二）分类模型，主要特点有两个： （1）针对分类问题损失函数 loss funcion不方便求导优化参数的问题，SVM采用Hinge Loss （2）针对线性分类模型的分类局限性，SVM引入Kernel的方法进行特征变化，进而进行分类">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/10/14/SVM/"/>
+
+
+
+
+
+  <title>SVM | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/10/14/SVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SVM</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-14T21:36:17+08:00">
+                2018-10-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>支持向量机SVM（Support Vector Machine）是一个（二）分类模型，主要特点有两个：</p>
+<p>（1）针对分类问题损失函数 loss funcion不方便求导优化参数的问题，SVM采用Hinge Loss</p>
+<p>（2）针对线性分类模型的分类局限性，SVM引入Kernel的方法进行特征变化，进而进行分类</p>
+<a id="more"></a>
+<h2 id="Binary-Classification"><a href="#Binary-Classification" class="headerlink" title="Binary Classification"></a>Binary Classification</h2><p>在写SVM之前，我们可以简单回顾一下分类问题</p>
+<p> （1）定义模型／函数空间</p>
+<p>（假设我们的类别是+1和-1）</p>
+<p>假设二维平面中，需要一个分类界面将平面上的点分成两类，$y_1$和$y_2$；从数学的角度来看，需要一个函数f(x)将二维平面上的点分城两类，比如，函数值大于0和小于0；再通过另外一个函数g(x)，将f(x)大于0的点归为一类，将小于0的点归为一类</p>
+<p>$g(x) = \left\{\begin{matrix}<br>f(x) &gt; 0 &amp; Output = +1\\<br> f(x) &lt;0&amp; Output = -1<br>\end{matrix}\right.$</p>
+<p>（2）定义损失函数 loss function</p>
+<p>理想的loss funcion是统计分类错误的样本个数：</p>
+<p>$L(f) = \sum_n\delta(g(x^n) \neq y^n)$</p>
+<p>但是理想的损失函数是没办法求导的</p>
+<p>我们转变损失函数</p>
+<p>$L(f) = \sum_nl(f(x^n),\hat y^n)$</p>
+<p>现在的问题变成 如何更好的定义转换后的损失函数，转换后的损失函数越接近理想的损失函数越好</p>
+<h2 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h2><p><img src="/2018/10/14/SVM/s.jpg" width="650px"></p>
+<p>图中的横坐标表示$y^nf(x)$</p>
+<p>如果分类类别$y^n$和f(x)是同向的，表明分类正确，即loss=0；如果是反向的，表明分类错误，即loss=1</p>
+<p><strong>图示黑线表示的是理想的损失函数</strong></p>
+<h3 id="Square-Loss"><a href="#Square-Loss" class="headerlink" title="Square Loss"></a>Square Loss</h3><p>平方损失函数 $l(f(x^n),\hat y^n) = (\hat y^nf(x^n)-1)^2 $</p>
+<p>如果 $y^n = 1$ ， f(x)接近1 </p>
+<p>=&gt; $l(f(x^n),\hat y^n) = (f(x^n)-1)^2 $ =&gt; $f(x^n)$接近1，损失函数最小</p>
+<p>如果 $y^n = -1$ ， f(x)接近-1</p>
+<p>=&gt; $l(f(x^n),\hat y^n) = (-f(x^n)-1)^2 $ =&gt; $(f(x^n)+1)^2$ =&gt; $f(x^n)$接近-1，损失函数最小</p>
+<p>图中红色线表示的平方损失函数，从图示中可以看出，当$y^nf(x)$通向很大时，loss依然很大</p>
+<p>所以，在分类问题中，不适合用平方损失函数进行优化</p>
+<h3 id="Sigmoid-Square-Loss"><a href="#Sigmoid-Square-Loss" class="headerlink" title="Sigmoid + Square Loss"></a>Sigmoid + Square Loss</h3><p>损失函数定义为： $l(f(x^n),\hat y^n) =(\sigma(\hat y^nf(x^n))-1)^2 $</p>
+<p>如果 $y^n = 1$ ， $\sigma(f(x))$接近1</p>
+<p>=&gt;$l(f(x^n),\hat y^n) =(\sigma(f(x^n))-1)^2 $ =&gt; $\sigma(f(x^n))$接近1，损失函数最小</p>
+<p>如果 $y^n = -1$ ，  $\sigma(f(x))$接近0</p>
+<p>=&gt;$l(f(x^n),\hat y^n) =(\sigma(-f(x^n))-1)^2 ​$ =&gt;$l(f(x^n),\hat y^n) =(1-\sigma(f(x^n))-1)^2 ​$=&gt; $\sigma(f(x^n))​$接近0，损失函数最小</p>
+<p>💡这相当于，LR中采用平方损失函数，如图中蓝线所示</p>
+<h3 id="Sigmoid-Cross-Entropy"><a href="#Sigmoid-Cross-Entropy" class="headerlink" title="Sigmoid + Cross Entropy"></a>Sigmoid + Cross Entropy</h3><p>交叉熵反应的是两个分布之间的差异</p>
+<p>sigmoid函数反应的是两个类别的概率，假设输出的概率 $\sigma (f(x))$代表类别为$\hat y^n =1$的概率，希望输出的概率越接近1越好；当类别$\hat y^n = $时-1，希望$\sigma(f(x))$输出的概率越接近0越好；</p>
+<p>所以考虑如下两个分布：</p>
+<p>真实分布，当$\hat y^n = 1$时，输出为1；当$\hat y^n = -1$时，输出为0</p>
+<p>学习到的分布，当$\hat y^n =1$时，输出为$\sigma(\hat y^n f(x))$；当当$\hat y^n =-1$时，输出为1-$\sigma(\hat y^n f(x))$</p>
+<p>从交叉熵的角度考虑，希望两个分布越接近越好：</p>
+<p>$l(f(x^n),\hat y^n) = -1·\sigma(\hat y^n f(x)) - 0· (1-\sigma(\hat y^n f(x))  $  = $- \sigma(\hat y^nf(x)) = ln(1+exp(-\hat y^nf(x)))$</p>
+<p>损失函数的图像是上图的绿色曲线</p>
+<blockquote>
+<p>为了和理想损失函数对比，我们将交叉熵损失函数除以$ln2$</p>
+</blockquote>
+<p><strong>在sigmoid函数中，采用平方损失和交叉熵损失函数的区别：</strong></p>
+<p>主要考虑$y^n$和f(x)反向时，调整$y^n$和f(x)，当$y^nf(x)$的乘积同时增大一定程度时，从图示曲线可以看出，sigmoid+交叉熵损失函数的的loss变化较大，而sigmoid+平方损失的loss变化较小</p>
+<p>💡类比一下：sigmoid + cross entropy：努力可以有较大回报；sigmoid + square loss：没有回报，不想努力</p>
+<h3 id="Hinge-Loss"><a href="#Hinge-Loss" class="headerlink" title="Hinge Loss"></a>Hinge Loss</h3><p>Hinge loss是合页损失函数，也是一种分段函数：</p>
+<p>$l(f(x^n),\hat y^n) = max(0,1-\hat y^nf(x))$</p>
+<p>当$y^n = 1$时，$l = max(0,1-f(x))$ =&gt;  loss = 0 1-f(x) &lt; 0 =&gt; f(x) &gt; 1</p>
+<p>当$y^n =- 1$时，$l = max(0,1+f(x))$ =&gt;  loss = 0 1+f(x) &lt; 0 =&gt; f(x) &lt; -1</p>
+<p>hinge loss表示，对于$y^n = 1$这个类，<strong>只需要f(x)的判别值大于1即可，不用大太多，f(x) = 3和f(x) = 2 对于损失来说，最后的损失都为0</strong></p>
+<p>hinge loss表示为上图的紫色曲线：</p>
+<p>当$y^nf(x) &gt;1$ 时，loss = 0</p>
+<p>当$0&lt;y^nf(x)&lt;1$时，按照前面分类的定义，这属于分类正确的情况，但是对于hinge loss来说，这种情况下loss并不能等于0；这意味着，对于hinge loss来说，二者同向并不是最好的，还要比penalty要好</p>
+<p>💡在这个函数形式中，1为penalty／margin，是一个超参数，我们当然可以定义这个penalty为2，3，4..</p>
+<p>💡上式定义penalty为1，hinge loss可以作为理想loss的upper bound</p>
+<p><strong>hinge loss和交叉熵的区别</strong></p>
+<p>考虑$y^n$和f(x)的同向问题，当$y^nf(x)&gt;1时，f(x)的增加，会使得sigmoid+交叉熵的loss变得更小，而hinge loss的变化并不是很大</p>
+<p>即 交叉熵需要分离器在做的好的样本上需要做的更好；而hinge loss只需要好过定义好的penalty，就不需要再好</p>
+<h2 id="Linear-SVM"><a href="#Linear-SVM" class="headerlink" title="Linear SVM"></a>Linear SVM</h2><p>线性svm与逻辑回归的不同点在于线性svm采用了hinge loss</p>
+<p><strong>线性svm的模型为：</strong></p>
+<p>$f(x) = \sum_{i}w_ix_i+b = \begin{bmatrix}<br>w\\<br>b<br>\end{bmatrix} ·\begin{bmatrix}<br>x\\<br>1<br>\end{bmatrix} = w^Tx$</p>
+<p>💡线性模型可能会有一个偏置b，我们将权重向量写成增广向量的形式，这样原始的线性模型可以写成两个向量的内积的形式</p>
+<p><strong>线性svm的损失函数 loss function</strong>：由hinge loss和正则项两个部分组成</p>
+<p>$L(f) = \sum_nl(f(x^n),\hat y^n) + \lambda||w||_2$</p>
+<p>其中，$l(f(x^n),\hat y^n) = max(0,1-\hat y^nf(x))$</p>
+<p>💡线性svm的损失函数L是一个凸函数，即无论从哪个地方初始化进行优化，都可以找到最终的优化结果</p>
+<p><strong>一般情况下，svm采用拉格朗日乘子法+对偶形式进行参数优化，但是svm的损失函数同样可以用梯度下降的方法进行优化</strong></p>
+<h3 id="Perspective-One：梯度下降优化损失"><a href="#Perspective-One：梯度下降优化损失" class="headerlink" title="Perspective One：梯度下降优化损失"></a>Perspective One：梯度下降优化损失</h3><p><strong>线性svm采用梯度下降的方式进行优化</strong>：</p>
+<p>简化损失函数为hinge loss $L(f) = \sum_nl(f(x^n),\hat y^n)$</p>
+<p>对于第i个参数：</p>
+<p>$\frac{\partial l(f(x^n),\hat y^n)}{\partial w_i} = \frac{\partial l(f(x^n),\hat y^n)}{\partial f(x^n)} \frac{\partial f(x^n)}{\partial w_i}  =\frac{\partial l(f(x^n),\hat y^n)}{\partial f(x^n)}x^n_i$   </p>
+<p>其中，$\frac{\partial l(f(x^n),\hat y^n)}{\partial f(x^n)} = \frac{\partial max(0,1-\hat y^nf(x^n))}{\partial f(x^n)} = \left\{\begin{matrix}<br>-\hat y^n &amp; if \;\hat y^nf(x^n)&lt;1 \\<br> 0&amp; otherwise<br>\end{matrix}\right.$</p>
+<p>因此，$\frac{\partial l(f(x^n),\hat y^n)}{\partial w_i}  = \sum_n -\delta(\hat y^n f(x^n)&lt;1)\hat y^n x_i^n $</p>
+<p>设 $c^n(w) = -\delta(\hat y^n f(x^n)&lt;1)\hat y^n x_i^n$</p>
+<p>参数更新公式：</p>
+<p>$w_i $ &lt;—- $w_i - \eta \sum_n c^n(w)x_i^n$</p>
+<h3 id="Persepective-Two：从松弛变量的角度出发"><a href="#Persepective-Two：从松弛变量的角度出发" class="headerlink" title="Persepective Two：从松弛变量的角度出发"></a>Persepective Two：从松弛变量的角度出发</h3><p>$L(f) = \sum_nl(f(x^n),\hat y^n) + \lambda||w||_2$</p>
+<p>设$\epsilon^n = l(f(x^n),\hat y^n) = max(0,1-\hat y^nf(x))$ </p>
+<p>$L(f) = \sum_n \epsilon^n + \lambda||w||_2$</p>
+<p>对$\epsilon^n$的变形，设定：</p>
+<p>$\epsilon^n \geq 0$</p>
+<p>$\epsilon^n \ge 1-\hat y^nf(x)$  =&gt; $\hat y^nf(x) \ge 1-\epsilon^n$</p>
+<p>以上两个不等式和hinge loss其实不对等，$\epsilon^n$可以跟比二者的max大1，大2，…但可以不是二者之中的max</p>
+<p>但是，如果加上第三个前提，让loss L(f) 最小，则两个不等式和hinge loss是对等的，即</p>
+<p>$\begin{matrix}<br>   &amp;  minimize \;\;L(f)\\<br>max(0,1-\hat y^nf(x))  &lt;=&gt;&amp; \epsilon^n \ge 0\\<br> &amp; \epsilon^n \ge 1-\hat y^nf(x)<br>\end{matrix}$</p>
+<p>将第二个不等式变形，得到$\hat y^nf(x) \ge 1-\epsilon^n$</p>
+<p>原本的hinge loss的penalty是限定 $\hat y^nf(x)  \ge 1 $才会使得loss =0</p>
+<p>但是从现在的变形中得到，$\epsilon^n$的存在，让这个penalty变得比较小，<strong>所以$\epsilon ^n$称之为“松弛变量” slack variable</strong></p>
+<h3 id="Perspective-Three：对偶形式Dual-Representation"><a href="#Perspective-Three：对偶形式Dual-Representation" class="headerlink" title="Perspective Three：对偶形式Dual Representation"></a>Perspective Three：对偶形式Dual Representation</h3><p>根据perpsective one，采用梯度下降的方式优化损失函数，得到参数的更新公式：</p>
+<p>$w_i $ &lt;—- $w_i - \eta \sum_n c^n(w)x_i^n$</p>
+<p>对于参数w的每一维：</p>
+<p>$w_1 $ &lt;—- $w_1 - \eta \sum_n c^n(w)x_1^n$</p>
+<p>$w_t $ &lt;—- $w_t - \eta \sum_n c^n(w)x_t^n$</p>
+<p>$w_n $ &lt;—- $w_n - \eta \sum_n c^n(w)x_n^n$</p>
+<p>如果初始化参数w为0的话，则每次计算加上的都是当前训练样本的线性组合，即$w^<em> = \sum_n \alpha_n^</em>x^n$</p>
+<p>其中，对于每个训练样本，其$=\alpha_n^* =  -\eta c^n(w)$</p>
+<p>而对于大部分样本，$c^n(w) = 0$；只有少部分样本，$c^n(w) = -\hat y^n$，这部分样本称为支撑向量  =&gt; 即 $\alpha_n^*$是稀疏的</p>
+<p><strong>对比hinge loss和交叉熵：</strong></p>
+<p>在hinge loss中，对于大部分样本，$c^n(w) =0$</p>
+<p>而在交叉熵中，$c^n(w)$是永远不会为0</p>
+<p>所以，当采用hinge loss时，算法会更鲁棒，因为不是所有的数据点都参与更新参数，只有小部分数据参与更新</p>
+<hr>
+<p> $w = \sum_n \alpha^nx^n = X\alpha$</p>
+<p><img src="/2018/10/14/SVM/s3.png" width="350px"></p>
+<p>💡参数表示成训练样本的线性组合，可以方便使用核技巧kernel trick</p>
+<p> $ f(x) = w^Tx = \alpha^TX^Tx$</p>
+<p>其中，$\alpha^T = \begin{bmatrix}<br>\alpha_1 &amp;…  &amp; \alpha_N<br>\end{bmatrix}$ 是一个1*N的向量； $ X^T = \begin{bmatrix}<br>x^1\\<br>x^2\\<br>…\\<br>x^N<br>\end{bmatrix}$是一个N<em>n的矩阵（N是数据量，n是数据维度），相当于是N个行向量组成一个矩阵，每个行向量是1\</em>n的向量；x是一个n*1的向量，所以三者的乘积是一个标量</p>
+<p>$X^Tx = \begin{bmatrix}<br>x^1·x\\<br>x^2·x\\<br>…\\<br>x^N·x<br>\end{bmatrix}$ =&gt;$X^T$是训练样本，x是测试样本，即乘积可以表示成测试样本和训练样本的内积</p>
+<p>因此，我们可以采用kernel trick对训练样本和测试样本的乘积进行处理，即（n个训练样本时）</p>
+<p>$f(x) = \sum_n\alpha ^n(x^n·x) = \sum_n\alpha^nK(x^n,x)$</p>
+<h3 id="Perspective-Four：核化技巧Kernel-Trick"><a href="#Perspective-Four：核化技巧Kernel-Trick" class="headerlink" title="Perspective Four：核化技巧Kernel Trick"></a>Perspective Four：核化技巧Kernel Trick</h3><p>通过上面的推导，svm分类模型可以转换为：</p>
+<p>$f(x) = \sum_n\alpha^nK(x^n,x)$，即我们无需知道样本x，只需要知道$K(x^n,x)$的值即可</p>
+<p>线性分类模型的分类能力其实较弱，更多的情况下，需要进行特征变化，然后再进行分类，核化技巧将特征变化（Feature Transformation）和内积结合在一起，加快了计算速度</p>
+<p>假设数据维度是2维 $ x= \begin{bmatrix}<br>x_1\\<br>x_2<br>\end{bmatrix}$ ，$\phi(x) = \begin{bmatrix}<br>x_1^2\\<br>\sqrt{2}x_1x_2\\<br>x_2^2<br>\end{bmatrix}$</p>
+<p>$K(x,z) = \phi(x)·\phi(z) =\begin{bmatrix}<br>x_1^2\\<br>\sqrt{2}x_1x_2\\<br>x_2^2<br>\end{bmatrix} ·\begin{bmatrix}<br>z_1^2\\<br>\sqrt{2}z_1z_2\\<br>z_2^2<br>\end{bmatrix}  = x_1^2z_1^2+2x_1x_2z_1z_2+x_x^2z_2^2 = (x_1z_1+x_2z_2)^2 = (\begin{bmatrix}<br>x_1\\<br>x_2<br>\end{bmatrix}·\begin{bmatrix}<br>z_1\\<br>z_2<br>\end{bmatrix})^2 = (x·z)^2$</p>
+<p>所以，通过核化技巧，我们不需要将向量z和向量x通过$\phi(x)$的变换，再进行内积；x和z可以直接进行内积计算再平方即可 </p>
+<p>如果x是k维的，则对应的$\phi(x)$就是每个维度的平方和任意两个维度的乘积的$\sqrt{2}$倍，即</p>
+<p>$ x= \begin{bmatrix}<br>x_1\\<br>…\\x_k\\\end{bmatrix}$ $ \phi(x)= \begin{bmatrix}<br>x_1^2\...\\x_k^2\\\sqrt{2}x_1x_2\\ \sqrt{2}x_1x_3\\<br>…\\\sqrt{2}x_2x_3\...\end{bmatrix}$</p>
+<p>$K(x,z) = (x·z)^2 = (x_1z_1+x_2z_2+…+x_kz_k)^2 = x_1^2z_1^2+x_2^2z_2^2+…x_k^2z_k^2+2x_1x_2z_1z_2+2x_1x_3z_1z_3+… = \phi(x)·\phi(z)$</p>
+<p>💡kernel trick可以用在任何一个“模型参数可以通过样本线性表示”的分类器中，比如，logistic regeression ／ linear regression等</p>
+<h4 id="Radial-Basis-Function-Kernel"><a href="#Radial-Basis-Function-Kernel" class="headerlink" title="Radial Basis Function Kernel"></a>Radial Basis Function Kernel</h4><p>径向基函数 $K(x,z) = exp(-\frac{1}{2}||x-z||_2)$</p>
+<p>径向基函数可以计算向量x和向量z之间的相似度，但是能否表示成$\phi(x)·\phi(z)$的内积形式呢？</p>
+<p> $K(x,z) = exp(-\frac{1}{2}||x-z||_2) = exp(-\frac{1}{2}||x||_2-\frac{1}{2}||z||_2+x·z) $</p>
+<p>$=exp(-\frac{1}{2}||x||_2)exp(-\frac{1}{2}||z||_2)exp(x·z) $</p>
+<p>$=C_xC_zexp(x·z)$</p>
+<p>$= C_xC_z\sum_{i=0}^ \infty \frac{(x·z)^i}{i!} = C_xC_z+C_xC_z(x·z)+C_xC_z\frac{1}{2}(x·z)^2…$</p>
+<p>根据泰勒展开式，最终的$\phi(x)$和$\phi(z)$是无穷维</p>
+<h4 id="Sigmoid-Kernel"><a href="#Sigmoid-Kernel" class="headerlink" title="Sigmoid Kernel"></a>Sigmoid Kernel</h4><p>sigmoid核函数为 $K(x,z) = tanh(x·z) $</p>
+<p>$tanh(x·z) = \frac{sinhx}{coshx} = \frac{e^x-e^{-x}}{e^x+e^{-x}}$</p>
+<p>$f(x) = \sum_n\alpha^nK(x^n,x) = \sum_n\alpha^ntanh(x^n·x)$</p>
+<p>采用sigmoid核函数时，相当于只有一个隐藏层的神经网络；隐藏层神经元的个数为支撑向量的个数</p>
+<p>输入层-&gt;隐藏层之间的权重是每个支撑向量，隐藏层的计算结果是支撑向量和输入向量的内积，隐藏层-&gt;输出层之间的权重是支撑向量对应的$\alpha^n$</p>
+<p><img src="/2018/10/14/SVM/s4.png" width="350px"></p>
+<p>💡这里面需要注意的是，在线性分类器中采用核函数技巧，相当于增加了模型的复杂度，容易过拟合</p>
+<h3 id="Perspective-Five：对偶-拉格朗日乘子法"><a href="#Perspective-Five：对偶-拉格朗日乘子法" class="headerlink" title="Perspective Five：对偶+拉格朗日乘子法"></a>Perspective Five：对偶+拉格朗日乘子法</h3>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/28/lookup/" rel="next" title="Lookup additional data in Spark Streaming">
+                <i class="fa fa-chevron-left"></i> Lookup additional data in Spark Streaming
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Binary-Classification"><span class="nav-number">1.</span> <span class="nav-text">Binary Classification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Loss-Function"><span class="nav-number">2.</span> <span class="nav-text">Loss Function</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Square-Loss"><span class="nav-number">2.1.</span> <span class="nav-text">Square Loss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sigmoid-Square-Loss"><span class="nav-number">2.2.</span> <span class="nav-text">Sigmoid + Square Loss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sigmoid-Cross-Entropy"><span class="nav-number">2.3.</span> <span class="nav-text">Sigmoid + Cross Entropy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hinge-Loss"><span class="nav-number">2.4.</span> <span class="nav-text">Hinge Loss</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linear-SVM"><span class="nav-number">3.</span> <span class="nav-text">Linear SVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Perspective-One：梯度下降优化损失"><span class="nav-number">3.1.</span> <span class="nav-text">Perspective One：梯度下降优化损失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Persepective-Two：从松弛变量的角度出发"><span class="nav-number">3.2.</span> <span class="nav-text">Persepective Two：从松弛变量的角度出发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Perspective-Three：对偶形式Dual-Representation"><span class="nav-number">3.3.</span> <span class="nav-text">Perspective Three：对偶形式Dual Representation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Perspective-Four：核化技巧Kernel-Trick"><span class="nav-number">3.4.</span> <span class="nav-text">Perspective Four：核化技巧Kernel Trick</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Radial-Basis-Function-Kernel"><span class="nav-number">3.4.1.</span> <span class="nav-text">Radial Basis Function Kernel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sigmoid-Kernel"><span class="nav-number">3.4.2.</span> <span class="nav-text">Sigmoid Kernel</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Perspective-Five：对偶-拉格朗日乘子法"><span class="nav-number">3.5.</span> <span class="nav-text">Perspective Five：对偶+拉格朗日乘子法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
