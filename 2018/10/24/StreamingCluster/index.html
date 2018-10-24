@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="机器学习," />
 
 
 
@@ -79,13 +79,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Yeeex">
-<meta property="og:url" content="https://yeeex.gitee.io/index.html">
+<meta name="description" content="流式聚类算法的统一框架流式聚类算法，在线阶段可以分为：寻找归属，模型更新，模型检测三个步骤 模型$Q = \lbrace q_1,q_2,q_3…,q_n\rbrace$ 寻找归属寻找归属阶段有两个计算任务，一是找到离数据最近的归属，二是判断数据点是否为离群点 度量指标：距离具体计算方式有两个： （1）欧式距离: 数据点与模型中现有的每个数据归属进行计算，找到距离最近的归属，得到$(q_i,x_i">
+<meta name="keywords" content="机器学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="StreamingCluster">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/10/24/StreamingCluster/index.html">
 <meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="流式聚类算法的统一框架流式聚类算法，在线阶段可以分为：寻找归属，模型更新，模型检测三个步骤 模型$Q = \lbrace q_1,q_2,q_3…,q_n\rbrace$ 寻找归属寻找归属阶段有两个计算任务，一是找到离数据最近的归属，二是判断数据点是否为离群点 度量指标：距离具体计算方式有两个： （1）欧式距离: 数据点与模型中现有的每个数据归属进行计算，找到距离最近的归属，得到$(q_i,x_i">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-10-24T09:02:58.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Yeeex">
+<meta name="twitter:title" content="StreamingCluster">
+<meta name="twitter:description" content="流式聚类算法的统一框架流式聚类算法，在线阶段可以分为：寻找归属，模型更新，模型检测三个步骤 模型$Q = \lbrace q_1,q_2,q_3…,q_n\rbrace$ 寻找归属寻找归属阶段有两个计算任务，一是找到离数据最近的归属，二是判断数据点是否为离群点 度量指标：距离具体计算方式有两个： （1）欧式距离: 数据点与模型中现有的每个数据归属进行计算，找到距离最近的归属，得到$(q_i,x_i">
 
 
 
@@ -115,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://yeeex.gitee.io/"/>
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/10/24/StreamingCluster/"/>
 
 
 
 
 
-  <title>Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>StreamingCluster | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -140,8 +145,7 @@
     
   
 
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left 
-  page-home">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -234,9 +238,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -266,9 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/24/StreamingCluster/" itemprop="url">StreamingCluster</a></h1>
+          <h1 class="post-title" itemprop="name headline">StreamingCluster</h1>
         
 
         <div class="post-meta">
@@ -318,9 +320,7 @@
       
 
       
-        
-          
-            <h2 id="流式聚类算法的统一框架"><a href="#流式聚类算法的统一框架" class="headerlink" title="流式聚类算法的统一框架"></a>流式聚类算法的统一框架</h2><p>流式聚类算法，在线阶段可以分为：<strong>寻找归属，模型更新，模型检测</strong>三个步骤</p>
+        <h2 id="流式聚类算法的统一框架"><a href="#流式聚类算法的统一框架" class="headerlink" title="流式聚类算法的统一框架"></a>流式聚类算法的统一框架</h2><p>流式聚类算法，在线阶段可以分为：<strong>寻找归属，模型更新，模型检测</strong>三个步骤</p>
 <p>模型$Q = \lbrace q_1,q_2,q_3…,q_n\rbrace$</p>
 <h3 id="寻找归属"><a href="#寻找归属" class="headerlink" title="寻找归属"></a>寻找归属</h3><p>寻找归属阶段有两个计算任务，一是找到离数据最近的归属，二是判断数据点是否为离群点</p>
 <h4 id="度量指标：距离"><a href="#度量指标：距离" class="headerlink" title="度量指标：距离"></a><strong>度量指标：距离</strong></h4><p>具体计算方式有两个：</p>
@@ -587,8 +587,6 @@
 <p><strong>Grid Cluster</strong></p>
 <p>如果g中的每个inside grid是dense grid，而outside grid是dense grid或者transitional grid，则g是一个grid cluster</p>
 
-          
-        
       
     </div>
     
@@ -603,290 +601,36 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/10/23/Mining-Data-Stream-Techniques/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yeeex">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yeeex">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/23/Mining-Data-Stream-Techniques/" itemprop="url">Mining Data Stream Techniques</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-23T10:03:29+08:00">
-                2018-10-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
           
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
+      
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+      
       
       
 
       
-        
-          <p>数据流模型是一个带有时间戳的多维数据点集合$X^1,X^2…X^K$</p>
-<p>每一个数据点有d维$X_ i =(x_1,x_2,…,x_d)$，并且带有时间戳$t_i$</p>
-<p>对于流式数据处理的底层方法可以分为：</p>
-<p>（1）基于数据的技术：仅仅处理整个数据集上的小部分数据，或将数据转换成某种近似的小尺寸表示</p>
-<p>（2）基于任务的技术：将目标瞄准在时间和空间上更高效的解决方案</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/10/23/Mining-Data-Stream-Techniques/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/23/Mining-Data-Stream-Techniques/" rel="next" title="Mining Data Stream Techniques">
+                <i class="fa fa-chevron-left"></i> Mining Data Stream Techniques
+              </a>
+            
           </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
 
-    
+          <span class="post-nav-divider"></span>
 
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/10/14/SVM/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yeeex">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yeeex">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/14/SVM/" itemprop="url">SVM</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+          <div class="post-nav-prev post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-14T21:36:17+08:00">
-                2018-10-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <p>支持向量机SVM（Support Vector Machine）是一个（二）分类模型，主要特点有两个：</p>
-<p>（1）针对分类问题损失函数 loss funcion不方便求导优化参数的问题，SVM采用Hinge Loss</p>
-<p>（2）针对线性分类模型的分类局限性，SVM引入Kernel的方法进行特征变化，进而进行分类</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/10/14/SVM/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -896,465 +640,11 @@
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/09/28/lookup/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yeeex">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yeeex">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/28/lookup/" itemprop="url">Lookup additional data in Spark Streaming</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-28T09:43:13+08:00">
-                2018-09-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/大数据系统/" itemprop="url" rel="index">
-                    <span itemprop="name">大数据系统</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>在利用spark streaming处理流式数据时，有时会需要用到外部的数据，而不是dstream喂给程序的数据。</p>
-<p>本文主要想总结一下，spark streaming利用外部数据的几种方式：</p>
-<p>（1）广播📢Broadcast</p>
-<p>（2）mapParitions</p>
-<p>（3）mapParitions + connnection broadcast</p>
-<p>（4）stateful stream</p>
-<p>其中，stateful stream之前在research的时候用过mapWithState进行流状态的管理，就单独写了一篇。本文重点写前三种</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/09/28/lookup/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+    <div class="post-spread">
       
     </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/09/23/statefulstream/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yeeex">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yeeex">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/23/statefulstream/" itemprop="url">Stateful Stream</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-23T23:01:50+08:00">
-                2018-09-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/大数据系统/" itemprop="url" rel="index">
-                    <span itemprop="name">大数据系统</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>Spark Streaming提供了一套完整的状态管理机制，Spark Streaming会将dstream中的数据按batch interval 分成不同的rdd，再按block interval 分成不同的partition交给程序处理（如果使用kafka发送数据的话，partition的计算方式不同）；以word count 为例，我们总希望 本次计算中，能够直接用到之前数据的word count的计算结果，即“状态”，而这个“状态”信息是无法从数据流中读入的，需要一个外部的数据／变量等来保存</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/09/23/statefulstream/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/09/23/Transfer-Learning/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yeeex">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yeeex">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/23/Transfer-Learning/" itemprop="url">Transfer Learning</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-23T15:40:17+08:00">
-                2018-09-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>今天来写迁移学习 Transfer Learning</p>
-<p>迁移学习是指 训练数据的训练任务和真实的任务之间是没有直接相关性的</p>
-<p>比如，我们需要进行猫与狗的分类问题，但是我们现在的数据并不是猫🐱和狗🐶</p>
-<p><strong>Similar Domain，Different Tasks</strong></p>
-<p>（1）数据可能来自相同的分布，但是却是不同的任务：比如，数据是真实世界的大象🐘和老虎🐯</p>
-<p><strong>Different Domain，Similar Tasks</strong></p>
-<p>（2）数据可能是相同的任务，但是是不同的分布：比如，数据是漫画版的猫和狗</p>
-<p>现实世界中，无标记的数据很多，有标记的数据很少，我们可以用这些数据组合做无监督或者半监督学习；同样，对应任务的有标记数据不多，但是与任务不直接相关的数据很，我们可以用这些并不直接相关的数据做迁移学习</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/09/23/Transfer-Learning/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
-
 
 
           </div>
@@ -1362,6 +652,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -1382,8 +676,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -1443,6 +746,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#流式聚类算法的统一框架"><span class="nav-number">1.</span> <span class="nav-text">流式聚类算法的统一框架</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#寻找归属"><span class="nav-number">1.1.</span> <span class="nav-text">寻找归属</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#度量指标：距离"><span class="nav-number">1.1.1.</span> <span class="nav-text">度量指标：距离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#判断离群点："><span class="nav-number">1.1.2.</span> <span class="nav-text">判断离群点：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型更新"><span class="nav-number">1.2.</span> <span class="nav-text">模型更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型检测"><span class="nav-number">1.3.</span> <span class="nav-text">模型检测</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Clustream"><span class="nav-number"></span> <span class="nav-text">Clustream</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cluster-Feature-CF"><span class="nav-number">0.1.</span> <span class="nav-text">Cluster Feature CF</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Denstream"><span class="nav-number">1.</span> <span class="nav-text">Denstream</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据结构"><span class="nav-number">1.1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#core-micro-cluster"><span class="nav-number">1.1.1.</span> <span class="nav-text">core-micro-cluster</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#potential-c-micro-cluster"><span class="nav-number">1.1.2.</span> <span class="nav-text">potential c-micro-cluster</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#outlier-micro-cluster"><span class="nav-number">1.1.3.</span> <span class="nav-text">outlier micro-cluster</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#聚类过程"><span class="nav-number">1.2.</span> <span class="nav-text">聚类过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#在线部分"><span class="nav-number">1.2.1.</span> <span class="nav-text">在线部分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化"><span class="nav-number">1.2.2.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#离线部分"><span class="nav-number">1.2.3.</span> <span class="nav-text">离线部分</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ClusTree"><span class="nav-number">2.</span> <span class="nav-text">ClusTree</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据结构-1"><span class="nav-number">2.1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#插入操作"><span class="nav-number">2.1.1.</span> <span class="nav-text">插入操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分裂操作"><span class="nav-number">2.1.2.</span> <span class="nav-text">分裂操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#聚类过程-1"><span class="nav-number">2.2.</span> <span class="nav-text">聚类过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#在线部分-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">在线部分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#离线部分-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">离线部分</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#D-stream"><span class="nav-number">3.</span> <span class="nav-text">D-stream</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据结构-2"><span class="nav-number">3.1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Grid-Vector"><span class="nav-number">3.1.1.</span> <span class="nav-text">Grid Vector</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Grid-Density"><span class="nav-number">3.1.2.</span> <span class="nav-text">Grid Density</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dense-Grid"><span class="nav-number">3.1.3.</span> <span class="nav-text">Dense Grid</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sparse-Grid"><span class="nav-number">3.1.4.</span> <span class="nav-text">Sparse Grid</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transitional-Grid"><span class="nav-number">3.1.5.</span> <span class="nav-text">Transitional Grid</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#聚类过程-2"><span class="nav-number">3.2.</span> <span class="nav-text">聚类过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#在线过程"><span class="nav-number">3.2.1.</span> <span class="nav-text">在线过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模型检测-1"><span class="nav-number">3.2.2.</span> <span class="nav-text">模型检测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#离线过程"><span class="nav-number">3.2.3.</span> <span class="nav-text">离线过程</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1576,6 +895,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

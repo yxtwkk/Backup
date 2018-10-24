@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="机器学习," />
 
 
 
@@ -79,17 +79,18 @@
 
 
 
-<meta name="description" content="机器学习问题是，根据实际需求，设计训练函数集合，通过一定的方法，找到一个最优的函数，即可以分为三个步骤： （1）定义函数集合 （2）确定衡量函数/模型好坏的标准（最常见的就是loss funcion + regularization 即，损失函数+正则化） （3）根据确定的标准，从函数集合中选择最优的函数">
+<meta name="description" content="数据流模型是一个带有时间戳的多维数据点集合$X^1,X^2…X^K$ 每一个数据点有d维$X_ i =(x_1,x_2,…,x_d)$，并且带有时间戳$t_i$ 对于流式数据处理的底层方法可以分为： （1）基于数据的技术：仅仅处理整个数据集上的小部分数据，或将数据转换成某种近似的小尺寸表示 （2）基于任务的技术：将目标瞄准在时间和空间上更高效的解决方案">
+<meta name="keywords" content="机器学习">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Regression">
-<meta property="og:url" content="https://yeeex.gitee.io/2018/05/22/回归Regression/index.html">
+<meta property="og:title" content="Mining Data Stream Techniques">
+<meta property="og:url" content="https://yeeex.gitee.io/2018/10/23/Mining-Data-Stream-Techniques/index.html">
 <meta property="og:site_name" content="Yeeex">
-<meta property="og:description" content="机器学习问题是，根据实际需求，设计训练函数集合，通过一定的方法，找到一个最优的函数，即可以分为三个步骤： （1）定义函数集合 （2）确定衡量函数/模型好坏的标准（最常见的就是loss funcion + regularization 即，损失函数+正则化） （3）根据确定的标准，从函数集合中选择最优的函数">
+<meta property="og:description" content="数据流模型是一个带有时间戳的多维数据点集合$X^1,X^2…X^K$ 每一个数据点有d维$X_ i =(x_1,x_2,…,x_d)$，并且带有时间戳$t_i$ 对于流式数据处理的底层方法可以分为： （1）基于数据的技术：仅仅处理整个数据集上的小部分数据，或将数据转换成某种近似的小尺寸表示 （2）基于任务的技术：将目标瞄准在时间和空间上更高效的解决方案">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-08T14:32:32.000Z">
+<meta property="og:updated_time" content="2018-10-23T15:23:06.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Regression">
-<meta name="twitter:description" content="机器学习问题是，根据实际需求，设计训练函数集合，通过一定的方法，找到一个最优的函数，即可以分为三个步骤： （1）定义函数集合 （2）确定衡量函数/模型好坏的标准（最常见的就是loss funcion + regularization 即，损失函数+正则化） （3）根据确定的标准，从函数集合中选择最优的函数">
+<meta name="twitter:title" content="Mining Data Stream Techniques">
+<meta name="twitter:description" content="数据流模型是一个带有时间戳的多维数据点集合$X^1,X^2…X^K$ 每一个数据点有d维$X_ i =(x_1,x_2,…,x_d)$，并且带有时间戳$t_i$ 对于流式数据处理的底层方法可以分为： （1）基于数据的技术：仅仅处理整个数据集上的小部分数据，或将数据转换成某种近似的小尺寸表示 （2）基于任务的技术：将目标瞄准在时间和空间上更高效的解决方案">
 
 
 
@@ -119,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://yeeex.gitee.io/2018/05/22/回归Regression/"/>
+  <link rel="canonical" href="https://yeeex.gitee.io/2018/10/23/Mining-Data-Stream-Techniques/"/>
 
 
 
 
 
-  <title>Regression | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>Mining Data Stream Techniques | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -252,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/05/22/回归Regression/">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/10/23/Mining-Data-Stream-Techniques/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yeeex">
@@ -269,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Regression</h1>
+          <h1 class="post-title" itemprop="name headline">Mining Data Stream Techniques</h1>
         
 
         <div class="post-meta">
@@ -281,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-22T21:22:11+08:00">
-                2018-05-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-23T10:03:29+08:00">
+                2018-10-23
               </time>
             
 
@@ -291,28 +292,6 @@
             
           </span>
 
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -341,68 +320,34 @@
       
 
       
-        <p>机器学习问题是，根据实际需求，设计训练函数集合，通过一定的方法，找到一个最优的函数，即可以分为三个步骤：</p>
-<p>（1）定义函数集合</p>
-<p>（2）确定衡量函数/模型好坏的标准（最常见的就是loss funcion + regularization 即，损失函数+正则化）</p>
-<p>（3）根据确定的标准，从函数集合中选择最优的函数</p>
+        <p>数据流模型是一个带有时间戳的多维数据点集合$X^1,X^2…X^K$</p>
+<p>每一个数据点有d维$X_ i =(x_1,x_2,…,x_d)$，并且带有时间戳$t_i$</p>
+<p>对于流式数据处理的底层方法可以分为：</p>
+<p>（1）基于数据的技术：仅仅处理整个数据集上的小部分数据，或将数据转换成某种近似的小尺寸表示</p>
+<p>（2）基于任务的技术：将目标瞄准在时间和空间上更高效的解决方案</p>
 <a id="more"></a>
-<p>根据不同的需求，我们可以将机器学习的任务分为三类：</p>
-<p>（1）回归问题 regeression 即，最后输出的是数值</p>
-<p>（2）分类问题 classification 即，最后输出的是样本类别</p>
-<p>（3）结构化学习 Structured learning 即，最后输出的是结构化的结果（输出的结果较复杂，比如语音辨识或者机器翻译等）</p>
-<p>根据不同的场景，可以将机器学习分为：</p>
-<p>（1）监督学习 Supervised Learning</p>
-<p>（2）无监督学习 Unsupervised Learning</p>
-<p>（3）半监督学习 Semi-supervised learning</p>
-<p>（4）迁移学习 Transfer Learning：训练样本与目标任务不相关（训练样本可以是有标记的，也可以是无标记的）</p>
-<p>（5）强化学习 Reinforcement Learning</p>
-<p>💡强化学习和监督学习的区别：监督学习会告诉模型，每一个训练样本的正确标签/输出；强化学习不会告诉模型正确的输出应该是什么，只会告诉模型，如果按照这样行为去做，最终会得多少分（即，奖励机制）</p>
-<hr>
-<h3 id="Regression"><a href="#Regression" class="headerlink" title="Regression"></a>Regression</h3><p><strong>回归问题</strong></p>
-<p>（1）定义函数集合，即设计模型：需要利用先验知识来确定模型：<script type="math/tex">y=wx+b</script>  这里<script type="math/tex">w</script> <script type="math/tex">b</script> <script type="math/tex">x</script> 都是向量，可以有多维</p>
-<p>（2）确定衡量函数/模型好坏的标准：平方损失函数=&gt;模型优化采用梯度下降Gradient Descent方法</p>
-<p>（3）采用梯度下降的方法优化模型，找到损失函数最小的参数$w$ 和$b$</p>
-<h3 id="Gradient-Descent"><a href="#Gradient-Descent" class="headerlink" title="Gradient Descent"></a>Gradient Descent</h3><p><strong>梯度下降</strong></p>
-<p>我就是这里被老师圈粉的 哈哈！梯度下降和偏差方差那部分讲的真的很棒！</p>
-<p>从函数的角度，如果此刻在某一点（x,y）函数的梯度为负，则增加x，会使得y变小；反之，如果这一点函数的梯度为正，则增加x，会使得y变大</p>
-<p>对于平方损失函数：</p>
-<script type="math/tex; mode=display">w^{*},b^{*} = arg{min_{w,b}L(w,b)} = arg{min_{w,b}\sum_{n=1}^{N}(\hat{y}^n-(b+w*x_{i}) )^2}</script><p>而为了达到<strong>最小化损失函数</strong>的目的，如果函数的梯度为负，则增大变量$w​$，如果函数梯度为正，则减小变量$w​$</p>
-<p>参数更新公式：</p>
-<p>$w^{i+1} = w^{i} - \eta \frac{\partial L}{\partial w}$</p>
-<p>$b^{i+1} = b^{i} - \eta \frac{\partial L}{\partial b}$              $\eta&gt;0$</p>
-<p>（1）梯度下降中的初始化参数是随机的，初始化不同会得到不同的最优解</p>
-<p>（2）优化的目标是使得损失函数最小即为0，但是实际操作中，当损失函数优化到一个较小的值时，就视为收敛</p>
-<p>（3）在梯度下降更新参数时，不会保证每次参数更新以后，损失函数会更小</p>
-<h3 id="Generalization"><a href="#Generalization" class="headerlink" title="Generalization"></a>Generalization</h3><p><strong>模型泛化能力</strong></p>
-<p>（1）模型是否是线性的，取决于参数对于输出是否是线性的，即$w$ </p>
-<p>（2）模型泛化能力是指训练得到的模型，在测试集合上的误差，误差越大，泛化能力越差</p>
-<p>（3）越复杂的函数，其实包含了简单的函数，所以函数模型越复杂，训练误差会越低：</p>
-<script type="math/tex; mode=display">
-y_1 = \vec{b} +\vec{w _{1}}*\vec x + \vec w _{2}* \vec x^2</script><script type="math/tex; mode=display">
-y_2 = \vec{b} +\vec{w _{1}}*\vec x</script><p>函数y1的函数空间包含了函数y2，只需要令$\vec w _{2}$为0向量就可以</p>
-<p>所以，在函数y2上可以达到的最小训练误差，在函数y1上也可以达到</p>
-<p>（4）过拟合问题</p>
-<p>过拟合是指在训练样本上达到很小的训练误差，但是在测试样本上有很大的测试误差</p>
-<p>解决过拟合的几种方法：</p>
-<p>a. 收集更多的训练数据进行训练</p>
-<p>b. 重新设计模型，可能存在一些hidden factor隐藏因素是最初没有考虑到的</p>
-<p>c. 正则化Regularization：对于loss functin增加正则化项</p>
-<script type="math/tex; mode=display">L ={\sum_{n=1}^{N}(\hat{y}^n-(b+w*x_{i}) )^2} + \lambda \sum (w_{i})^2</script><p>正则化项即所有参数的平方和，其中$\lambda$是正则化项的权重</p>
-<p>$\lambda$越大，则最后得到的模型越平滑，当然，对应的训练误差也会越大</p>
-<p>对于模型参数w，其表征的函数平滑程度，w越小，函数越平滑</p>
-<p>（所谓平滑的意思就是，<script type="math/tex">y+\sum w _{i} \bigtriangleup x _{i} = b + \sum w _{i}(x _{i} + \bigtriangleup x _{i})</script>，<script type="math/tex">\sum w _{i} \bigtriangleup x _{i}</script> x的变化导致y的变化小）</p>
-<p>💡我们这里其实假设，smooth的函数可能是更正确的</p>
-<p>💡对于偏置项 $b$ 是不需要正则化的，因为正则化的意义是平滑模型函数，但是偏置$b$对于模型的平滑无影响（b的大小只是改变模型的平行移动）</p>
-<hr>
-<p>课程里提到一个问题，我觉得还挺有意思的：</p>
-<p>设$x_{s} $ = species  of  x </p>
-<p>if $x_{s} $= p :   $y = \vec{b_{1}} +\vec{w _{1}}*\vec x $</p>
-<p>if $x_{s} ​$ = w:  $y = \vec{b_{2}} +\vec{w _{2}}*\vec x ​$</p>
-<p>if $x_{s} $ = c:   $y = \vec{b_{3}} +\vec{w _{3}}*\vec x $</p>
-<p>这样的模型是否是线性的？</p>
-<p>引入$\delta(x_{s} = p)$ 函数 ：$\delta(x_{s} = p)$ = 1 if $x_{s} $= p ，else   $\delta(x_{s} = p) = 0$</p>
-<p>则原模型可以改写为：</p>
-<script type="math/tex; mode=display">y = \vec{b_{1}} \delta(x_{s} ) +\delta(x_{s}) \vec{w _{1}}*\vec x  +  \delta(x_{s} ) \vec{b_{2}} +\delta(x_{s}) \vec{w _{2}}*\vec x + \delta(x_{s}) \vec{b_{3}} +\delta(x_{s})\vec{w _{3}}*\vec x</script>
+<h2 id="基于数据的技术"><a href="#基于数据的技术" class="headerlink" title="基于数据的技术"></a>基于数据的技术</h2><p><strong>Data-Based Techniques</strong></p>
+<h3 id="Sampling-抽样"><a href="#Sampling-抽样" class="headerlink" title="Sampling 抽样"></a>Sampling 抽样</h3><p>抽样的技术通过一定的概率决定一个数据元素是否被选中；采用抽样技术较大的挑战来自于如何才能采集到具有代表性的样本</p>
+<h4 id="Reservoir-Sampling"><a href="#Reservoir-Sampling" class="headerlink" title="Reservoir Sampling"></a>Reservoir Sampling</h4><p>水库抽样的技术维护一个“水库”用来存放抽样样本，水库的大小为k</p>
+<p>随着数据的流动，假设每个样本在数据流中的位置为i，每个样本有$\frac{k}{i}$的概率取代原有水库的样本；假设数据源的数据有n个，当i=n时，可以保证水库中存放的数据元素是通过均匀抽样得到，每个数字都是被均匀采样得到，采样概率是$\frac{k}{n}$</p>
+<p><strong>证明：</strong></p>
+<p>第i个元素以$\frac{k}{i}$的概率保存在水库中，第i+1个元素流入时，以$\frac{k}{i+1}$的概率替换水库中的元素，水库中之前存放的那个i元素以$\frac{1}{k}$的概率被选中，则第i个元素被替换掉的概率为$\frac{k}{i+1}·\frac{1}{k} = \frac{1}{i+1}$，则这个元素依然在水库中的概率为$1- \frac{1}{i+1}$</p>
+<p>同理，第i+2个元素流入时，第i个元素在水库中不被替换的概率为 $1-\frac{1}{i+2}$</p>
+<p>当第n个元素流入时，第i个元素在水库中的概率为 $\frac{i}{k}(1-\frac{1}{i+1})(1-\frac{1}{i+2})…(1-\frac{1}{n}) = \frac{k}{n}$</p>
+<h4 id="Min-Wise-Sampling"><a href="#Min-Wise-Sampling" class="headerlink" title="Min-Wise Sampling"></a>Min-Wise Sampling</h4><p>对于数据流中的每个数据，随机选择[0,1]中的一个数，并选中数据流中具有最小随机数的那个数据</p>
+<h4 id="Load-Shedding"><a href="#Load-Shedding" class="headerlink" title="Load Shedding"></a>Load Shedding</h4><p>load shedding技术是采样的一种，但是这种方式的主要功能是降低流速。当流入系统的数据超过系统可以处理的速度时，某一部分数据将被丢弃</p>
+<p>基于采样的技术可以帮助我们降低数据流入，但是流式数据处理的一个主要应用是监控数据的波动，但是基于抽样的技术会限制我们对数据波动的观测</p>
+<h3 id="Sketching-梗概"><a href="#Sketching-梗概" class="headerlink" title="Sketching 梗概"></a>Sketching 梗概</h3><p>梗概是一个奖数据流中的数据向量做一个随机投影的过程。在数据流处理中，通常采用PCA进行数据投影。梗概技术时对精度和存储空间折中的比较好的处理方法，但是同样需要考虑精度的问题</p>
+<h3 id="Synopsis-Data-Structure-大纲数据结构"><a href="#Synopsis-Data-Structure-大纲数据结构" class="headerlink" title="Synopsis Data Structure 大纲数据结构"></a>Synopsis Data Structure 大纲数据结构</h3><p>大纲数据结构通过采用数据概要的方式（data summarization），生成比当前数据流小的多的数据结构。数据大纲并不能总结出数据的所有特性，所以，大纲数据结果只能被用于近似计算</p>
+<h3 id="Data-Summaries-／-Aggregation"><a href="#Data-Summaries-／-Aggregation" class="headerlink" title="Data Summaries ／ Aggregation"></a>Data Summaries ／ Aggregation</h3><p>聚集运算／数据概要通过计算一些统计度量（平均数，方差等）来概括当前的数据流</p>
+<h2 id="基于任务的技术"><a href="#基于任务的技术" class="headerlink" title="基于任务的技术"></a>基于任务的技术</h2><p><strong>Task-based Techniques</strong></p>
+<h3 id="Window-窗口技术"><a href="#Window-窗口技术" class="headerlink" title="Window 窗口技术"></a>Window 窗口技术</h3><h4 id="Landmark-Window-Model"><a href="#Landmark-Window-Model" class="headerlink" title="Landmark Window Model"></a>Landmark Window Model</h4><p>landmark window是将时间窗口的起始位置设置为landmark，并考虑从landmark到现在的所有数据</p>
+<h4 id="Sliding-Window-Model"><a href="#Sliding-Window-Model" class="headerlink" title="Sliding Window Model"></a>Sliding Window Model</h4><p>滑动窗口模型固定窗口的大小为$w$，以及当前的时间t，每个滑动窗口保留的是 从当前时间t到之前某一点（与窗口大小有关，即为 t-w+1）的所有数据</p>
+<p>滑动窗口基于的事实是“用户对于最近的数据更感兴趣”</p>
+<h4 id="Damped-Window-Model"><a href="#Damped-Window-Model" class="headerlink" title="Damped Window Model"></a>Damped Window Model</h4><p>时间衰减窗口模型，将数据的权重与时间戳关联，随着时间的推移，数据的权重会下降；即 数据在经过计算之前，先经过衰减函数的作用，保证越旧的数据对于计算结果的影响越小。</p>
+<p>常见的权重衰减函数为 $f(t) = 2^{(-\lambda(t_c-t_o))}$</p>
+<p>其中，$\lambda$为衰减因子；$t_c$是当前的时间戳；$t_o$是初始创建的时间戳</p>
+<h4 id="Titled-Window-Model"><a href="#Titled-Window-Model" class="headerlink" title="Titled Window Model"></a>Titled Window Model</h4>
       
     </div>
     
@@ -417,6 +362,12 @@ y_2 = \vec{b} +\vec{w _{1}}*\vec x</script><p>函数y1的函数空间包含了�
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+        </div>
+      
 
       
       
@@ -426,14 +377,18 @@ y_2 = \vec{b} +\vec{w _{1}}*\vec x</script><p>函数y1的函数空间包含了�
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/10/14/SVM/" rel="next" title="SVM">
+                <i class="fa fa-chevron-left"></i> SVM
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/05/23/偏差方差分解/" rel="prev" title="Bias-Variance Decompostion">
-                Bias-Variance Decompostion <i class="fa fa-chevron-right"></i>
+              <a href="/2018/10/24/StreamingCluster/" rel="prev" title="StreamingCluster">
+                StreamingCluster <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -566,7 +521,7 @@ y_2 = \vec{b} +\vec{w _{1}}*\vec x</script><p>函数y1的函数空间包含了�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Regression"><span class="nav-number">1.</span> <span class="nav-text">Regression</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gradient-Descent"><span class="nav-number">2.</span> <span class="nav-text">Gradient Descent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generalization"><span class="nav-number">3.</span> <span class="nav-text">Generalization</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于数据的技术"><span class="nav-number">1.</span> <span class="nav-text">基于数据的技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sampling-抽样"><span class="nav-number">1.1.</span> <span class="nav-text">Sampling 抽样</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Reservoir-Sampling"><span class="nav-number">1.1.1.</span> <span class="nav-text">Reservoir Sampling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Min-Wise-Sampling"><span class="nav-number">1.1.2.</span> <span class="nav-text">Min-Wise Sampling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Load-Shedding"><span class="nav-number">1.1.3.</span> <span class="nav-text">Load Shedding</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sketching-梗概"><span class="nav-number">1.2.</span> <span class="nav-text">Sketching 梗概</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Synopsis-Data-Structure-大纲数据结构"><span class="nav-number">1.3.</span> <span class="nav-text">Synopsis Data Structure 大纲数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Data-Summaries-／-Aggregation"><span class="nav-number">1.4.</span> <span class="nav-text">Data Summaries ／ Aggregation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于任务的技术"><span class="nav-number">2.</span> <span class="nav-text">基于任务的技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Window-窗口技术"><span class="nav-number">2.1.</span> <span class="nav-text">Window 窗口技术</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Landmark-Window-Model"><span class="nav-number">2.1.1.</span> <span class="nav-text">Landmark Window Model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sliding-Window-Model"><span class="nav-number">2.1.2.</span> <span class="nav-text">Sliding Window Model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Damped-Window-Model"><span class="nav-number">2.1.3.</span> <span class="nav-text">Damped Window Model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Titled-Window-Model"><span class="nav-number">2.1.4.</span> <span class="nav-text">Titled Window Model</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
