@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/27/Ensemble/e1.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/27/Ensemble/e2.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/27/Ensemble/e3.png">
-<meta property="og:updated_time" content="2018-11-03T07:56:34.000Z">
+<meta property="og:updated_time" content="2018-11-03T08:00:50.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ensemble">
 <meta name="twitter:description" content="集成学习是机器学习中一种常用的手段👋 本文介绍三种常用的集成学习学习方法，分别是Bagging/Boosting/Stacking 集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分 集成学习需要将这些不同的模型通过合适的方式整合到一起，得到一个更强的模型">
@@ -378,7 +378,7 @@
 <p><strong>Bagging的方式是用在同质的基学习器中</strong></p>
 <p>对于复杂的模型来说，每个模型的偏差较小，但是模型会带来较大的偏差；一个改进的方式就是，将这些复杂的模型集合起来，求出平均，以此降低方差；即，目标是$E[f^*] = \hat f$ </p>
 <blockquote>
-<p>$f^{\*}$: 每一个复杂的模型按权重集合起来，即 $f^{\*} = \sum_i^m \gamma_if_i$ </p>
+<p>$f^{<em>}$: 每一个复杂的模型按权重集合起来，即 $f^{</em>} = \sum_i^m \gamma_if_i$ </p>
 </blockquote>
 <p>相当于，我们将训练数据分成n份，每一份单独训练一个复杂的模型，每个复杂的模型都可以很好的拟合自己的训练样本，但是每个模型之间的差异很大，如果将这些模型求平均，得到的就是非常贴合的模型</p>
 <h3 id="BootStrap-Sampling"><a href="#BootStrap-Sampling" class="headerlink" title="BootStrap Sampling"></a>BootStrap Sampling</h3><p>对训练样本采用有放回抽样，构造不同的训练样本集合，单独训练每一个复杂的模型。</p>
@@ -449,7 +449,7 @@
 <p>=&gt; 分子是$f_1$分类错误的样本，其权重换成$u_2^n = u_1^n · d_1$   即 $\sum_n u_2^n \delta(f_1(x^n)\ne\hat y^n) = \sum_{f_1(x^n)\ne\hat y^n} u_1^nd_1$ </p>
 <p>=&gt; 分母是$Z_2 =\sum_{f_1(x^n)\ne\hat y^n} u_1^nd_1 + \sum_{f_1(x^n)=\hat y^n} u_1^n/d_1$</p>
 <p>$\frac{\sum_n\;u_2^n\; \delta(f_1(x^n)\ne\hat y^n)}{Z_2} = 0.5$   =&gt; $\frac{Z_2}{\sum_n\; u_2^n\; \delta(f_1(x^n)\;\ne\;\hat y^n)} = 2$  =&gt; $\frac{\sum_{f_1(x^n)\;\ne\hat y^n}\; u_1^nd_1 + \sum_{f_1(x^n)\;=\hat y^n} \; u_1^n/d_1}{\sum_{f_1(x^n)\;\ne\;\hat y^n}\; u_1^n d_1} = 2$  </p>
-<p>=&gt; $\frac{\sum_{f_1(x^n)\ne\hat y^n}\; u_1^nd_1}{\sum_{f_1(x^n)\ne\hat y^n}\; u_1^n d_1}  +\frac{ \sum_{f_1(x^n)=\hat y^n}\; u_1^n/d_1}{\sum_{f_1(x^n)\ne\hat y^n} \;u_1^n d_1} = 2 = 1 + \frac{ \sum_{f_1(x^n)=\hat y^n} u_1^n/d_1}{\sum_{f_1(x^n)\ne\hat y^n} u_1^n d_1}$</p>
+<p>=&gt; $\frac{\sum_{f_1(x^n)\ne\hat y^n}\; u_1^nd_1}{\sum_{f_1(x^n)\ne\hat y^n}\; u_1^n d_1}  +\frac{ \sum_{f_1(x^n)=\hat y^n}\; u_1^n/d_1}{\sum_{f_1(x^n)\ne\hat y^n} \;u_1^n d_1} = 2 = 1 + \frac{ \sum_{f_1(x^n)=\hat y^n}\; u_1^n/d_1}{\sum_{f_1(x^n)\ne\hat y^n} \;u_1^n d_1}$</p>
 <p>因此，$\sum_{f_1(x^n)=\hat y^n} u_1^n/d_1= \sum_{f_1(x^n)\ne\hat y^n} u_1^n d_1$</p>
 <p>$\frac{1}{d_1}\sum_{f_1(x^n)=\hat y^n} u_1^n  = d_1 \sum_{f_1(x^n)\ne\hat y^n} u_1^n$  =&gt; $\frac{1}{d_1}Z_1(1-\epsilon_1) = d_1Z_1\epsilon_1$</p>
 <p>$\sum_{f_1(x^n)=\hat y^n} u_1^n = Z_1(1-\epsilon_1) $</p>
