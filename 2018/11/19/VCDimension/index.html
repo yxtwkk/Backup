@@ -82,7 +82,7 @@
 <meta name="description" content="之前介绍过，在假设空间有限的情况下，我们可以通过hoffeding不等式证明，在假设空间固定且资料量足够多的情况下，in-sample error和out-of-sample error相差很大的概率很小 💡这里面存在一个假设，即 训练集和测试集来自同一个分布 如果演算法根据训练数据在假设空间中找到一个$E_{in}(g) \approx 0$，则根据PAC理论，可以保证在$E_{out}(g)">
 <meta name="keywords" content="机器学习">
 <meta property="og:type" content="article">
-<meta property="og:title" content="VC Dimension">
+<meta property="og:title" content="VC Dimension I">
 <meta property="og:url" content="https://yeeex.gitee.io/2018/11/19/VCDimension/index.html">
 <meta property="og:site_name" content="Yeeex">
 <meta property="og:description" content="之前介绍过，在假设空间有限的情况下，我们可以通过hoffeding不等式证明，在假设空间固定且资料量足够多的情况下，in-sample error和out-of-sample error相差很大的概率很小 💡这里面存在一个假设，即 训练集和测试集来自同一个分布 如果演算法根据训练数据在假设空间中找到一个$E_{in}(g) \approx 0$，则根据PAC理论，可以保证在$E_{out}(g)">
@@ -97,9 +97,9 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v8.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v9.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v10.png">
-<meta property="og:updated_time" content="2018-12-04T14:22:40.000Z">
+<meta property="og:updated_time" content="2019-01-23T01:31:04.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="VC Dimension">
+<meta name="twitter:title" content="VC Dimension I">
 <meta name="twitter:description" content="之前介绍过，在假设空间有限的情况下，我们可以通过hoffeding不等式证明，在假设空间固定且资料量足够多的情况下，in-sample error和out-of-sample error相差很大的概率很小 💡这里面存在一个假设，即 训练集和测试集来自同一个分布 如果演算法根据训练数据在假设空间中找到一个$E_{in}(g) \approx 0$，则根据PAC理论，可以保证在$E_{out}(g)">
 <meta name="twitter:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v1.png">
 
@@ -137,7 +137,7 @@
 
 
 
-  <title>VC Dimension | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>VC Dimension I | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -281,7 +281,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">VC Dimension</h1>
+          <h1 class="post-title" itemprop="name headline">VC Dimension I</h1>
         
 
         <div class="post-meta">
@@ -387,7 +387,7 @@
 <p>即，对于输入的N个点，<strong>最多</strong>共有多少种可能的分类假设 =&gt; upper bond 是$2^N$</p>
 <p>💡结合前面的讨论，这个成长后函数即为 PLA中的effective number line</p>
 <h4 id="Positive-Rays"><a href="#Positive-Rays" class="headerlink" title="Positive Rays"></a>Positive Rays</h4><p>输入样本空间 $X = R$ 是一维实数</p>
-<p>假设空间H中的每个假设h，$h(x) = sign(x-a)$ </p>
+<p> 假设空间H中的每个假设h，$h(x) = sign(x-a)$ </p>
 <p>即，当x&gt;a时，h(x) = 1；当x&lt;a时，h(x) = -1</p>
 <p>💡positve ray是 positve half的1D perceptrons （永远只有正向的那个方向为正）</p>
 <p><img src="/2018/11/19/VCDimension/v6.png" width="390px"></p>
@@ -471,8 +471,6 @@
 <p>我们通过成长函数$m_H(N)$确定了在给定N个训练样本时，限定了假设空间中训练函数的最大类别数</p>
 <p>但是，这个不合理的地方在于，在真实空间中，数据点是无穷多个的，而不是限定的N个数据点，所以，我们限定的$m_H(N)$个分类函数，只是在训练样本上有效，在测试空间中，真实的分类函数远比这个数目大。</p>
 <p>更具体一点，即$E_{in}$是有限个的，但是$E_{out}$是无限个的，无法合理使用union-bound，所以，我们需要替换$E_{out}$</p>
-<p>（1）当数据量够大时，</p>
-<p>但是当数据量N足够大时，$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2·2m_H(2N)·exp(-2\frac{1}{16}\epsilon^2N)$</p>
 
       
     </div>
@@ -663,7 +661,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
