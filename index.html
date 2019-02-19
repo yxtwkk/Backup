@@ -249,7 +249,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/01/23/VC-Dimesnion-II/">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/01/23/VC-Dimension-II/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yeeex">
@@ -268,7 +268,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/01/23/VC-Dimesnion-II/" itemprop="url">VC Dimesnion II</a></h1>
+                <a class="post-title-link" href="/2019/01/23/VC-Dimension-II/" itemprop="url">VC Dimension</a></h1>
         
 
         <div class="post-meta">
@@ -290,6 +290,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -319,9 +341,35 @@
 
       
         
-          
-            
-          
+          <p>为了写论文，跑了很久的实验。VC Bound写完就没在关注博客。</p>
+<p>VC Bound说明了$E_{in} \approx E_{out}$这个约等式成立的条件：</p>
+<p>（1） 假设空间的成长函数存在一个上界</p>
+<p>（2）训练样本N的数目足够大</p>
+<p>VC Bound的存在说明，如果机器学习可以really learn something，需要保证以下三点：</p>
+<p>（1）假设空间的VC Dimension有限，这样才会存在VC Bound</p>
+<p>（2）训练样本数目足够大（后面会讨论，$N \approx 10d_{VC}$）</p>
+<p>（3）存在一个合适的算法，可以从假设空间中，选择一个in-sample error最小的假设</p>
+<p>对于假设空间H，现在存在N个训练样本，其break point = k，则：当$N \geq 2 \;\;\;\; k \geq 3$时，成长函数的上届可以再进行放缩</p>
+<p>$m_H(N) \leq B(N,K) =\sum_{i=0}^{k-1}\binom{N}{i} \leq N^{k-1}$  </p>
+<p>💡当k&lt;3时，可以改用其他的上界对成长函数的上界进行放大</p>
+<p><img src="/2019/01/23/VC-Dimension-II/v1.png" width="500px"></p>
+<p>因此，对于任意一个假设空间H，给定训练样本D，任意一个假设 $g=A(D) \in H $不好的概率：</p>
+<p>$P_D[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] $</p>
+<p>$\leq P_D[\exists h \in H s.t. |E_{in}(g)-E_ {out}|&gt; \epsilon ]$</p>
+<p>$\leq 4m_H(2N)exp(-\frac{1}{8}\epsilon^2N)$</p>
+<p>$\leq 4(2N)^{k-1}exp(-\frac{1}{8}\epsilon^2 N)$ </p>
+<p>第一个不等式是推导VC Bound中用到的概率性质 P(A or B) = P(A) + P(B) -P(AB)，发生事件A或者事件B的概率，是发生事件A的概率+发生事件B的概率-发生事件A和B的概率</p>
+<p>第二个不等式是VC Bound的定义，当N足够大的时候，存在这个不等式</p>
+<p>第三个不等式是当所选的假设空间存在break point的时候，不等式成立</p>
+<p>以上条件可以保证 $E_{in} \approx E_{out} $</p>
+<p>当有一个足够优秀的演算法A，可以从假设空间H选择一个合适的假设，保证$E_{in}$很小时，则propbably learned，即PAC probably approximately correct learning</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/01/23/VC-Dimension-II/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -387,7 +435,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/11/19/VCDimension/" itemprop="url">VC Dimension I</a></h1>
+                <a class="post-title-link" href="/2018/11/19/VCDimension/" itemprop="url">VC Bound</a></h1>
         
 
         <div class="post-meta">
@@ -409,6 +457,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -445,7 +515,7 @@
 <p>$E_{in}(g) \approx 0$比较容易做到，模型／假设记住所有的训练样本即可，所以，我们需要讨论两个问题：</p>
 <p>（1）虽然在PAC理论下，$E_{in}(g) \approx E_{out}(g)$，但是实际情况下，二者是否真的接近</p>
 <p>（2）我们能不能让$E_{in}(g)$尽可能的小</p>
-<h2 id="Trad-off-On-M"><a href="#Trad-off-On-M" class="headerlink" title="Trad-off On M"></a>Trad-off On M</h2><p>M是指假设空间中假设的个数，即$|H|$</p>
+<h2 id="Trad-off-On-M"><a href="#Trad-off-On-M" class="headerlink" title="Trad-off On M"></a>Trad-off On M</h2><p>M是指假设空间中假设的个数，即$|H|​$</p>
 <p>当M很小时（假设空间个数有限）：</p>
 <p>$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2Mexp(-2\epsilon^2N)$</p>
 <p>（1）根据PAC理论，$E_{in}(g) \approx E_{out}(g)$ 可以成立</p>
@@ -668,6 +738,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           

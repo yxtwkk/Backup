@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="为了写论文，跑了很久的实验。VC Bound写完就没在关注博客。 VC Bound说明了$E_{in} \approx E_{out}$这个约等式成立的条件： （1） 假设空间的成长函数存在一个上界 （2）训练样本N的数目足够大 VC Bound的存在说明，如果机器学习可以really learn something，需要保证以下三点： （1）假设空间的VC Dimension有限，这样才会存在V">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VC Dimension">
+<meta property="og:url" content="https://yeeex.gitee.io/2019/01/23/VC-Dimension-II/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="为了写论文，跑了很久的实验。VC Bound写完就没在关注博客。 VC Bound说明了$E_{in} \approx E_{out}$这个约等式成立的条件： （1） 假设空间的成长函数存在一个上界 （2）训练样本N的数目足够大 VC Bound的存在说明，如果机器学习可以really learn something，需要保证以下三点： （1）假设空间的VC Dimension有限，这样才会存在V">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/01/23/VC-Dimension-II/v1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/01/23/VC-Dimension-II/v2.png">
+<meta property="og:updated_time" content="2019-02-19T08:33:33.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VC Dimension">
+<meta name="twitter:description" content="为了写论文，跑了很久的实验。VC Bound写完就没在关注博客。 VC Bound说明了$E_{in} \approx E_{out}$这个约等式成立的条件： （1） 假设空间的成长函数存在一个上界 （2）训练样本N的数目足够大 VC Bound的存在说明，如果机器学习可以really learn something，需要保证以下三点： （1）假设空间的VC Dimension有限，这样才会存在V">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2019/01/23/VC-Dimension-II/v1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2019/01/23/VC-Dimension-II/"/>
+
+
+
+
+
+  <title>VC Dimension | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/01/23/VC-Dimension-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VC Dimension</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-23T09:32:34+08:00">
+                2019-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>为了写论文，跑了很久的实验。VC Bound写完就没在关注博客。</p>
+<p>VC Bound说明了$E_{in} \approx E_{out}$这个约等式成立的条件：</p>
+<p>（1） 假设空间的成长函数存在一个上界</p>
+<p>（2）训练样本N的数目足够大</p>
+<p>VC Bound的存在说明，如果机器学习可以really learn something，需要保证以下三点：</p>
+<p>（1）假设空间的VC Dimension有限，这样才会存在VC Bound</p>
+<p>（2）训练样本数目足够大（后面会讨论，$N \approx 10d_{VC}$）</p>
+<p>（3）存在一个合适的算法，可以从假设空间中，选择一个in-sample error最小的假设</p>
+<p>对于假设空间H，现在存在N个训练样本，其break point = k，则：当$N \geq 2 \;\;\;\; k \geq 3$时，成长函数的上届可以再进行放缩</p>
+<p>$m_H(N) \leq B(N,K) =\sum_{i=0}^{k-1}\binom{N}{i} \leq N^{k-1}$  </p>
+<p>💡当k&lt;3时，可以改用其他的上界对成长函数的上界进行放大</p>
+<p><img src="/2019/01/23/VC-Dimension-II/v1.png" width="500px"></p>
+<p>因此，对于任意一个假设空间H，给定训练样本D，任意一个假设 $g=A(D) \in H $不好的概率：</p>
+<p>$P_D[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] $</p>
+<p>$\leq P_D[\exists h \in H s.t. |E_{in}(g)-E_ {out}|&gt; \epsilon ]$</p>
+<p>$\leq 4m_H(2N)exp(-\frac{1}{8}\epsilon^2N)$</p>
+<p>$\leq 4(2N)^{k-1}exp(-\frac{1}{8}\epsilon^2 N)$ </p>
+<p>第一个不等式是推导VC Bound中用到的概率性质 P(A or B) = P(A) + P(B) -P(AB)，发生事件A或者事件B的概率，是发生事件A的概率+发生事件B的概率-发生事件A和B的概率</p>
+<p>第二个不等式是VC Bound的定义，当N足够大的时候，存在这个不等式</p>
+<p>第三个不等式是当所选的假设空间存在break point的时候，不等式成立</p>
+<p>以上条件可以保证 $E_{in} \approx E_{out} $</p>
+<p>当有一个足够优秀的演算法A，可以从假设空间H选择一个合适的假设，保证$E_{in}$很小时，则propbably learned，即PAC probably approximately correct learning</p>
+<a id="more"></a>
+<h2 id="VC-Dimension"><a href="#VC-Dimension" class="headerlink" title="VC Dimension"></a>VC Dimension</h2><p>VC Dimension 是针对每个假设空间的定义：</p>
+<p>$d_{vc}(H)$ = 假设空间可以满足的最大训练样本点数 N，保证 $m_H(N) = 2^N$</p>
+<p>（1）VC Dimesion代表的N个点是，假设空间H可以shatter的最多的点</p>
+<p>（2）$d_{vc}(H) = mini \;break\;point\;k-1$</p>
+<p>几点说明：</p>
+<p>（1）之前的介绍中强调过，当k是break point时，k+1，k+2都是break point</p>
+<p>当$N &lt;d_{vc}$时，表明假设空间H可以shatterN个点，可以shatter N个点的意思是，只需要shatter one set of N即可；shatter与否与数据点的类别标签无关，即假设空间可以满足，在N个数据点满足一种位置的情况下， 这N个点可以出现$2^N$种分类方式</p>
+<p>当$ K&gt;d_{vc}$时，表明k是假设空间的一个break point</p>
+<p>（2）当假设空间不存在break point的时候，则假设空间的VC Dimension无限大</p>
+<p>（3）当训练样本 $N \geq 2,d_{vc} \geq 2$时，$m_H(N) \leq N^{d_{vc}}$</p>
+<p>💡如果训练样本数目比VC Dimension大，即 训练样本数目 即为break point，则最大的dichotomy数目一定小于</p>
+<p>（4）一个好的假设空间是VC Dimension有限的</p>
+<p>（5）在进行VC Bound的推导过程中，我们没有考虑从假设空间选择假设的演算法，没有考虑训练样本服从的分布，没有考虑目标函数的具体形式；即 对于假设空间，其VC Dimension存在且有限，我们就可以PAC保证$E_{in} \approx E_{out}$</p>
+<p>当存在break point k时，成长函数$m_H(N) \leq \sum_{i=0}^{k-1}\binom{N}{i}$</p>
+<p>我们用VC Dimension表示，$m_H(N) \leq \sum_{i=0}^{d_{vc}}\binom{N}{i} \leq N^{d_{vc}}+1$</p>
+<h2 id="Recap-PLA"><a href="#Recap-PLA" class="headerlink" title="Recap PLA"></a>Recap PLA</h2><p>我们需要通过推导perceptron的VC Dimension来讨论VC Dimension的意义</p>
+<p>先上结论 $d_{vc} = d+1$ 其中，d是数据的维度</p>
+<p>我们需要从两个方面来证明这个VC Dimension</p>
+<p>（1）$d_{vc} \leq d+1$</p>
+<p>（2）$d_{vc} \geq d+1$</p>
+<h3 id="d-vc-geq-d-1"><a href="#d-vc-geq-d-1" class="headerlink" title="$d_{vc} \geq d+1$"></a>$d_{vc} \geq d+1$</h3><p>假设在d维空间中有d+1个数据，$X = \begin{bmatrix}<br>-X_1^T-\\<br>-X_2^T-\\<br>-X_3^T-\\<br>……\\<br>-X_{d+1}^T-<br>\end{bmatrix} = \begin{bmatrix}<br>1\;0\;0\;…\;0\\<br>1\;1\;0\;…\;0\\<br>1\;0\;1\;…\;0\\<br>1……….\;0\\<br>1\;0\;0\;…\;1<br>\end{bmatrix}$</p>
+<p>X是一个对角矩阵，是一个方阵，且X的行列式为1 =&gt; X 是可逆(invertible)的；</p>
+<p>因此，对于输入X而言，任意的dichotomy都可以被shatter：</p>
+<p>为了使得，$sign(Xw) = y$  =&gt; 令，$Xw=y$ =&gt; $w = X^{-1}y$</p>
+<p>因此，无论数据点是正标记还是负标记，都可以找到 对应的w</p>
+<p> 我们可以shatter d+1个点，证明，$d_{vc} \geq d+1$</p>
+<h3 id="d-vc-leq-d-1"><a href="#d-vc-leq-d-1" class="headerlink" title="$d_{vc} \leq d+1$"></a>$d_{vc} \leq d+1$</h3><p>证明VC Dimension 小于等于d+1，则需要证明假设空间不能shatter任意d+2个点</p>
+<p>如果我们此时有d+2个训练样本，则训练样本的数目大于维度数目（d+1），则任意一个训练样本$x_j$可以表示成其他样本的线性组合： $x_j = \sum_{i \neq j}a_ix_i$  并且 不是所有的$a_i$都等于0 （这个条件不是linear dependency的要求，因为，X的每一个行向量，第0维都是1）</p>
+<p>我们现在只关注对于$a_i \neq 0 $的数据点，对于这些数据点$x_i$，令$y_i = sign(a_i)$，并令$y_j = -1$，则：</p>
+<p>$x_j = \sum_{i \neq j}a_ix_i$ =&gt; $w^Tx_j = \sum_{x \neq j}a_iw^Tx_i$</p>
+<p>而$y_i = sign(w^Tx_i) = sign(a_i)$  =&gt; $w^Tx_i$ 和 $a_i$同号 =&gt; $a_iw^Tx_i &gt; 0$</p>
+<p>因此，$w^Tx_j = \sum_{x \neq j}a_iw^Tx_i &gt;0 $ 与$y_j = -1$矛盾</p>
+<p>故，perceptron不能shatter d+2个点</p>
+<p>💡相当于，前d+1个点决定了第d+2个数据点的正负标记</p>
+<p>💡如果一个矩阵，行数大于列数，则行向量是线性相关的</p>
+<p>根据上面的证明，我们接下来要讨论，VC Dimension的意义</p>
+<h2 id="Interpreting-VC-Dimension"><a href="#Interpreting-VC-Dimension" class="headerlink" title="Interpreting VC Dimension"></a>Interpreting VC Dimension</h2><p>对于perceptron而言，$d_{vc} = d+1$ 恰好是其参数的个数，这反应了VC Dimension的一个重要意义：</p>
+<p>（1）VC Dimension代表了假设空间的自由度</p>
+<p>VC Dimension近似等于模型可以修正的参数的个数，表示的有效的参数个数</p>
+<p>（2）VC Dimension明确了VC Inequality能够bound住的数据点个数</p>
+<p>根据之前VC Inequality的推导：$P[E_{in}(g)- E_{out}(g) &gt; \epsilon] \leq 4m_H(2n)exp(-\frac{1}{8}\epsilon^2N)$</p>
+<p>替换成VC Dimension，原有的inequality为 $P[E_{in}(g)- E_{out}(g) &gt; \epsilon] \leq 4(2N)^{d_{VC}}exp(-\frac{1}{8}\epsilon^2N)$</p>
+<p>设$\delta = 4(2N)^{d_{vc}}exp(-\frac{1}{8}\epsilon^2N) $</p>
+<p>$\frac{\delta}{4(2N)^{d_{VC}}} = exp(-\frac{1}{8}\epsilon^2N)$</p>
+<p>$ln(\frac{4(2N)^{d_{VC}}}{\delta}) = \frac{1}{8}\epsilon^2N$</p>
+<p>因此，$\epsilon = \sqrt{\frac{8}{N}ln(\frac{4(2N)^{d_{VC}}}{\delta})} = \Omega (N,H,\delta)$ </p>
+<p>根据不等式，有$\delta$的概率，in-sample error和out-of-sample error之间的差值会超过$\epsilon$；因此，二者之间的差值小于$\epsilon$的概率  大于等于 1 - $\delta$</p>
+<p>根据前面对$\epsilon$的推导，泛化误差$|E_{in}(g) - E_{out}(g)| \leq \epsilon$</p>
+<p>$E_{in}(g) - \epsilon \leq E_{out}(g) \leq E_{in}(g) + \epsilon$</p>
+<p>对in-sample error和out-of-sample error的右半部分进行图示，随着VC Dimension变大，in-sample error会较小，但是$\epsilon$或者$\Omega$会变大；这就表明，不是越复杂的模型，效果越好。</p>
+<p>💡当VC Dimension越大时，表明可以shatter的点变多</p>
+<p>💡一般情况下，训练样本 $N \approx 10d_{VC}$</p>
+<p><img src="/2019/01/23/VC-Dimension-II/v2.png" width="500px"></p>
+<p>💡我们将不等式转变成 $E_{out} \leq E_{in} + \Omega$，这个不等式表明亮点，一是假设空间的选择要合适（上面讨论的），二是在进行优化时，这是一个正正则化项</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/19/VCDimension/" rel="next" title="VC Bound">
+                <i class="fa fa-chevron-left"></i> VC Bound
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tag/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#VC-Dimension"><span class="nav-number">1.</span> <span class="nav-text">VC Dimension</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Recap-PLA"><span class="nav-number">2.</span> <span class="nav-text">Recap PLA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#d-vc-geq-d-1"><span class="nav-number">2.1.</span> <span class="nav-text">$d_{vc} \geq d+1$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d-vc-leq-d-1"><span class="nav-number">2.2.</span> <span class="nav-text">$d_{vc} \leq d+1$</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Interpreting-VC-Dimension"><span class="nav-number">3.</span> <span class="nav-text">Interpreting VC Dimension</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

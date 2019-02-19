@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="机器学习," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -80,7 +80,6 @@
 
 
 <meta name="description" content="我们知道，机器学习是假设存在一个真实的模型，所有的训练数据是从这个模型中产生的，我们希望通过机器学习的方式，学习得到一个模型，希望学习到的这个模型和真实模型之间越接近越好 而机器学习的过程，可以理解为，存在一个假设空间hypotheisis set  $H$，通过一个合适的算法algrihtm $A$，从假设空间中选择得到一个合适的$h$，得到模型model $g$，希望这个模型$g$，越接近真实">
-<meta name="keywords" content="机器学习">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Feasibility of Learning">
 <meta property="og:url" content="https://yeeex.gitee.io/2018/11/11/LearningFeasibility/index.html">
@@ -89,8 +88,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/11/LearningFeasibility/l1.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/11/LearningFeasibility/l2.png">
-<meta property="og:image" content="https://yeeex.gitee.io/2018/11/11/LearningFeasibility/l3.png">
-<meta property="og:updated_time" content="2018-11-19T14:56:46.000Z">
+<meta property="og:updated_time" content="2019-02-19T08:33:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Feasibility of Learning">
 <meta name="twitter:description" content="我们知道，机器学习是假设存在一个真实的模型，所有的训练数据是从这个模型中产生的，我们希望通过机器学习的方式，学习得到一个模型，希望学习到的这个模型和真实模型之间越接近越好 而机器学习的过程，可以理解为，存在一个假设空间hypotheisis set  $H$，通过一个合适的算法algrihtm $A$，从假设空间中选择得到一个合适的$h$，得到模型model $g$，希望这个模型$g$，越接近真实">
@@ -297,6 +295,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -337,19 +357,20 @@
 <p>所以，No Free Lunch的意思即，在没有任何假设前提的情况下，我们其实无法衡量一个模型是不是好的模型，但是这并不代表机器学习模型是不能学习的，只不过需要存在一定的假设</p>
 <h2 id="Inferring-Something-Unkown"><a href="#Inferring-Something-Unkown" class="headerlink" title="Inferring Something Unkown"></a>Inferring Something Unkown</h2><p>假设我们现在有一个罐子，罐子里有橙色和绿色的小球（无数个），我们的目标是找到橙色小球占总小球树数目的比例。</p>
 <p>假设罐子里橙色小球的比例为$\mu$，对应绿色小球的比例为$1-\mu$</p>
+<p>💡如果罐子里的小球数目是无穷多的，则在抽样过程中，直接抽样即可；如果小球数目是有限的，则在抽样过程中采用有放回抽样，保证罐子里的橙色球数目一直为$\mu$</p>
 <p>我们从罐子里抽取N个样本，N个样本里，橙色小球的比例为$\nu$，对应的绿色小球的比例为$1-\nu$</p>
-<p>💡如果罐子里的小球数目是固定的，那么我们每从罐子里抽一个小球，橙色小球出现的概率是变化的；但是，如果罐子里的小球数目无限多，相当于采用的是有放回抽样，小球出现的概率是相同的</p>
 <p>我们称$\nu$为in-sampl比例，$\mu$为out-of-sample的比例</p>
-<p>in-sample的$\nu$无法告诉我们out-of-sample的$\mu$的准确值，但是我们可以得知，当抽样的样本数目N非常大时，in-sample的$\nu$和out-of-sample的$\mu$是非常接近的</p>
+<p>in-sample的$\nu$无法告诉我们out-of-sample的$\mu$的准确值，但是我们可以得知，当抽样的样本数目N非常大时，in-sample的$\nu$和out-of-sample的$\mu$是非常接近的（<strong>大数定理</strong>）</p>
 <p>💡这有点类似人口普查，在调查某个省份的男女比例，我们不必统计全省的男女各有多少人，只需要采用合理的抽样方式，抽出N个样本，统计N个样本中男女比例多大即可 （科学的抽样方式，个人理解是，不能在女子学校里抽N个人，这样N个样本都是女生）</p>
 <h3 id="Hoeffding’s-Inequality"><a href="#Hoeffding’s-Inequality" class="headerlink" title="Hoeffding’s Inequality"></a>Hoeffding’s Inequality</h3><p>hoeffding不等式证明了上述观点。</p>
 <p>假设抽样样本为N，N中橙色小球的比例为$\nu$；整体样本中橙色小球的比例为$\mu$，则</p>
 <p>$P[|\nu-\mu|&gt;\epsilon] \leq 2exp(-2\epsilon^2N)$</p>
 <p>即，$\nu$和$\mu$之间的相差的$\epsilon$ 的概率小于$2exp(-2\epsilon^2N)$</p>
 <p>当N越大时，这个概率值越小</p>
-<p>这表明$\nu = \mu$是在PAC假设下成立的 （PAC=rpobably approximately correct）有很大概率是正确的</p>
+<p>这表明$\nu = \mu$是在PAC假设下成立的 （PAC=probably approximately correct）有很大概率是正确的</p>
 <blockquote>
-<p>（1）这个不等式与$\mu$无关，在不知道$\mu$的情况下，我们可以估算出$\nu$与真实值之间的差距的一个上界</p>
+<p>（1）这个不等式与$\mu$无关，在不知道$\mu$的情况下，我们可以估算出$\nu$与真实值之间的差距的一个上界；</p>
+<p>$\nu$受到$\mu$的影响，$P[|\nu-\mu|&gt;\epsilon]$的概率是受到$\mu$的影响，但是这个概率的上界与$\mu$无关</p>
 <p>（2）这个不等式对所有的N和$\epsilon$都适用</p>
 <p>（3）N越大，$\epsilon$越松弛（越小）表明$\mu$与$\nu$有更大的概率越接近</p>
 </blockquote>
@@ -369,7 +390,11 @@
 <hr>
 <p>这个过程是验证过程而不是学习过程，因为现在只有一个固定的假设h，我们讨论其$E_{out}$多大；但是在实际的模型训练过程中，我们应该通过一定的演算法从假设空间选择一个合适的假设h，而不是固定选择一个假设h</p>
 <p>=&gt; 当这个假设h在训练样本上表现并不是很好时，我们依然选择这个假设h作为我们的模型，那么我们的学习过程是失败的</p>
-<h3 id="Learning-Process"><a href="#Learning-Process" class="headerlink" title="Learning Process"></a>Learning Process</h3><p>真正的学习过程需要在假设空间$H$中选择一个最合适的假设。</p>
+<h3 id="Learning-Process"><a href="#Learning-Process" class="headerlink" title="Learning Process"></a>Learning Process</h3><p><strong>真正的学习过程需要在假设空间$H$中选择一个最合适的假设。</strong></p>
+<p>一个罐子bin代表整个输入空间$X$，不同的假设对应了罐子里小球的不同涂色（小球的涂色与假设密切相关）</p>
+<p>Hoeffding不等式只是表明，在固定一个假设的情况下，这个假设在in-sample error $E_{in}$ 和 out-of-sample error $E_{out}$上是PAC的</p>
+<p>但是并不能保证$E_{in}$是小的</p>
+<p>因此，整个的学习过程是在一个假设空间$H$中找到一个最合适的假设；而当出现多个假设，需要从中选择一个假设时，出现红色小球的概率会变高，原有的bound   $2exp(-2\epsilon^2N)$会失效</p>
 <p>以抛硬币为例，我们现在抛150个硬币 （每个硬币代表假设空间中的一个假设），每个硬币抛5次（当作用训练样本进行模型训练），假设硬币正面表明训练正确，硬币反面视为训练错误。如果一个硬币的连续5次均出现正面，这个硬币是否是最好的硬币？（最优的假设）</p>
 <p>不是！抛一个硬币连续出现5次的概率$p(连续出现5次) = (\frac{1}{2})^5 = \frac{1}{32}$</p>
 <p>则$p(至少有一次不是正面) = 1-\frac{1}{32} = \frac{31}{32}$</p>
@@ -377,28 +402,17 @@
 <p>从概率的角度说明，出现连续五次硬币正面的概率很高，这并不能说明这个硬币／模型就是好的</p>
 <p><strong>即，当有选择出现时，会出现偏见，其实这150个硬币是一样的，但是我们会选择出现5次正面的那个硬币，即会选择看起来很好的模型／假设； hoeffding不等式表明，在只有一个假设时，in-sample error和out-of-sample error相差很大的概率很低</strong></p>
 <p>=&gt; 如果只有一个硬币，连续出现五次正面（in-sample error为0）的概率是$\frac{1}{32}$，但是出现150个硬币可以选择时，连续出现五次正面的概率大于99% </p>
-<p>这是不好的sample，即实际出现正面的概率为1/2，但是我们选择出现机率为1的硬币</p>
-<p>在verification process中，我们说明了如果一个假设在训练样本下表现很好，那么其泛化误差（在未知样本上的表现）也不会差</p>
-<p>在learning process中，我们需要说明，从概率的角度来看，出现不好训练样本的几率很低（即无论训练样本是什么，演算法只需要根据训练样本在假设空间中选择一个最优的假设即可，无需额外的限制）</p>
-<p>💡不好的训练样本是指，当出现这种样本时，我们的模型可以达到一个很低的训练误差，但是这个训练样本并不能完整代表真实样本本身，即 模型其实并没有学习到样本的很多信息</p>
-<p><img src="/2018/11/11/LearningFeasibility/l3.png" width="520px"></p>
-<p>第一行的每个D表示一组训练样本</p>
-<p>第一列的每个h表示假设空间中的每个假设</p>
-<p>数据D标注为BAD表示这个数据集是不好的数据集 =&gt; </p>
-<p>如果只有一个假设，模型／假设在这个数据集上的in-sample error$E_{in}$很小，但是在out-of-sample error $E_{out}$很大，我们认为这个data是不好的；但是根据hoeffiding不等式，我们可以得出，每个假设遇到bad data的概率很小</p>
-<p>如果存在多个假设，如果训练样本在某一个假设上是bad，那么这个训练样本即为bad data</p>
-<p>如果训练样本是D1时，演算法无法在假设空间中自由的进行选择， 因为存在多个假设，这个样本会使得in-sample error和out-of-sample error相差很大</p>
-<p>但是如果训练样本时D1126，演算法就可以自由无限制的在整个假设空间中选择最优的假设作为最终的模型</p>
-<p>对于整个假设空间而言，遇到bad data的概率上界：</p>
-<p>$P_D[BAD \;D] = P_D[BAD \; D \;for\; h1 \;or\;BAD \; D \;for\; h2 \;or..or \;BAD\;D\;for\;h_M]$</p>
-<p>$\le P_D[BAD \;D\;for \;h_1] + P_D[BAD \;D\;for \;h_2] + …+P_D[BAD \;D\;for \;h_M]$</p>
-<p>$\le 2exp(-2\epsilon^2N)+ 2exp(-2\epsilon^2N)+…+2exp(-2\epsilon^2N)$</p>
-<p>$ = 2Mexp(-2\epsilon^2N)$</p>
-<blockquote>
-<p>（1）$P(A \;or\; B) = P(A) +P(B)-P(AB)$</p>
-<p>（2）M是假设空间中假设数目</p>
-</blockquote>
+<p>因此，我们需要讨论，我们现在已经从假设空间中选择出一个最合适的假设g，其in-sample error和out-of-sample error之间的误差上界：</p>
+<p>$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq$                                                         </p>
+<p>$P[|E_{in}(h1)-E_{out}(h1)|&gt;\epsilon] \; or \;   P[|E_{in}(h2)-E_{out}(h2)|&gt;\epsilon] \; or \ ;                                                  P[|E_{in}(h3)-E_{out}(h3)|&gt;\epsilon] \; or \  $                                                           </p>
+<p>$……P[|E_{in}(h_M)-E_{out}(h_M)|&gt;\epsilon] $</p>
+<p>$\leq \sum_{m=1}^M P[|E_{in}(h_m)-E_{out}(h_m)|&gt;\epsilon]$</p>
+<p>假设空间中存在一个最好的假设g，这个假设满足$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon]$的概率，小于等于整个假设空间中每个假设发生这个$P[|E_{in}(h)-E_{out}(h)|&gt;\epsilon]$事件的概率</p>
+<p>$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2Mexp(-2\epsilon^2N)$</p>
+<p>💡此处我们讨论假设空间中的假设个数是有限个M</p>
+<p>💡如果我们以假设空间假设的个数M作为衡量指标，来判断模型的复杂程度，则模型越复杂，对应的假设空间越大，即M越大；模型越复杂，代表模型越能更好的拟合in-sample error，但是，对应的in-sample error和out-sample error出现差距很大的概率的上限也会变大</p>
 <p><strong>上述upper bond表明，当训练样本数目N足够多时，训练样本对假设空间中的每个假设都是安全的，所以我们可以选择in-sample error最小的那个假设</strong></p>
+<p>总结一下，hoeffding不等式控制的是泛化误差，我们可以选择假设空间中在in-sample上表现最好的一个假设，但是我们如何保证在 out-of sample的地方，这个假设依然是有效的，即，我们采用hoeffding不等式证明，in-sample error和out-of-sample error之间相差$\epsilon$的概率会被bound住</p>
 
       
     </div>
@@ -413,12 +427,6 @@
     
 
     <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
-          
-        </div>
       
 
       
@@ -439,8 +447,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/11/19/VCDimension/" rel="prev" title="VC Dimension I">
-                VC Dimension I <i class="fa fa-chevron-right"></i>
+              <a href="/2018/11/19/VCDimension/" rel="prev" title="VC Bound">
+                VC Bound <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>

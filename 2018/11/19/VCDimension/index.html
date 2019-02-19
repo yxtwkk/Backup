@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="机器学习," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -80,9 +80,8 @@
 
 
 <meta name="description" content="之前介绍过，在假设空间有限的情况下，我们可以通过hoffeding不等式证明，在假设空间固定且资料量足够多的情况下，in-sample error和out-of-sample error相差很大的概率很小 💡这里面存在一个假设，即 训练集和测试集来自同一个分布 如果演算法根据训练数据在假设空间中找到一个$E_{in}(g) \approx 0$，则根据PAC理论，可以保证在$E_{out}(g)">
-<meta name="keywords" content="机器学习">
 <meta property="og:type" content="article">
-<meta property="og:title" content="VC Dimension I">
+<meta property="og:title" content="VC Bound">
 <meta property="og:url" content="https://yeeex.gitee.io/2018/11/19/VCDimension/index.html">
 <meta property="og:site_name" content="Yeeex">
 <meta property="og:description" content="之前介绍过，在假设空间有限的情况下，我们可以通过hoffeding不等式证明，在假设空间固定且资料量足够多的情况下，in-sample error和out-of-sample error相差很大的概率很小 💡这里面存在一个假设，即 训练集和测试集来自同一个分布 如果演算法根据训练数据在假设空间中找到一个$E_{in}(g) \approx 0$，则根据PAC理论，可以保证在$E_{out}(g)">
@@ -97,9 +96,9 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v8.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v9.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v10.png">
-<meta property="og:updated_time" content="2019-01-23T01:48:40.000Z">
+<meta property="og:updated_time" content="2019-02-19T08:33:38.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="VC Dimension I">
+<meta name="twitter:title" content="VC Bound">
 <meta name="twitter:description" content="之前介绍过，在假设空间有限的情况下，我们可以通过hoffeding不等式证明，在假设空间固定且资料量足够多的情况下，in-sample error和out-of-sample error相差很大的概率很小 💡这里面存在一个假设，即 训练集和测试集来自同一个分布 如果演算法根据训练数据在假设空间中找到一个$E_{in}(g) \approx 0$，则根据PAC理论，可以保证在$E_{out}(g)">
 <meta name="twitter:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v1.png">
 
@@ -137,7 +136,7 @@
 
 
 
-  <title>VC Dimension I | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>VC Bound | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -281,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">VC Dimension I</h1>
+          <h1 class="post-title" itemprop="name headline">VC Bound</h1>
         
 
         <div class="post-meta">
@@ -303,6 +302,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -337,7 +358,7 @@
 <p>$E_{in}(g) \approx 0$比较容易做到，模型／假设记住所有的训练样本即可，所以，我们需要讨论两个问题：</p>
 <p>（1）虽然在PAC理论下，$E_{in}(g) \approx E_{out}(g)$，但是实际情况下，二者是否真的接近</p>
 <p>（2）我们能不能让$E_{in}(g)$尽可能的小</p>
-<h2 id="Trad-off-On-M"><a href="#Trad-off-On-M" class="headerlink" title="Trad-off On M"></a>Trad-off On M</h2><p>M是指假设空间中假设的个数，即$|H|$</p>
+<h2 id="Trad-off-On-M"><a href="#Trad-off-On-M" class="headerlink" title="Trad-off On M"></a>Trad-off On M</h2><p>M是指假设空间中假设的个数，即$|H|​$</p>
 <p>当M很小时（假设空间个数有限）：</p>
 <p>$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2Mexp(-2\epsilon^2N)$</p>
 <p>（1）根据PAC理论，$E_{in}(g) \approx E_{out}(g)$ 可以成立</p>
@@ -486,12 +507,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
-          
-        </div>
-      
 
       
       
@@ -511,8 +526,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/01/23/VC-Dimesnion-II/" rel="prev" title="VC Dimesnion II">
-                VC Dimesnion II <i class="fa fa-chevron-right"></i>
+              <a href="/2019/01/23/VC-Dimension-II/" rel="prev" title="VC Dimension">
+                VC Dimension <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
