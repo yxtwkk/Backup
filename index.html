@@ -187,6 +187,26 @@
         </li>
       
         
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
             
@@ -488,149 +508,19 @@
 
       
         
-          
-            <p>之前介绍过，在假设空间有限的情况下，我们可以通过hoffeding不等式证明，在假设空间固定且资料量足够多的情况下，in-sample error和out-of-sample error相差很大的概率很小</p>
+          <p>之前介绍过，在假设空间有限的情况下，我们可以通过hoffeding不等式证明，在假设空间固定且资料量足够多的情况下，in-sample error和out-of-sample error相差很大的概率很小</p>
 <p>💡这里面存在一个假设，即 训练集和测试集来自同一个分布</p>
 <p>如果演算法根据训练数据在假设空间中找到一个$E_{in}(g) \approx 0$，则根据PAC理论，可以保证在$E_{out}(g) \approx 0$</p>
 <p>$E_{in}(g) \approx 0$比较容易做到，模型／假设记住所有的训练样本即可，所以，我们需要讨论两个问题：</p>
 <p>（1）虽然在PAC理论下，$E_{in}(g) \approx E_{out}(g)$，但是实际情况下，二者是否真的接近</p>
 <p>（2）我们能不能让$E_{in}(g)$尽可能的小</p>
-<h2 id="Trad-off-On-M"><a href="#Trad-off-On-M" class="headerlink" title="Trad-off On M"></a>Trad-off On M</h2><p>M是指假设空间中假设的个数，即$|H|​$</p>
-<p>当M很小时（假设空间个数有限）：</p>
-<p>$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2Mexp(-2\epsilon^2N)$</p>
-<p>（1）根据PAC理论，$E_{in}(g) \approx E_{out}(g)$ 可以成立</p>
-<p>（2）但是当选择较少时，我们未必能够选择到一个在训练数据上表现足够好的g</p>
-<p>当M很大时（假设空间个数无限）：</p>
-<p>$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2Mexp(-2\epsilon^2N)$</p>
-<p>（1）根据PAC理论，$E_{in}(g) \approx E_{out}(g)$ 不成立，二者相差较大的概率很高</p>
-<p>（2）但是当选择较多时，我们大概率能够选择到一个在训练数据上表现足够好的g</p>
-<p>所以，我们需要一个合适的假设空间；或者说，我们能不能用其他的量表征假设空间的假设个数？</p>
-<p>我们现在需要证明，可以用一个有穷变量 （finite quaintity）$m_H$代替假设空间的假设个数M</p>
-<hr>
-<p>设$B_m$ 表示$|E_{in}(h_m)-E_{out}(h_m)| &gt; \epsilon$ 即 in-sample error和out-of-sample error相差很大</p>
-<p>之前讨论过，演算法可以自由地在假设空间中选择一个合适的假设的概率表示为：$p[B_1 \;or \;B_2 \;or\; B_3..B_M]$</p>
-<p>根据union bond $p[B_1 \;or \;B_2 \;or\; B_3..B_M] \leq p[B_1]+p[B_2]+..+p[B_M]$</p>
-<p>当M无穷多时，union bound是无穷多项相加，这必然会使得$p[B_1 \;or \;B_2 \;or\; B_3..B_M]$上限变得无穷大</p>
-<p><strong>但是，这个union bound的上限被over-estimating</strong></p>
-<p>假设存在两个相似的假设$h_1$ 和$h_2$，以PLA 为例，两条线（比如，两条线夹角0.05度）在多数训练样本的表现都是类似的，同理，在测试样本上表现也是类似的；即出现$B_m$的情况也是类似的，则union bond这个上界被over-estimate</p>
-<p><img src="/2018/11/19/VCDimension/v1.png" width="220px"></p>
-<p>所以，一个改进的方法是将无限的假设分成有限个类（类内的假设是相似的），找出重叠部分的假设</p>
-<hr>
-<p><strong>以PLA为例，我们进行讨论：</strong></p>
-<p>（1）当平面只有一个点时：</p>
-<p>PLA的假设空间可以分成两类：$h_1(x) = o$    $h_2(x) = x$</p>
-<p>（2）当平面有两个点时：</p>
-<p>PLA的假设空间可以分成如下四类</p>
-<p><img src="/2018/11/19/VCDimension/v2.png" width="320px"></p>
-<p>（3）当平面有三个点时：</p>
-<p>PLA的假设空间可以分成8类</p>
-<p><img src="/2018/11/19/VCDimension/v3.png" width="320px"></p>
-<p>但是当三个点共线时，平面上三个点最多6种情况可以被线性可分</p>
-<p>（4）当平面有四个点时：</p>
-<p>PLA的假设空间可以分成14类</p>
-<p><img src="/2018/11/19/VCDimension/v4.png" width="290px"></p>
-<p>只列出现有的7种，剩下的7种与现在的是对称的</p>
-<p>=&gt; 通过以上的讨论可以得出一个结论，从输入空间上（平面上的点）考虑，得到的假设空间是有限的</p>
-<p>所以，在PLA的问题中，我们希望将假设空间无限个假设替换成 有效线的数目 effctive(N)</p>
-<p>$effective(N) \leq 2^N$</p>
-<p>$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2·effective(N)·exp(-2\epsilon^2N)$</p>
-<p>我们接下来的讨论将围绕：</p>
-<p>（1）effctive(N) 可以替换M</p>
-<p>（2）effective(N)远小于$2^N$</p>
-<h2 id="Dichotomies-Mini-hypotheses"><a href="#Dichotomies-Mini-hypotheses" class="headerlink" title="Dichotomies : Mini-hypotheses"></a>Dichotomies : Mini-hypotheses</h2><p>我们引入变量dichotomy ：$h(x_1,x_2…x_N) = (h(x_1),h(x_2),…h(x_N)) \in \lbrace x,o\rbrace ^N$</p>
-<p>Dichtomy 指的是针对N个训练样本，可以产生多少种可能的分类假设</p>
-<p>对于假设空间H来说，其假设的个数可能有无限个，但是对于dichotomy来说，针对N个训练样本，最多可能有$2^N$种不同的假设</p>
-<p><img src="/2018/11/19/VCDimension/v5.png" width="390px"></p>
-<h3 id="Growth-Function"><a href="#Growth-Function" class="headerlink" title="Growth Function"></a>Growth Function</h3><p>成长函数 $m_H(N) = max _{x_1,x_2,…,x_N \in X} \;|H(x_1,x_2,..x_N)|$</p>
-<p>即，对于输入的N个点，<strong>最多</strong>共有多少种可能的分类假设 =&gt; upper bond 是$2^N$</p>
-<p>💡结合前面的讨论，这个成长后函数即为 PLA中的effective number line</p>
-<h4 id="Positive-Rays"><a href="#Positive-Rays" class="headerlink" title="Positive Rays"></a>Positive Rays</h4><p>输入样本空间 $X = R$ 是一维实数</p>
-<p> 假设空间H中的每个假设h，$h(x) = sign(x-a)$ </p>
-<p>即，当x&gt;a时，h(x) = 1；当x&lt;a时，h(x) = -1</p>
-<p>💡positve ray是 positve half的1D perceptrons （永远只有正向的那个方向为正）</p>
-<p><img src="/2018/11/19/VCDimension/v6.png" width="390px"></p>
-<p>$m_H(N) = N+1$，对于N个点来说，共有N+1个间隔段，a可以取在这N+1个间隔段中，则对应会有不同的数据点分类</p>
-<h4 id="Positive-Intervals"><a href="#Positive-Intervals" class="headerlink" title="Positive Intervals"></a>Positive Intervals</h4><p>输入样本空间 $X = R$ 是一维实数</p>
-<p>假设空间H中的每个假设h，$h(x) =1$ iff $x \in [l,r)$，否则的话h(x) = -1</p>
-<p>即，当x属于区间内的值时，h(x) = 1</p>
-<p>$m_H(N) = \binom{N+1}{2} + 1  = \frac{1}{2}N^2+\frac{1}{2}N+1$ </p>
-<p>💡1 表示 当区间端点在一起时，则所有的数据点均为负值；$\binom{N+1}{2}$ 表示 N个数据点会有N+1个间隔，在这N+1个间隔里选其中两个</p>
-<h4 id="Decision-Stump"><a href="#Decision-Stump" class="headerlink" title="Decision Stump"></a>Decision Stump</h4><p>输入样本空间 $X = R$ 是一维实数</p>
-<p>假设空间H中的每个假设h，是ID perceptron，即将positive ray和negative ray结合在一起：</p>
-<p>确定一个阈值a，当x&gt;a 时，可能是1 也可能是 -1；反之，当x&lt;a时，可能是-1也可能是1</p>
-<p>$m_H(N) = 2N$</p>
-<p>💡当阈值选择在N-1个间隔区间内，</p>
-<h4 id="Shatter"><a href="#Shatter" class="headerlink" title="Shatter"></a>Shatter</h4><p>如果某个假设集合，针对现有的N个样本，其成长函数$m_H(N)= 2^N$，则表明这N个点被假设集合H shatterred</p>
-<p>💡因为成长函数是指，假设集合中，对于现有的N个点可能存在的最多的分类结果；因此，shatter只需要针对某一种输入的样本点即可</p>
-<p>拿PLA来说，当其输入的点都在一条直线时，是存在PLA无法线性可分的情况，但是并不影响$m_H(4) = 14$</p>
-<p>总结一下，$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2·m_H(N)·exp(-2\epsilon^2N)$</p>
-<p>当假设空间的成长函数是一个多项式（polynomial）时，用成长函数代替原有的假设空间的假设个数是有效的；（后面的exp的衰减速度比多项式快）</p>
-<p>但是，当成长函数是一个指数形式（exponential）时，用成长函数代替原有的假设空间的假设个数是无效的</p>
-<h2 id="Break-Point-of-H"><a href="#Break-Point-of-H" class="headerlink" title="Break Point of H"></a>Break Point of H</h2><p>根据之前的讨论，对于2D的perceptron，如果只有三个点时，这三个点可以被shatter，即$m_H(3) = 2^3 = 8$</p>
-<p>💡注意，这里再次强调，shatter是指对于某一种形式的输入，因为当输入的三个点是共线时，#dichotomy = 2</p>
-<p>但是，对于输入四个点时，无论输入样本在空间中以何种形式存在，都不会出现#dichotomy = 16</p>
-<p>因此，对于PLA来说，我们称k=4 为 PLA的break point</p>
-<p>break point是输入样本的个数：</p>
-<p>（1）满足$m_H(k) &lt; 2^k$</p>
-<p>（2）如果k是break point，那么k+1，k+2，k+3都是break point</p>
-<p>有了break point，我们发现当输入N个点较多时，是不是可能存在$m_H(N) &lt; 2^N$，这样，我们用成长函数代替假设空间的假设个数是合适的</p>
-<p>💡注意，这里我们还没有讨论成长函数代替原有的假设空间M是否合理</p>
-<h3 id="Discussion"><a href="#Discussion" class="headerlink" title="Discussion"></a>Discussion</h3><p>假设对于某个假设空间，break point  =2：</p>
-<p>（1）当数据点个数为1时，可以出现两种可能的分类结果</p>
-<p>（2）当数据点个数为2时，无法出现$2^2=4$种分类结果，所以maximmum possible = 3</p>
-<p>（3）当数据点个数为3时，maximum possible = 4</p>
-<p>对于某个假设空间，其break point =1 =&gt; 表明 当只有1个点时，无法出现2种分类情况，所以，无论数据点个数时多少，$m_H(N) == 1$</p>
-<p>猜想：在给定假设空间break point个数时，我们可以得到，对于N个训练样本，$m_H(N) \leq$ maximum possible $m_H(N) ||K \leq$ ploy(N)</p>
-<h3 id="Bounding-Function"><a href="#Bounding-Function" class="headerlink" title="Bounding Function"></a>Bounding Function</h3><p>Bounding Function $B(N,K)$ : 当训练样本数目是N，break point =k时，$m_H(N)$的最大值，即其upper bound</p>
-<p>💡这里不考虑具体的假设，只关注$B(N,K)$</p>
-<p>现在我们只需要讨论$B(N,K)$是否是多项式的</p>
-<p>对于下图所示的表格：</p>
-<p><img src="/2018/11/19/VCDimension/v7.png" width="390px"></p>
-<p>（1）当k=1时，B(N,K) == 1 (见之前的讨论)</p>
-<p>（2）当N&lt;K时，$B(N,K) = 2^N$，当break point数目比N大时，证明当前的N个点可以最多满足$2^N$种分类情况</p>
-<p>（3）当N=K时，$B(N,K) = 2^N-1$，当break point数目与N一样大时，只需要从全部的dichotomy中减去1个，即可满足条件</p>
-<p>现在需要讨论当N&gt;K 时，$B(N,K)$的值</p>
-<p>以B(4,3)为例，当训练样本有4个时，共有$2^4 = 16$种可能；而每种可能，也有出现和不出现两种情况，即共有$2^{16}$种dichotomies，通过程序，可以分析得到，最多的dichotomies的数目 = 11，以下图为例：</p>
-<p><img src="/2018/11/19/VCDimension/v8.png" width="190px"></p>
-<p>我们将11种情况分类，分成（x1,x2,x3）相同，而x4成对出现：</p>
-<p>下图橙色表示x4是成对出现：o/x；但是(x1,x2,x3)是相同的</p>
-<p>紫色表示x4不是成对出现</p>
-<p><img src="/2018/11/19/VCDimension/v9.png" width="190px"></p>
-<p>遮住x4，分析(x1,x2,x3)：$\alpha + \beta \leq B(3,3)$</p>
-<p><img src="/2018/11/19/VCDimension/v10.png" width="170px"></p>
-<p>对于$\alpha$来说， 针对x4已经有两种可能出现的结果，所以为了满足break point=3，必须保证（x1,x2,x3）中任意的两个点不能被shatter，即任意的两个点不能出现$2^2 = 4$种情况，因此：</p>
-<p>$\alpha \leq B(3,2)$</p>
-<p>整理可得：</p>
-<p>$\alpha + \beta \leq B(3,3)$</p>
-<p>$\alpha \leq B(3,2)$</p>
-<p>=&gt; $2\alpha + \beta \leq B(3,3) + B(3,2)$ </p>
-<p>=&gt;$B(4,3)\leq B(3,3) + B(3,2)$ </p>
-<p>通过等价代换，我们可以得到：</p>
-<p>$B(N,K) = 2\alpha + \beta$</p>
-<p>$\alpha + \beta \leq B(N-1,K)$</p>
-<p>$\alpha \leq B(N-1,K-1)$</p>
-<p>=&gt; $B(N,K) \leq B(N-1,K) +B(N-1,K-1)$</p>
-<p>通过数学归纳法证明： $B(N,K) \leq \sum_{i=0}^{k-1}\binom{N}{i}$</p>
-<p><strong>证明：</strong></p>
-<p>（1）K = 1, $B(N,K) \leq 1$ 成立</p>
-<p>K=1表示,何一个点都不能满足出现两种分类状况，则 $m_H(N) = 1$</p>
-<p>（2）N=1，K=1，$B(N,K)\leq 1$，$m_H(N) = 1$</p>
-<p>（3）当$K \geq 2$时，</p>
-<p>假设当$N \leq N_0$时，对于所有的K，不等式都成立，下面需要证明，当$N = N_0+1$时，不等式成立</p>
-<p>$B(N_0+1,K) \leq B(N_0,K) +B(N_0,K-1) = \sum_{i=0}^{K-1}\binom{N_0}{i} + \sum_{i=0}^{K-2}\binom{N_0}{i} $</p>
-<p>$ = 1 + \sum_{i=1}^{K-1} \binom{N_0}{i} + \sum_{i=1}^{K-1}\binom{N_0}{i-1}$</p>
-<p>$=1+\sum_{i=1}^{K-1}[\binom {N_0}{i} + \binom{N_0}{i-1}]$</p>
-<p>$= 1+ \sum_{i=1}^{K-1} \binom{N_0+1}{i} = \sum_{i=0}^{K-1}\binom{N_0+1}{i}$</p>
-<p>💡$\binom{n}{m} = \binom{n-1}{m-1}+\binom{n-1}{m}$</p>
-<p>因此，证明，当N=N+1时，不等式成立</p>
-<p>通过上面的证明，我们可以得出，假设空间$m_H(N)$的上界可以被一个poly(N) 多项式函数bound住</p>
-<h2 id="Bad-Bound-for-General-H"><a href="#Bad-Bound-for-General-H" class="headerlink" title="Bad Bound for General H"></a>Bad Bound for General H</h2><p>我们希望得到$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2·m_H(N)·exp(-2\epsilon^2N)$</p>
-<p>但是上述不等式存在如下问题：</p>
-<p>我们通过成长函数$m_H(N)$确定了在给定N个训练样本时，限定了假设空间中训练函数的最大类别数</p>
-<p>但是，这个不合理的地方在于，在真实空间中，数据点是无穷多个的，而不是限定的N个数据点，所以，我们限定的$m_H(N)$个分类函数，只是在训练样本上有效，在测试空间中，真实的分类函数远比这个数目大。</p>
-<p>更具体一点，即$E_{in}$是有限个的，但是$E_{out}$是无限个的，无法合理使用union-bound，所以，我们需要替换$E_{out}$</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/11/19/VCDimension/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>

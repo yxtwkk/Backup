@@ -96,7 +96,7 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v8.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v9.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/19/VCDimension/v10.png">
-<meta property="og:updated_time" content="2019-02-19T08:33:38.000Z">
+<meta property="og:updated_time" content="2019-02-19T09:22:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VC Bound">
 <meta name="twitter:description" content="之前介绍过，在假设空间有限的情况下，我们可以通过hoffeding不等式证明，在假设空间固定且资料量足够多的情况下，in-sample error和out-of-sample error相差很大的概率很小 💡这里面存在一个假设，即 训练集和测试集来自同一个分布 如果演算法根据训练数据在假设空间中找到一个$E_{in}(g) \approx 0$，则根据PAC理论，可以保证在$E_{out}(g)">
@@ -197,6 +197,26 @@
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
             首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
           </a>
         </li>
       
@@ -338,6 +358,7 @@
 <p>$E_{in}(g) \approx 0$比较容易做到，模型／假设记住所有的训练样本即可，所以，我们需要讨论两个问题：</p>
 <p>（1）虽然在PAC理论下，$E_{in}(g) \approx E_{out}(g)$，但是实际情况下，二者是否真的接近</p>
 <p>（2）我们能不能让$E_{in}(g)$尽可能的小</p>
+<a id="more"></a>
 <h2 id="Trad-off-On-M"><a href="#Trad-off-On-M" class="headerlink" title="Trad-off On M"></a>Trad-off On M</h2><p>M是指假设空间中假设的个数，即$|H|​$</p>
 <p>当M很小时（假设空间个数有限）：</p>
 <p>$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2Mexp(-2\epsilon^2N)$</p>
