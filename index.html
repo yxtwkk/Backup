@@ -249,7 +249,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/02/21/Distributed-Machine-Learning/">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/02/23/Noise-And-Error/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yeeex">
@@ -268,7 +268,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/02/21/Distributed-Machine-Learning/" itemprop="url">Distributed Machine Learning Introduction</a></h1>
+                <a class="post-title-link" href="/2019/02/23/Noise-And-Error/" itemprop="url">Noise And Error</a></h1>
         
 
         <div class="post-meta">
@@ -280,8 +280,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-21T13:58:47+08:00">
-                2019-02-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-23T22:16:21+08:00">
+                2019-02-23
               </time>
             
 
@@ -290,6 +290,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -319,20 +341,13 @@
 
       
         
-          <p>分布式机器学习的应用场景：</p>
-<p>（1）计算量太大</p>
-<p>a. 共享内存（或虚拟内存）的多线程或多机并行运算</p>
-<p>（2）训练数据太多</p>
-<p>a. 数据进行划分，分配到多个工作节点上训练 （数据并行）</p>
-<p>b. 每个工作节点巡礼那一个子模型，并和其他工作节点进行通信交流（通信内容可以包括：子模型的参数／参数更新／重要的一些数据）</p>
-<p>（3）模型规模太大</p>
-<p>a. 将模型进行划分，分配到多个工作节点上训练（模型并行）</p>
-<p>💡模型并行的各个子模型之间的依赖关系强，某个子模型的输出可以是另一个子模型的输入</p>
-<p>本文主要概述分布式机器学习所需要的四个模块，包括数据与模型划分模块／单机优化模块／通信模块／数据与模型融合模块</p>
-<p>其中，单机优化模块即每一个工作节点本地可以视为一个“独立”的机器学习问题，执行“独立的‘机器学习优化任务</p>
+          <p>在前面的介绍中，每一个机器学习问题，其训练样样本x是从一个固定的分布P(x)中产生，类比从bin中选择小球的过程，选择每个小球是有一定概率的，这个概率就是P(x)，其会影响$\nu$和$\mu$；但是在既定的学习问题中，我们只需要固定的sample set就可以。</p>
+<p>P(x)的存在强调，训练样本和测试样本需来自同一个概率分布。</p>
+<p>有了训练样本x以后，我们需要得到x对应的标签／具体值，则需要根据target function找到对应训练样本的标签／值。</p>
+<p>所以，对于每一个训练任务（监督学习）， 需要通过样本分布P(x)产生sample和target function产生label</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2019/02/21/Distributed-Machine-Learning/#more" rel="contents">
+            <a class="btn" href="/2019/02/23/Noise-And-Error/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -383,7 +398,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/02/21/分布式机器学习概述/">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/02/21/Distributed-Machine-Learning/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yeeex">
@@ -402,7 +417,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/02/21/分布式机器学习概述/" itemprop="url">未命名</a></h1>
+                <a class="post-title-link" href="/2019/02/21/Distributed-Machine-Learning/" itemprop="url">Distributed Machine Learning Introduction</a></h1>
         
 
         <div class="post-meta">
@@ -414,7 +429,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-21T11:48:35+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-21T13:58:47+08:00">
                 2019-02-21
               </time>
             
@@ -424,6 +439,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/分布式机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -453,8 +490,7 @@
 
       
         
-          
-            <p>分布式机器学习的应用场景：</p>
+          <p>分布式机器学习的应用场景：</p>
 <p>（1）计算量太大</p>
 <p>a. 共享内存（或虚拟内存）的多线程或多机并行运算</p>
 <p>（2）训练数据太多</p>
@@ -463,78 +499,15 @@
 <p>（3）模型规模太大</p>
 <p>a. 将模型进行划分，分配到多个工作节点上训练（模型并行）</p>
 <p>💡模型并行的各个子模型之间的依赖关系强，某个子模型的输出可以是另一个子模型的输入</p>
-<p>整体框架：</p>
-<p>（1）数据与模型划分模块</p>
-<p>（2）单机优化模块</p>
-<p>（3）通信模块</p>
-<p>（4）数据与模型聚合模块</p>
-<p>（1）数据与模型划分模块</p>
-<p>数据划分</p>
-<p>训练样本划分</p>
-<p>a. 随机采样</p>
-<p>原训练集作为采样数据源，有放回的方式进行随机采样，保证每个工作节点的局部训练数据与原训练数据是独立同分布的</p>
-<p>💡弊端：全局采样的代价比较高；有些低频的较重要的训练样本可能无法被采集到</p>
-<p>b. 置乱切分</p>
-<p>💡数据打乱等价于或者接近于无放回的随机采样；独立同分布的假设暗示有放回的随机采样</p>
-<p>特征维度划分</p>
-<p>维度划分与特定的优化方法进行配合使用</p>
-<p>模型划分</p>
-<p>不同的子模型之间会有一定的依赖关系：各个工作节点需要等待其输入所依赖的其他子模型计算完毕后，才能开始自己的计算，而其计算结果也将供给依赖其输出的其他子模型进行消费</p>
-<p>（1）对于线性模型，可以针对不同特征维度进行划分，与基于维度的数据划分进行配合</p>
-<p>（2）对于神经网络模型：</p>
-<p>a. 逐层的横向划分</p>
-<p>b. 跨层的纵向划分</p>
-<p>c. 随机的模型划分：</p>
-<p>神经网络具有一定的冗余性，给定一个神级网络，存在一个规模更小的网络可以达到类似的函数拟合效果=&gt; 骨架网络</p>
-<p>将骨架网络存储与各个节点，各个节点之间的通信内容除了骨架网络的模型更新之外，还会通信非骨架网络的参数</p>
-<p>（3）通信模块</p>
-<ol>
-<li>通信的内容</li>
-</ol>
-<p>a. 数据并行：</p>
-<p>每个工作节点得到基于局部数据的子模型，将子模型或子模型的更新作为通信内容／将重要的样本（SVM的支撑向量）作为通信内容</p>
-<p>b. 模型并行：</p>
-<p>各个工作节点之间可能有很强的相互依存关系，通行内容为中间计算结果</p>
-<ol>
-<li>通信的拓扑结构</li>
-</ol>
-<p>a. 基于迭代MapReduce的通信拓扑（Iterative MapReduce ／Spark）</p>
-<p>Map操作完成数据分发和并行处理；Reduce操作完成数据的全局同步和聚合</p>
-<p>MapReduce的问题：</p>
-<p>（1）完全依赖硬盘I／O的数据交互对于迭代式的机器学习效率过低</p>
-<p>（2）MapReduce的范式，中间计算结果不能得到维持</p>
-<p>迭代式MapReduce（IMR）基于内存的实现，缩减了计算过程的I/O代价；考虑机器学习任务的迭代计算，引入永久性存储(persistent store)</p>
-<p>弊端：运算节点和模型存储节点没有很好的逻辑隔离，只能支持同步的通信逻辑；并且只有当所有的mapper计算完成后，才能进行reducer计算</p>
-<p>b. 基于参数服务器的通行拓扑 （Parameter Server）</p>
-<p>参数服务器的架构将<strong>工作节点</strong>和<strong>模型存储节点</strong>逻辑上分开，各个工作节点负责处理本地训练数据，通过参数服务器的客户端API与参数服务器通信交互，从而从参数服务器获取最新的模型参数／将本地训练产生的模型更新发送到参数服务器上</p>
-<p>（1）各个工作节点之间不需要时刻保持同步</p>
-<p>（2）多个参数服务器可以共同维护较大的模型（平衡负载，提高通信效率／当工作节点在训练过程中只需要访问部分参数，可以实现模型并行）</p>
-<p>c. 基于数据流的通信拓扑（Tensorflow）</p>
-<p>基于数据流的通信拓扑，计算被描述为一个有向无环图；图中的每个节点进行数据处理或者计算，图中的每条边代表数据的流动</p>
-<p>每个节点通常有两个通信通道：</p>
-<p>（1）计算数据流：负责接收模型训练需要的数据、模型参数（中间计算结果／参数更新）等 </p>
-<p>（2）控制信息流：决定工作节点应接受的数据／接收的数据是否完整／工作节点所做的计算是否完成／下游工作节点是否开始计算等</p>
-<ol>
-<li>通信的步调</li>
-</ol>
-<p>（1）同步通信</p>
-<p>（2）异步通信：有锁通信／无锁通信／延迟不太敏感的异步通信算法</p>
-<p>（3）半同步通信 SSP</p>
-<p>（4）混合同步通信：将工作节点分组，组内进行同步通信，组间进行异步通信</p>
-<ol>
-<li>通信的频率</li>
-</ol>
-<p>降低通信频率（时域滤波）的目的是减小通信带宽（空域滤波）需求</p>
-<p>a. 模型压缩🗜️（模型低秩分解）</p>
-<p>b. 模型量化，对模型参数进行低精度量化（e.g. 一比特量化）；对模型参数进行随机丢弃（weighted dropout）</p>
-<p>（4）数据与模型聚合模块</p>
-<p>a. 模型参数进行简单平均获得全局模型</p>
-<p>b. 求解一个一致性优化问题获得全局模型（ADMM，BMUF）</p>
-<p>模型平均和ADMM等方法操作简单，在学习目标是凸函数的条件下可以保证：平均模型的精度不会比本地模型的平均精度差</p>
-<p>c. 模型集成（ensemble）获得全局模型</p>
-<p>深度学习问题是非凸，模型平均不具有理论保证；模型集成增大模型规模，K个模型的集成将会包含K倍的参数个数（在模型集成之后，对模型进行压缩）</p>
-
-          
+<p>本文主要概述分布式机器学习所需要的四个模块，包括数据与模型划分模块／单机优化模块／通信模块／数据与模型融合模块</p>
+<p>其中，单机优化模块即每一个工作节点本地可以视为一个“独立”的机器学习问题，执行“独立的‘机器学习优化任务</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/02/21/Distributed-Machine-Learning/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1089,6 +1062,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -1222,21 +1217,12 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
             
 
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                <a href="/tag/index.html">
-                  <span class="site-state-item-count">2</span>
-                  <span class="site-state-item-name">标签</span>
-                </a>
-              </div>
             
 
           </nav>

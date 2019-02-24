@@ -79,20 +79,17 @@
 
 
 
-<meta name="description" content="想再开个tag记录读过的论文。作为一个非典型程序员，就从这篇发表在Science上的文章开始吧。 这篇文章的贡献有两个部分： （1）传统的kmeans聚类算法在初始化聚类中心的时候通常是随机选点，或者采用kmeans++。这篇文章提到了另一种初始化选择聚类中心的方式 （2）在选择初始化聚类中心的时候，是根据“密度”的概念进行指标确定。在之后的聚类过程中，密度一直是聚类的一个标准。所以是densti">
+<meta name="description" content="在前面的介绍中，每一个机器学习问题，其训练样样本x是从一个固定的分布P(x)中产生，类比从bin中选择小球的过程，选择每个小球是有一定概率的，这个概率就是P(x)，其会影响$\nu$和$\mu$；但是在既定的学习问题中，我们只需要固定的sample set就可以。 P(x)的存在强调，训练样本和测试样本需来自同一个概率分布。 有了训练样本x以后，我们需要得到x对应的标签／具体值，则需要根据targ">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Clustering by fast search and find of density peaks">
-<meta property="og:url" content="https://yeeex.gitee.io/2018/08/12/ClusteringByDensity/index.html">
+<meta property="og:title" content="Noise And Error">
+<meta property="og:url" content="https://yeeex.gitee.io/2019/02/23/Noise-And-Error/index.html">
 <meta property="og:site_name" content="Yeeex">
-<meta property="og:description" content="想再开个tag记录读过的论文。作为一个非典型程序员，就从这篇发表在Science上的文章开始吧。 这篇文章的贡献有两个部分： （1）传统的kmeans聚类算法在初始化聚类中心的时候通常是随机选点，或者采用kmeans++。这篇文章提到了另一种初始化选择聚类中心的方式 （2）在选择初始化聚类中心的时候，是根据“密度”的概念进行指标确定。在之后的聚类过程中，密度一直是聚类的一个标准。所以是densti">
+<meta property="og:description" content="在前面的介绍中，每一个机器学习问题，其训练样样本x是从一个固定的分布P(x)中产生，类比从bin中选择小球的过程，选择每个小球是有一定概率的，这个概率就是P(x)，其会影响$\nu$和$\mu$；但是在既定的学习问题中，我们只需要固定的sample set就可以。 P(x)的存在强调，训练样本和测试样本需来自同一个概率分布。 有了训练样本x以后，我们需要得到x对应的标签／具体值，则需要根据targ">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://yeeex.gitee.io/2018/08/12/ClusteringByDensity/c3.png">
-<meta property="og:image" content="https://yeeex.gitee.io/2018/08/12/ClusteringByDensity/c2.png">
-<meta property="og:updated_time" content="2018-09-27T13:12:26.000Z">
+<meta property="og:updated_time" content="2019-02-24T09:11:24.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Clustering by fast search and find of density peaks">
-<meta name="twitter:description" content="想再开个tag记录读过的论文。作为一个非典型程序员，就从这篇发表在Science上的文章开始吧。 这篇文章的贡献有两个部分： （1）传统的kmeans聚类算法在初始化聚类中心的时候通常是随机选点，或者采用kmeans++。这篇文章提到了另一种初始化选择聚类中心的方式 （2）在选择初始化聚类中心的时候，是根据“密度”的概念进行指标确定。在之后的聚类过程中，密度一直是聚类的一个标准。所以是densti">
-<meta name="twitter:image" content="https://yeeex.gitee.io/2018/08/12/ClusteringByDensity/c3.png">
+<meta name="twitter:title" content="Noise And Error">
+<meta name="twitter:description" content="在前面的介绍中，每一个机器学习问题，其训练样样本x是从一个固定的分布P(x)中产生，类比从bin中选择小球的过程，选择每个小球是有一定概率的，这个概率就是P(x)，其会影响$\nu$和$\mu$；但是在既定的学习问题中，我们只需要固定的sample set就可以。 P(x)的存在强调，训练样本和测试样本需来自同一个概率分布。 有了训练样本x以后，我们需要得到x对应的标签／具体值，则需要根据targ">
 
 
 
@@ -122,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="https://yeeex.gitee.io/2018/08/12/ClusteringByDensity/"/>
+  <link rel="canonical" href="https://yeeex.gitee.io/2019/02/23/Noise-And-Error/"/>
 
 
 
 
 
-  <title>Clustering by fast search and find of density peaks | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>Noise And Error | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -255,7 +252,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/08/12/ClusteringByDensity/">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/02/23/Noise-And-Error/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yeeex">
@@ -272,7 +269,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Clustering by fast search and find of density peaks</h1>
+          <h1 class="post-title" itemprop="name headline">Noise And Error</h1>
         
 
         <div class="post-meta">
@@ -284,8 +281,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-12T19:35:48+08:00">
-                2018-08-12
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-23T22:16:21+08:00">
+                2019-02-23
               </time>
             
 
@@ -344,47 +341,44 @@
       
 
       
-        <p>想再开个tag记录读过的论文。作为一个非典型程序员，就从这篇发表在Science上的文章开始吧。</p>
-<p>这篇文章的贡献有两个部分：</p>
-<p>（1）传统的kmeans聚类算法在初始化聚类中心的时候通常是随机选点，或者采用kmeans++。这篇文章提到了另一种初始化选择聚类中心的方式</p>
-<p>（2）在选择初始化聚类中心的时候，是根据“密度”的概念进行指标确定。在之后的聚类过程中，密度一直是聚类的一个标准。所以是denstiy peak</p>
+        <p>在前面的介绍中，每一个机器学习问题，其训练样样本x是从一个固定的分布P(x)中产生，类比从bin中选择小球的过程，选择每个小球是有一定概率的，这个概率就是P(x)，其会影响$\nu$和$\mu$；但是在既定的学习问题中，我们只需要固定的sample set就可以。</p>
+<p>P(x)的存在强调，训练样本和测试样本需来自同一个概率分布。</p>
+<p>有了训练样本x以后，我们需要得到x对应的标签／具体值，则需要根据target function找到对应训练样本的标签／值。</p>
+<p>所以，对于每一个训练任务（监督学习）， 需要通过样本分布P(x)产生sample和target function产生label</p>
 <a id="more"></a>
-<p>作者认为聚类中心应该具有两个特点：</p>
-<p>（1）聚类中心本身的密度很大（被<strong>密度不超过他</strong>的邻居包围）</p>
-<p>（2）与其他密度更大的数据点之间的距离相对更大</p>
-<p>数据集 $S =\{x_i\}^N_{i=1}$</p>
-<p>度量指标有两个量，$\delta$和 $\rho$，需要通过计算任意两个数据点之间的距离$d_{ij} = dist(x_i,x_j)$来计算这两个度量指标</p>
-<p><strong>局部密度 $\rho$</strong>，包括Cut-off kernel 和 Gaussian Kernel两种：</p>
-<p>（1）Cut-off kernel：</p>
-<p>$\rho_i = \sum_{j \in I_s/\{i\}} \chi(d_{ij}-d_c)$</p>
-<p>$ \chi(x) = \left\{\begin{matrix} 1,&amp; x&lt;0\\ 0,&amp; x\geq 0\end{matrix}\right.$ 是一个截断函数，局部密度采用截断的方式，表示在所有数据点中，距离$x_i$的小于截断距离$d_c$的数据点的个数</p>
-<p>（2）Gaussian kernel：</p>
-<p>$\rho_i = \sum_{j \in I_s/\{i\}} e^{-(\frac {d_{ij}}{d_c})^2} $</p>
-<p>当数据点距离$x_i$的距离 $d_ij$的距离小于$d_c$时，对应的局部密度更大</p>
-<p>在利用局部密度作为选择依据之一选择聚类中心时，选择Gaussian kernel的方式更不容易产生冲突，并且满足”与$x_i$的距离小于$d_c$的数据点越多，局部密度$\rho_i$的值越大“</p>
-<p><strong>距离</strong>$\delta$</p>
-<p>将原有的N个数据点按局部密度的不增数序排列：</p>
-<p>得到 $\rho_{q_1} \ge \rho_{q_2}  \ge … \ge \rho_{q_N}$</p>
-<p>$\delta_{q_i} = \left\{\begin{matrix} min_{q_j\cap j&lt;i}\;\;\;\{d_{q_iq_j}\},&amp;i \ge 2\\ max_{j \ge 2}\;\;\;\;\;\{\delta_{q_j}\},&amp;i=1\\\end{matrix}\right.$</p>
-<p>💡这个保证的是当某一个数据点具有最大的局部密度时，其应该被选为聚类中心，所以，高局部密度，高距离（本身被很多局部密度比其小的点包围，且 距离其他局部密度大的数据点很远，这样的点适合作为聚类中心）</p>
-<p>💡当数据点不是局部密度最大的点时，需要计算的距离是其距离局部密度比他的点的最小距离，如果这个数据点本身局部密度较大，且，距离比他局部密度大的数据点里的最小距离都非常大，这个点非常适合作为聚类中心</p>
-<p>💡可是，如果这个点，本身局部密度不是很大，且 距离局部密度比他大的点的最小距离都非常大，则，这个点很有可能是离群点</p>
-<p><img src="/2018/08/12/ClusteringByDensity/c3.png" width="650px"></p>
-<p>可以以$(\rho_i,\delta_i)$代表每个数据点，构造决策图（decision graph），这种定性分析的方式并不具有确定性的结果，不同的人对于聚类中心/离群点的阈值理解可能不同</p>
-<p>但是，可以利用局部密度和距离两个量共同确定一个决定量：</p>
-<p>$\gamma_i = \rho_i\delta_i \; \;, i \in I_S $</p>
-<p>$\gamma_i$的值越大，表明数据点越可能是聚类中心</p>
-<p>通过对数据点的$\gamma$值统计，发现，会呈现界越性变化，方便确定聚类中心</p>
-<p><img src="/2018/08/12/ClusteringByDensity/c2.png" width="350px"> </p>
-<p>💡选择聚类中心的函数可以自己定义，只需要保证具有高局部密度和高距离即可</p>
-<p>💡既然综合考虑局部密度和距离，我们需要将局部密度和距离处理到统一的数量级上</p>
-<p>以上可以作为独立的一部分，因为在传统kmeans选择聚类中心时，需要选择一个合适的方式初始化这个数据的聚类中心和聚类个数，方便后面进行迭代</p>
-<h4 id="聚类算法过程："><a href="#聚类算法过程：" class="headerlink" title="聚类算法过程："></a>聚类算法过程：</h4><p>考虑如下参数：</p>
-<p>$n_c$：聚类中心的个数</p>
-<p>$\{c_i\}^N_{i=1}$：数据点归属于的类别标记，$c_i$表示源数据中，第i个数据属于第$c_i$个聚类</p>
-<p>$d_{max} = max_{i&lt;j}\{d_{ij}\}$：源数据中距离最远的两个数据点之间的距离</p>
-<p>$\{n_i\}^N_{i=1}$：$n_i$表示S中所有局部密度（排序意义下）比$x_i$大的数据点中与$x_i$距离最近的数据点的编号，主要用于确定，非聚类中心点归属于哪个聚类（根据距离的定义，属于距离最近的）</p>
-<p>$n_{q_i} = \left\{\begin{matrix} arg\;min_{q_j\cap j&lt;i} \;\;\;\;{d_{q_iq_j}}, &amp;  i \ge 2\\  0,&amp;i=1 \end{matrix}\right.$</p>
+<h2 id="Error-Measure"><a href="#Error-Measure" class="headerlink" title="Error Measure"></a>Error Measure</h2><p>我们希望我们从假设空间中选择的假设与目标函数越接近越好，因此我们需要通过定义误差评价方式来衡量假设和target funcion之间的接近程度 $E(h,f)$</p>
+<p>Error Measure 是pointwise definition，即 $e(h(x),f(x))$，因此整体的误差 是pointwise definition的平均</p>
+<p><strong>In-Sample Error</strong> : $E_{in}(h) = \frac{1}{N} \sum_{n=1}^N e(h(x_n),f(x_n))$</p>
+<p>💡这里的x是sample set中的每一个训练样本x</p>
+<p>💡在二分类问题中，in-sample error是 训练样本的错误频率 frequency of error in sample</p>
+<p><strong>Out-of-sample Error</strong>：$E_{out}(h) = E_{x}[e(h(x),f(x)]$</p>
+<p>💡这里的x是整体样本空间中每一个general point，是general point的误差期望；因为我们无法得到整体样本空间中每一个general point，所以才根据Hoeffding Inequality进行判断</p>
+<p>💡在二分类问题中，out-of-sample error是整体样本的误差概率 probability of error </p>
+<p><strong>误差评价的选择方式和具体的应用有关</strong>：在误差评价中，重点关注 false reject 和 false accpet</p>
+<p>无论选择什么样的误差评价方式，一个好的error measure是closed-form solution 并且是 convex optimization</p>
+<h2 id="Noisy-Target"><a href="#Noisy-Target" class="headerlink" title="Noisy Target"></a>Noisy Target</h2><p>前面提到，我们需要选择一个合适的假设，使得这个假设越接近target funcion 越好，但是现在情况是，因为存在数据噪声，实际数据往往不是一个target funcion f(x) 而是target distribution P(y|x)</p>
+<p>💡function的意思是，给定一个数据点，可以根据这个function得到一个具体的确定的类别／值；distribution的意思是，给定一个数据点，这个数据点可能属于多个类别，每个类别都有一个具体的概率，这个就是target distribution</p>
+<p>因此，(x,y)不再是通过 P(x)和target function产生，而是通过联合概率分布产生  P(x)P(y|x)</p>
+<p>假设不存在noise的情况下，某个hypothesis <script type="math/tex">h</script>在<script type="math/tex">\mathcal{D}</script>中的错误率<script type="math/tex">E_{in}=\mu</script>。现在考虑加上一个 ‘flipping’ noise level*<script type="math/tex">=1-\lambda​</script>的noise，即：</p>
+<p>$P(y|x)= \left\{\begin{matrix} \lambda &amp; y=f(x)\\\ 1-\lambda &amp; y\neq f(x) \end{matrix}\right.$</p>
+<p>考虑到了noise，<script type="math/tex">h</script>判断正确的样本当中，实际只有<script type="math/tex">\lambda</script>这么多的比例是真的判断正确的，同理<script type="math/tex">h</script>判断错误的样本中，实际也只有<script type="math/tex">\lambda</script>这么多的比例是真的判断错误。假设<script type="math/tex">\mathcal{D}</script>中样本量为N：</p>
+<p>$ \begin{matrix} &amp; \text{no noise} &amp; \text{noise}\\\ h\text{ on }\mathcal{D} &amp; \left\{\begin{matrix} (1-\mu)N &amp; right\\ \\ \\ \mu N&amp; wrong \end{matrix}\right. &amp; \begin{matrix} \left\{\begin{matrix} \lambda(1-\mu)N &amp; \text{true right}\\ (1-\lambda)(1-\mu)N &amp; \text{false right} \end{matrix}\right.\\ \\ \left\{\begin{matrix} \lambda \mu N &amp; \text{true wrong}\\ (1-\lambda)\mu N &amp; \text{false wrong} \end{matrix}\right. \end{matrix} \end{matrix}$</p>
+<p>因此，如果存在noise，则<script type="math/tex">h</script>判断错误的数量实际应该为<script type="math/tex">\lambda \mu N + (1-\lambda)(1-\mu)N</script>这么多，<script type="math/tex">h</script>真实的<script type="math/tex">E_{in}=\lambda \mu + (1-\lambda)(1-\mu)</script>。稍微做个合并，得到：<script type="math/tex">\text{true }E_{in} = (2\lambda - 1)\mu + (1-\lambda)</script></p>
+<p>假设通过学习我们得到一个<script type="math/tex">g</script>，并且有<script type="math/tex">E_{in}(g)=0.2</script>(即<script type="math/tex">\mu = 0.2</script>)，若学习所用的<script type="math/tex">\mathcal{D}</script>中存在 ‘flipping’ level=0.1的noise(即<script type="math/tex">\lambda = 0.9</script>)，则真实的<script type="math/tex">E_{in}(g)=0.26</script>。若 ‘flipping’ level达到0.2，则真实的<script type="math/tex">E_{in}(g) = 0.32</script></p>
+<p><strong>Noisy Target / y= deterministic target + noise</strong>:</p>
+<p>deteministic target 确定性的target 即 f(x) = E(y|x)</p>
+<p>noise = y - f(x)</p>
+<p>💡 确定性target是noisy target的一个特殊情况，令 y=f(x) ，其他P(y|x) = 0</p>
+<p><strong>这里需要明确</strong>：</p>
+<p>target distribtuion是P(y|x), 是我们学习的目标；输入空间的概率分布P(x)表明x的分布与训练样本的重要性；我们将sample set的产生过程合并成联合概率分布 P(x,y)= P(x)P(y|x)，但是这并不表明我们需要学习这个联合概率P(x,y)，我们真正学习的是P(y|x)</p>
+<p><strong>不同的误差评价方式会影响mini-target的选择：</strong> （mini-taget即 假设空间在样本的这个target上的误差最小／deterministic target）</p>
+<p>假设P(y=1|x) = 0.2,P(y=2|x)=0.7,P(y=3|x)=0.1</p>
+<p>选择0/1误差：$e(h(x),f(x)) = [h(x) \neq f(x)]$  =&gt; $f(x) = argmax_{y \in Y}P(y|x)​$</p>
+<p>$\widetilde{y} = \left\{\begin{matrix}<br>1 &amp;  avg.err 0.8 \\<br>2&amp; avg.err 0.3 &amp; \\<br>3 &amp; avg.err 0.9 &amp; \\<br>1.9 &amp;avg.err 1.0  &amp;<br>\end{matrix}\right.$</p>
+<p>选择平方损失 mse：$e(h(x),f(x)) = (h(x) \neq f(x))^2$  =&gt; $f(x) = \sum_{y \in Y} y ·P(y|x)$</p>
+<p>$\widetilde{y} = \left\{\begin{matrix}<br>1 &amp;  avg.err 1.1 \\<br>2&amp; avg.err 0.3&amp; \\<br>3 &amp; avg.err 1.5 &amp; \\<br>1.9 &amp;avg.err 0.29  &amp;<br>\end{matrix}\right.$</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>因为我们没有办法确定所选的假设在全部样本空间上的表现如何，所以只能通过$E_{in} \approx E_{out}$ （通过 Hoeffding。Inequality）</p>
+<p>而 我们希望学习到 所选的假设 $g\approx \; target \;function$，即希望$E_{out} = 0$，只能通过优化$E_{in}$来优化</p>
 
       
     </div>
@@ -409,8 +403,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/26/半监督学习/" rel="next" title="Semi-supervid Learning">
-                <i class="fa fa-chevron-left"></i> Semi-supervid Learning
+              <a href="/2019/02/21/Distributed-Machine-Learning/" rel="next" title="Distributed Machine Learning Introduction">
+                <i class="fa fa-chevron-left"></i> Distributed Machine Learning Introduction
               </a>
             
           </div>
@@ -418,10 +412,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/16/PCA/" rel="prev" title="PCA">
-                PCA <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -544,7 +534,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#聚类算法过程："><span class="nav-number">1.</span> <span class="nav-text">聚类算法过程：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Error-Measure"><span class="nav-number">1.</span> <span class="nav-text">Error Measure</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Noisy-Target"><span class="nav-number">2.</span> <span class="nav-text">Noisy Target</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
             
 
           </div>

@@ -88,7 +88,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/11/LearningFeasibility/l1.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/11/11/LearningFeasibility/l2.png">
-<meta property="og:updated_time" content="2019-02-19T08:33:30.000Z">
+<meta property="og:updated_time" content="2019-02-24T08:14:58.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Feasibility of Learning">
 <meta name="twitter:description" content="我们知道，机器学习是假设存在一个真实的模型，所有的训练数据是从这个模型中产生的，我们希望通过机器学习的方式，学习得到一个模型，希望学习到的这个模型和真实模型之间越接近越好 而机器学习的过程，可以理解为，存在一个假设空间hypotheisis set  $H$，通过一个合适的算法algrihtm $A$，从假设空间中选择得到一个合适的$h$，得到模型model $g$，希望这个模型$g$，越接近真实">
@@ -404,10 +404,10 @@
 <p>=&gt; 如果只有一个硬币，连续出现五次正面（in-sample error为0）的概率是$\frac{1}{32}$，但是出现150个硬币可以选择时，连续出现五次正面的概率大于99% </p>
 <p>因此，我们需要讨论，我们现在已经从假设空间中选择出一个最合适的假设g，其in-sample error和out-of-sample error之间的误差上界：</p>
 <p>$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq$                                                         </p>
-<p>$P[|E_{in}(h1)-E_{out}(h1)|&gt;\epsilon] \; or \;   P[|E_{in}(h2)-E_{out}(h2)|&gt;\epsilon] \; or \ ;                                                  P[|E_{in}(h3)-E_{out}(h3)|&gt;\epsilon] \; or \  $                                                           </p>
-<p>$……P[|E_{in}(h_M)-E_{out}(h_M)|&gt;\epsilon] $</p>
-<p>$\leq \sum_{m=1}^M P[|E_{in}(h_m)-E_{out}(h_m)|&gt;\epsilon]$</p>
-<p>假设空间中存在一个最好的假设g，这个假设满足$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon]$的概率，小于等于整个假设空间中每个假设发生这个$P[|E_{in}(h)-E_{out}(h)|&gt;\epsilon]$事件的概率</p>
+<p>$P[|E_{in}(h1)-E_{out}(h1)|&gt;\epsilon] \; or \;   P[|E_{in}(h2)-E_{out}(h2)|&gt;\epsilon] \; or \;                                                  P[|E_{in}(h3)-E_{out}(h3)|&gt;\epsilon] \; or \  $                                                           </p>
+<p>$……P[|E_{in}(h_M)-E_{out}(h_M)|&gt;\epsilon] ​$</p>
+<p>$\leq \sum_{m=1}^M P[|E_{in}(h_m)-E_{out}(h_m)|&gt;\epsilon]​$</p>
+<p>假设空间中存在一个最好的假设g，这个假设满足$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon]​$的概率，小于等于整个假设空间中每个假设发生这个$P[|E_{in}(h)-E_{out}(h)|&gt;\epsilon]​$事件的概率</p>
 <p>$P[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] \leq 2Mexp(-2\epsilon^2N)$</p>
 <p>💡此处我们讨论假设空间中的假设个数是有限个M</p>
 <p>💡如果我们以假设空间假设的个数M作为衡量指标，来判断模型的复杂程度，则模型越复杂，对应的假设空间越大，即M越大；模型越复杂，代表模型越能更好的拟合in-sample error，但是，对应的in-sample error和out-sample error出现差距很大的概率的上限也会变大</p>
@@ -537,21 +537,12 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
             
 
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                <a href="/tag/index.html">
-                  <span class="site-state-item-count">2</span>
-                  <span class="site-state-item-name">标签</span>
-                </a>
-              </div>
             
 
           </nav>
