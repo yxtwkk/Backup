@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文Non-Linear SVM，我们着重总结，在large margin保证SVM 模型不复杂的前提下，我们如何通过feature transform的形式，让原始模型可以处理更复杂的样本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Non-Linear SVM">
+<meta property="og:url" content="https://yeeex.gitee.io/2019/03/27/SVM-II/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="本文Non-Linear SVM，我们着重总结，在large margin保证SVM 模型不复杂的前提下，我们如何通过feature transform的形式，让原始模型可以处理更复杂的样本">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-29T08:53:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Non-Linear SVM">
+<meta name="twitter:description" content="本文Non-Linear SVM，我们着重总结，在large margin保证SVM 模型不复杂的前提下，我们如何通过feature transform的形式，让原始模型可以处理更复杂的样本">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2019/03/27/SVM-II/"/>
+
+
+
+
+
+  <title>Non-Linear SVM | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/03/27/SVM-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Non-Linear SVM</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-27T11:28:44+08:00">
+                2019-03-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文Non-Linear SVM，我们着重总结，在large margin保证SVM 模型不复杂的前提下，我们如何通过feature transform的形式，让原始模型可以处理更复杂的样本</p>
+<a id="more"></a>
+<h2 id="Non-Linear-SVM"><a href="#Non-Linear-SVM" class="headerlink" title="Non-Linear SVM"></a>Non-Linear SVM</h2><p>根据之前的hard margin svm的优化问题，我们可以写出Non-Linear SVM的优化问题：</p>
+<p>优化目标：$min_{b,w}\frac{1}{2}w^Tw$</p>
+<p>约束条件：$y_n(w^Tz_n+b) \geq 1​$   （$z_n​$是原始样本进行feature transform以后，转换到z空间）</p>
+<p>我们的需求是希望模型／假设的空间不大（large margin）+ 希望模型可以处理复杂的问题（特征转换）</p>
+<p>针对这个二次规划问题，我们一共有N个约束条件（N个训练样本），我们一共有d+1个参数（假设映射到z空间后，z空间的向量维度为d，还需要求解原始模型的bias b，即共d+1个参数）</p>
+<p>如果当特征转换后的维度d很高时，我们无法通过二次规划进行求解，我们可以通过对偶问题，在进行求解时移除对维度d的依赖</p>
+<p>原始问题：优化d+1个参数，共有N个约束条件</p>
+<p>对偶问题：优化N个参数，共有N+1个约束条件</p>
+<h3 id="Lagrange-Dual-Problem"><a href="#Lagrange-Dual-Problem" class="headerlink" title="Lagrange Dual Problem"></a>Lagrange Dual Problem</h3><p>根据拉格朗日优化问题，我们可以将优化目标和约束条件写在一起：</p>
+<p>$L(b,w,\alpha) = \frac{1}{2}w^Tw + \sum_{n=1}^N \alpha_n(1-y_n(w^Tz_n+b))​$</p>
+<p>SVM = $min_{b,w}(max_{\alpha_n \geq 0}L(w,b,\alpha))​$</p>
+<p>（1）当b和w选取不合适时，至少有一个点$y_n(w^Tz_n+b) \leq 1$，即不满足约束条件，则$max_{\alpha_n}$会使得内部的max优化问题变成无穷大</p>
+<p>（2）当b和w选取合适时，则内部所有点满足 $y_n(w^Tz_n+b) \geq 1$，则$1 - y_n(w^Tz_n+b) \leq 0$，因此，对于$1 - y_n(w^Tz_n+b) &lt; 0$的点，我们另其对应的$\alpha_n = 0$，即可以保证内部max优化问题只优化 $\frac{1}{2}w^Tw$</p>
+<p>=&gt; 优化问题变成 $min_{b,w}\frac{1}{2}w^Tw$</p>
+<p>因此，最终的优化问题会变成在符合情况（2）的条件里，选择最小的min w</p>
+<p> 根据$min_{b,w}(max_{\alpha_n \geq 0}L(w,b,\alpha) )\geq min_{b,w}L(b,w,\alpha’)​$ </p>
+<p>（选择一个$\alpha$可以使得max部分达到最大，再优化这个max，一定会大于规定一个$\alpha$的min）</p>
+<p>以上这个不等式都任意的$\alpha’$都成立，那么自然可以选择一个合适的$\alpha’$让右边的式子最大，即</p>
+<p>$min_{b,w}(max_{\alpha_n \geq 0}L(w,b,\alpha) )\geq max_{\alpha’}min_{b,w}L(b,w,\alpha’)$ </p>
+<p>当存在：（1）优化函数为凸函数（2）原始问题有解，即数据是线性可分的（3）约束条件是线性的 =&gt;满足这三个条件时，存在强对偶性</p>
+<p>因此，我们的优化目标现在为：</p>
+<p>$max_{\alpha_n \geq 0}(min_{b,w} L(w,b,\alpha)) = max_{\alpha_n}(min_{b,w} \; \frac{1}{2}w^Tw + \sum_{n=1}^N\alpha_n(1-y_n(w^Tz_n+b)))​$</p>
+<p>括号内的优化是无约束的，可以直接求其导数为0的点，为函数的极值点，即</p>
+<p>$\frac{\partial L(w,b,\alpha)}{\partial b} = 0 = -\sum_{n=1}^N\alpha_ny_n​$</p>
+<p>根据这个等式，我们可以将原始优化目标简化：</p>
+<p>$max_{\alpha_n \geq 0}(min_{b,w} L(w,b,\alpha)) = max_{\alpha_n}(min_{b,w} \; \frac{1}{2}w^Tw + \sum_{n=1}^N\alpha_n(1-y_nw^Tz_n))​$</p>
+<p>同样，我对w求偏导，$\frac{\partial L(w,b,\alpha)}{\partial w_i} = 0 =w_i -\sum_{n=1}^N\alpha_ny_nz_{n,i}​$</p>
+<p>（模型参数的第i维对应训练样本的第i维）</p>
+<p>因此，$w=\sum_{n=1}^N\alpha_ny_nz_{n}​$  (一共n个训练样本)</p>
+<p>根据这个等式，我们可以将原始优化目标简化：</p>
+<p>$max_{\alpha_n \geq 0}(min_{b,w} L(w,b,\alpha)) = max_{\alpha_n}(min_{b,w} \; \frac{1}{2}w^Tw + \sum_{n=1}^N\alpha_n(1-y_nw^Tz_n))$ </p>
+<p>$=  max_{\alpha_n}(min_{b,w} \; \frac{1}{2}w^Tw + \sum_{n=1}^N\alpha_n·1- \sum_{n=1}^N\alpha_ny_nw^Tz_n)$</p>
+<p>$=  max_{\alpha_n}(min_{b,w} \; \frac{1}{2}w^Tw + \sum_{n=1}^N\alpha_n·1- w^Tw)​$</p>
+<p>$=  max_{\alpha_n}(min_{b,w} \;- \frac{1}{2}w^Tw + \sum_{n=1}^N\alpha_n)$</p>
+<p>$=  max_{\alpha_n \geq 0}(min_{b,w} \;- \frac{1}{2}||\sum_{n=1}^N\alpha_ny_nz_{n}||^2 + \sum_{n=1}^N\alpha_n)​$</p>
+<p>约束：</p>
+<p>（1）$w=\sum_{n=1}^N\alpha_ny_nz_{n}​$  </p>
+<p>（2）$ -\sum_{n=1}^N\alpha_ny_n​$= 0</p>
+<p>在求解拉格朗日对偶问题时，需要满足KKT条件：</p>
+<p>（1）满足原问题约束：$y_n(w^Tz_n+b) \geq 1$</p>
+<p>（2）满足对偶问题约束：$\alpha_n \geq 0$</p>
+<p>（3）满足现在问题的条件：$w=\sum_{n=1}^N\alpha_ny_nz_{n}$   和 $ \sum_{n=1}^N\alpha_ny_n$= 0</p>
+<p>（4）满足互补松弛条件：$\alpha_n (1-y_n(w^Tz_n+b)) = 0​$</p>
+<p>因此，我们的优化问题变成对$\alpha_n$进行约束求解</p>
+<p>优化目标：$max_{\alpha_n \geq 0} \;- \frac{1}{2}||\sum_{n=1}^N\alpha_ny_nz_{n}||^2 + \sum_{n=1}^N\alpha_n​$</p>
+<p>​                =&gt; $min \;\frac{1}{2}||\sum_{n=1}^N\alpha_ny_nz_{n}||^2 - \sum_{n=1}^N\alpha_n​$</p>
+<p>约束条件：</p>
+<p>（1）$\alpha_n \geq 0 \;\;\; n=1,2,3..N​$</p>
+<p>（2）$\sum_{n=1}^N y_n\alpha_n = 0$</p>
+<p>通过拉格朗日对偶问题，我们只需要优化N个变量，约束条件有N+1个</p>
+<p>当我们通过二次规划得到$\alpha_n$以后，可以根据$w=\sum_{n=1}^N\alpha_ny_nz_{n}$  得到w；可以根据KKT的互补松弛条件 $\alpha_n (1-y_n(w^Tz_n+b)) = 0$，选择不等于0的$\alpha_n$ 对应的训练样本，根据 $1-y_n(w^Tz_n+b) = 0$得到bias b</p>
+<p>根据互补松弛条件 $\alpha_n &gt;0$的训练样本恰好在分类边界上 是支撑向量</p>
+<p>总结一下：SVM的分类平面只跟支撑向量有关，即：</p>
+<p>$w=\sum_{n=1}^N\alpha_ny_nz_n = \sum_{SV}\alpha_ny_nz_n​$</p>
+<p>$b= y_n-w^Tz_n $ （选择一个支撑向量进行计算即可）</p>
+<h4 id="SVM-vs-PLA"><a href="#SVM-vs-PLA" class="headerlink" title="SVM vs PLA"></a>SVM vs PLA</h4><p>在SVM中，我们可以将参数向量表示称训练样本（支撑向量）的线性组合</p>
+<p>同样，在PLA中，如果我们的初参数向量从0开始，则PLA的参数也可以表示称分类错误的样本的线性组合 $w_{PLA} = \sum_{n=1}^N \beta_n(y_nz_n)$</p>
+<p>我们称这种模型为represented by data</p>
+<h2 id="Kernel-SVM"><a href="#Kernel-SVM" class="headerlink" title="Kernel SVM"></a>Kernel SVM</h2><p>仔细观察SVM的优化函数，虽然我们将SVM的优化问题转换到对偶问题求解，但是在求解过程中，需要计算两个向量的内积：</p>
+<p>优化目标：$min \;\frac{1}{2}||\sum_{n=1}^N\alpha_ny_nz_{n}||^2 - \sum_{n=1}^N\alpha_n​$</p>
+<p>其中 $w=\sum_{n=1}^N\alpha_ny_nz_n = \sum_{SV}\alpha_ny_nz_n$ </p>
+<p>我们可以将优化目标转换成：</p>
+<p>$min \;\frac{1}{2}(\sum_{i=1}^N\alpha_iy_iz_{i} ·\sum_{j=1}^N\alpha_jy_jz_{j})  - \sum_{n=1}^N\alpha_n​$</p>
+<p>$min \;\frac{1}{2}\sum_{i=1}^N\sum_{j=1}^N\alpha_i\alpha_jy_iy_j(z_{i} ·z_{j})  - \sum_{n=1}^N\alpha_n$</p>
+<p>当我们进行特征转换后，训练样本维度特别高时，增加了计算复杂度和存储的空间需求。</p>
+<p>以$\Phi_2$转换为例，$\Phi_2(x) = (1,x_1,x_2,…,x_d,x_1^2,x_1x_2,…x_1x_d,x2x1,x_2^2,…x_2x_d,….x_d^2)$</p>
+<p>（此处为了说明方便，同时包含了$x_1x_2$和$x_2x_1$，但是实际的转换这两个可以合并同类项）</p>
+<p>原始数据x和x‘，经过feature transform以后，得到$\Phi_2(x)$和$\Phi_2(x’)$</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/18/Gradinet-Descent-I/" rel="next" title="Gradinet Descent I">
+                <i class="fa fa-chevron-left"></i> Gradinet Descent I
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Non-Linear-SVM"><span class="nav-number">1.</span> <span class="nav-text">Non-Linear SVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Lagrange-Dual-Problem"><span class="nav-number">1.1.</span> <span class="nav-text">Lagrange Dual Problem</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SVM-vs-PLA"><span class="nav-number">1.1.1.</span> <span class="nav-text">SVM vs PLA</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel-SVM"><span class="nav-number">2.</span> <span class="nav-text">Kernel SVM</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -81,7 +81,7 @@
 
 <meta name="description" content="支持向量机SVM（Support Vector Machine）是一个（二）分类模型，主要特点有两个： （1）针对分类问题损失函数 loss funcion不方便求导优化参数的问题，SVM采用Hinge Loss （2）针对线性分类模型的分类局限性，SVM引入Kernel的方法进行特征变化，进而进行分类">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SVM">
+<meta property="og:title" content="Linear SVM">
 <meta property="og:url" content="https://yeeex.gitee.io/2018/10/14/SVM/index.html">
 <meta property="og:site_name" content="Yeeex">
 <meta property="og:description" content="支持向量机SVM（Support Vector Machine）是一个（二）分类模型，主要特点有两个： （1）针对分类问题损失函数 loss funcion不方便求导优化参数的问题，SVM采用Hinge Loss （2）针对线性分类模型的分类局限性，SVM引入Kernel的方法进行特征变化，进而进行分类">
@@ -89,9 +89,10 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s.jpg">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s3.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s4.png">
-<meta property="og:updated_time" content="2018-10-21T13:25:20.000Z">
+<meta property="og:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s5.png">
+<meta property="og:updated_time" content="2019-03-27T03:28:40.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SVM">
+<meta name="twitter:title" content="Linear SVM">
 <meta name="twitter:description" content="支持向量机SVM（Support Vector Machine）是一个（二）分类模型，主要特点有两个： （1）针对分类问题损失函数 loss funcion不方便求导优化参数的问题，SVM采用Hinge Loss （2）针对线性分类模型的分类局限性，SVM引入Kernel的方法进行特征变化，进而进行分类">
 <meta name="twitter:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s.jpg">
 
@@ -129,7 +130,7 @@
 
 
 
-  <title>SVM | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>Linear SVM | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -273,7 +274,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">SVM</h1>
+          <h1 class="post-title" itemprop="name headline">Linear SVM</h1>
         
 
         <div class="post-meta">
@@ -352,17 +353,29 @@
 <h2 id="Binary-Classification"><a href="#Binary-Classification" class="headerlink" title="Binary Classification"></a>Binary Classification</h2><p>在写SVM之前，我们可以简单回顾一下分类问题</p>
 <p> （1）定义模型／函数空间</p>
 <p>（假设我们的类别是+1和-1）</p>
-<p>假设二维平面中，需要一个分类界面将平面上的点分成两类，$y_1$和$y_2$；从数学的角度来看，需要一个函数f(x)将二维平面上的点分城两类，比如，函数值大于0和小于0；再通过另外一个函数g(x)，将f(x)大于0的点归为一类，将小于0的点归为一类</p>
+<p>假设二维平面中，需要一个分类界面将平面上的点分成两类，$y_1​$和$y_2​$；从数学的角度来看，需要一个函数f(x)将二维平面上的点分城两类，比如，函数值大于0和小于0；再通过另外一个函数g(x)，将f(x)大于0的点归为一类，将小于0的点归为一类</p>
 <p>$g(x) = \left\{\begin{matrix}<br>f(x) &gt; 0 &amp; Output = +1\\<br> f(x) &lt;0&amp; Output = -1<br>\end{matrix}\right.$</p>
 <p>（2）定义损失函数 loss function</p>
 <p>理想的loss funcion是统计分类错误的样本个数：</p>
 <p>$L(f) = \sum_n\delta(g(x^n) \neq y^n)$</p>
-<p>但是理想的损失函数是没办法求导的</p>
+<p>但是理想的损失函数是没办法求导的（NP-hard问题）</p>
 <p>我们转变损失函数</p>
 <p>$L(f) = \sum_nl(f(x^n),\hat y^n)$</p>
 <p>现在的问题变成 如何更好的定义转换后的损失函数，转换后的损失函数越接近理想的损失函数越好</p>
-<h2 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h2><p><img src="/2018/10/14/SVM/s.jpg" width="650px"></p>
-<p>图中的横坐标表示$y^nf(x)$</p>
+<h2 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h2><p>不同的损失函数，对应了不同的模型，而不同的模型，是通过参数和训练样本的内积计算得到一个分数s，通过对这个s的不同处理，得到不同的模型</p>
+<p>（1）linear classification</p>
+<p>模型：$h(x) = sign(s)$</p>
+<p>损失函数为0/1损失 $err(h,x,y) =\left [ h(x) \neq y \right ]$</p>
+<p>$err_{0/1}(s,y) = [sign(s) \neq y] = [sign(ys) \neq 1]​$</p>
+<p>（2）linear regression</p>
+<p>模型：$h(x) = s$</p>
+<p>损失函数为平方损失 $err(h,x,y) = (h(x) \neq y )^2$</p>
+<p>$err_{SQR}(s,y) =(s-y)^2 = (ys-1)^2$ 相当于乘了一个$y^2​$</p>
+<p>（3）logistic regression</p>
+<p>模型：$h(x) = \theta (s)$</p>
+<p>损失函数为交叉熵损失 $err_{CE}(s,y) =ln(1+exp(-ys)) $</p>
+<p><img src="/2018/10/14/SVM/s.jpg" width="650px"></p>
+<p>图中的横坐标表示$y^nf(x)​$</p>
 <p>如果分类类别$y^n$和f(x)是同向的，表明分类正确，即loss=0；如果是反向的，表明分类错误，即loss=1</p>
 <p><strong>图示黑线表示的是理想的损失函数</strong></p>
 <h3 id="Square-Loss"><a href="#Square-Loss" class="headerlink" title="Square Loss"></a>Square Loss</h3><p>平方损失函数 $l(f(x^n),\hat y^n) = (\hat y^nf(x^n)-1)^2 $</p>
@@ -392,6 +405,8 @@
 <p><strong>在sigmoid函数中，采用平方损失和交叉熵损失函数的区别：</strong></p>
 <p>主要考虑$y^n$和f(x)反向时，调整$y^n$和f(x)，当$y^nf(x)$的乘积同时增大一定程度时，从图示曲线可以看出，sigmoid+交叉熵损失函数的的loss变化较大，而sigmoid+平方损失的loss变化较小</p>
 <p>💡类比一下：sigmoid + cross entropy：努力可以有较大回报；sigmoid + square loss：没有回报，不想努力</p>
+<p>💡从图中可以看出，平方损失和交叉熵损失都是0/1损失的上界。但是平方损失和交叉熵损失不能作为分类问题的损失函数，对于平方损失而言 当|yf(x)|很大时，平方损失的误差是0/1损失的超级loose bound ；对于交叉熵损失而言，当yf(x)的乘积很负时，同样是0/1损失的超级loose upper bound</p>
+<p>我们可以用linear regression对PLA/LR等进行初始化 ，因为Linear Regression的参数最好优化</p>
 <h3 id="Hinge-Loss"><a href="#Hinge-Loss" class="headerlink" title="Hinge Loss"></a>Hinge Loss</h3><p>Hinge loss是合页损失函数，也是一种分段函数：</p>
 <p>$l(f(x^n),\hat y^n) = max(0,1-\hat y^nf(x))$</p>
 <p>当$y^n = 1$时，$l = max(0,1-f(x))$ =&gt;  loss = 0 1-f(x) &lt; 0 =&gt; f(x) &gt; 1</p>
@@ -481,7 +496,47 @@
 <p>输入层-&gt;隐藏层之间的权重是每个支撑向量，隐藏层的计算结果是支撑向量和输入向量的内积，隐藏层-&gt;输出层之间的权重是支撑向量对应的$\alpha^n$</p>
 <p><img src="/2018/10/14/SVM/s4.png" width="350px"></p>
 <p>💡这里面需要注意的是，在线性分类器中采用核函数技巧，相当于增加了模型的复杂度，容易过拟合</p>
-<h3 id="Perspective-Five：对偶-拉格朗日乘子法"><a href="#Perspective-Five：对偶-拉格朗日乘子法" class="headerlink" title="Perspective Five：对偶+拉格朗日乘子法"></a>Perspective Five：对偶+拉格朗日乘子法</h3>
+<h3 id="Perspective-Five：对偶-拉格朗日乘子法"><a href="#Perspective-Five：对偶-拉格朗日乘子法" class="headerlink" title="Perspective Five：对偶+拉格朗日乘子法"></a>Perspective Five：对偶+拉格朗日乘子法</h3><p>对于PLA而言，将训练样本分类正确的模型／线可以有很多条，但是PLA无法决定选择哪一条作为自己最终的模型。</p>
+<p><img src="/2018/10/14/SVM/s5.png" width="350px"></p>
+<p>如何衡量一个分类模型的好坏？可以看每一个训练样本离这条线的远近，每个分类样本离这条线越远，代表这个分类模型越好。</p>
+<p>定义一个模型的鲁棒性：距离模型／分类平面最近的训练样本，距离分类平面的距离 （这个距离越远，表明这个分类模型的鲁棒性越好）</p>
+<p>优化目标：$max_w  \; fatnees(w)$</p>
+<p>约束条件：训练样本的每个样本都能分类正确 并且 $fatness(w) = min_{n=1,2,..n} \;distance(x_n,w)$</p>
+<p>=&gt; 约束条件可以表示为：</p>
+<p>$y_nw^Tx_n &gt;0$</p>
+<p>$margin(w) = min_{n=1,2..n}\;distance(x_n,w)$</p>
+<p>（此处我们用w代表我们的分类平面）</p>
+<p>以上的计算依然延续了将训练样本扩展一维度，成为增广向量，下面的推导中，我们不考虑增广向量的问题，保持bias b， 即 模型为 $h(x) = sign(w^Tx+b)$</p>
+<p><strong>计算样本到分类平面的距离</strong> </p>
+<p>分类平面可以表示为 $ w^Tx+b = 0$</p>
+<p>考虑平面上的两个点 x’ 和 x’’，平面上两个点满足：</p>
+<p>（1）$w^Tx’ = -b$  $w^Tx’’ = -b$</p>
+<p>（2）w为平面的法向量，垂直于平面，即 $w^T(x’-x’’) = 0$</p>
+<p>平面外任意一点到平面的距离，即 平面外任意一点x，与平面上的一个点x’，构成的向量x-x’ 在垂直于平面向量上的投影，即</p>
+<p>$distance(x,b,w) = |\frac{w^T}{||w||}(x-x’)| = \frac{1}{||w||}|w^Tx-w^Tx’| = \frac{1}{||w||}|w^Tx+b|$</p>
+<p>因此，原始约束条件可以修改成：</p>
+<p>优化目标：$max_{b,w}\;margin(b,w)$</p>
+<p>约束条件：$y_n(w^Tx_n+b) &gt; 0$ 且 $margin(b,w) = min_{n=1,2…N} \frac{1}{||w||}y^n(w^Tx+b)$</p>
+<p><strong>平面的多条分类平面可以进行规约</strong></p>
+<p>对于分类平面$w^Tx+b = 0$ 和$3w^Tx+3b = 0$,两个分类平面虽然对应不同的参数，但是两个分类平面代表的意义是相同，即参数可以进行缩放</p>
+<p>则，为了优化简单起见，我们设定$min_{n=1,2..N}y_n(w^Tx_n+b) = 1​$ （因为最近的距离，和$\frac{1}{||w||}​$  $y_n(w^Tx_n+b)​$ 两项有关）</p>
+<p>因此，原始约束条件可以修改成：</p>
+<p>优化目标：$max_{b,w} \frac{1}{||w||}$</p>
+<p>约束条件：$y_n(w^Tx_n+b) &gt; 0​$ 且 $min_{n=1,2..N}y_n(w^Tx_n+b) = 1​$  =&gt; 两个条件有重合的地方，我们可以再次规约：</p>
+<p>约束条件：$min_{n=1,2..N}y_n(w^Tx_n+b) = 1$ </p>
+<p><strong>约束条件可以进行放缩</strong></p>
+<p>$min y_n(w^Tx_n+b ) = 1​$ 在这种情况下，可以和$y_n(w^Tx+b) \geq 1​$等价</p>
+<p> 假设两个约束条件不等价，我们按大于等于1进行优化，但是最终得到真实的$y_n(w^Tx+b) &gt; 1.126$，我们可以将w和b进行缩放，得到$\frac{b}{1.126}$和$\frac{w}{1.126}$，使得$y_n(w^Tx+b) \geq 1$成立。但是此时$\frac{1}{||w||}$比原始的结果要大，与最佳解矛盾</p>
+<p><strong>优化目标可以从max变成min</strong></p>
+<p>优化目标：$min_{b,w}\frac{1}{2}w^Tw​$</p>
+<p>约束条件：$y_n(w^Tx_n+b) \geq 1$ </p>
+<p><strong>Hard-Margin SVM</strong></p>
+<p>以上是Hard-Margin SVM的优化目标，即我们不允许分类平面犯错误；此外，在分类平面边界上的点，即距离分类平面$\frac{1}{||w||}$上的点，我们称之为support vector</p>
+<p>我们可以将SVM和正则化进行对比：</p>
+<p>（1）正则化的优化目标是最小化训练误差，约束条件是L1/L2范数的约束</p>
+<p>（2）SVM的优化目标是最小化参数的模／L2范数，约束条件是最小化训练误差；当margin = 0 时，即PLA进行的学习，margin越大，代表SVM可以分对的情况越少，即SVM的VC Dimension越低，代表泛化能力越好</p>
+<p>在VC Dimension中，我们讨论过，VC Dimension越大， 代表模型越复杂，则模型在训练样本上的误差越小；但是这同时也代表了泛化误差的上界更大 =&gt; large margin保证了模型不复杂， 泛化误差的上界小，我们可以通过featrue transform的形势将模型做的复杂。</p>
+
       
     </div>
     
@@ -594,7 +649,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">31</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

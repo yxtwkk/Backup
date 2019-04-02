@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本篇准备整理一下线性模型。线性模型是针对参数w而言是线性的，则我们称这个模型是线性模型。 本篇主要整理 PLA，PLA的变体Pocket Algorithm，Linear Regression和Logistic Regression。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linear Model">
+<meta property="og:url" content="https://yeeex.gitee.io/2019/03/09/Linear-Model/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="本篇准备整理一下线性模型。线性模型是针对参数w而言是线性的，则我们称这个模型是线性模型。 本篇主要整理 PLA，PLA的变体Pocket Algorithm，Linear Regression和Logistic Regression。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/03/09/Linear-Model/l1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/03/09/Linear-Model/l2.png">
+<meta property="og:updated_time" content="2019-03-22T04:07:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linear Model">
+<meta name="twitter:description" content="本篇准备整理一下线性模型。线性模型是针对参数w而言是线性的，则我们称这个模型是线性模型。 本篇主要整理 PLA，PLA的变体Pocket Algorithm，Linear Regression和Logistic Regression。">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2019/03/09/Linear-Model/l1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2019/03/09/Linear-Model/"/>
+
+
+
+
+
+  <title>Linear Model | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/03/09/Linear-Model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linear Model</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-09T20:50:16+08:00">
+                2019-03-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本篇准备整理一下线性模型。线性模型是针对参数w而言是线性的，则我们称这个模型是线性模型。</p>
+<p>本篇主要整理 PLA，PLA的变体Pocket Algorithm，Linear Regression和Logistic Regression。</p>
+<a id="more"></a>
+<p>无论是 PLA，Linear Regression还是Logistic Regression，都是根据训练样本和参数向量的内积计算得到一个“分数”，三个模型针对这个分数进行不同的处理，采用不同的损失函数，得到不同的模型。</p>
+<h2 id="PLA"><a href="#PLA" class="headerlink" title="PLA"></a>PLA</h2><p>PLA 即 Perceptron Learning Algorithm</p>
+<p>针对输入训练样本 $\overline{x} = (x_1,x_2,x_3…x_d)$,假设模型参数为$\overline{w} =(w_1,w_2,w_3…w_d) $</p>
+<p>通过计算 $\overline{w} · \overline{x} = \sum_{i=1}^d w_ix_i$得到一个分数</p>
+<p>h(x) = sign $((\sum_{i=1}^dw_ix_i)-threshold)$</p>
+<p>= sign$((\sum_{i=1}^d)w_ix_i) +(-threshold) ·1)$        (将原始训练样本的维度进行扩展，即第0维 = 1，作为bias项)</p>
+<p>=sign$(\sum_{i=0}^d w_ix_i)$</p>
+<p>=sign$(w^Tx)$</p>
+<p>💡通过这种方式，将阈值作为训练样本的第0维度</p>
+<p>训练样本的标记y={+1,-1}</p>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>从初始参数$w_0​$出发，针对一个训练样本，如果模型输出的标记和这个训练样本的标记不同，$sign(w_t^Tx_{n(t)}) \neq y_{n(t)}​$</p>
+<p>则根据这个样本对模型参数进行修正，$w_{t+1} \leftarrow w_t+y_{n(t)}x_{n(t)}$</p>
+<p>直到模型在全部样本上的分类正确为止。</p>
+<p><img src="/2019/03/09/Linear-Model/l1.png" width="270px"></p>
+<p>如果y=+1，$w^Tx &lt;0​$ 表明向量w和向量x之间的夹角太大，需要减小二者之间的夹角 即$\overline{x} = \overline{w} + \overline{x} = \overline{w} +y \overline{x} ​$</p>
+<p>如果y=-1，$w^Tx &gt;0$ 表明向量w和向量x之间的夹角太小，需要增大二者之间的夹角 即$\overline{x} = \overline{w} - \overline{x} = \overline{w} +y \overline{x} $</p>
+<p>以二维为例，我们通过PLA会得到一个二维的向量作为参数，这个二维向量可以确定一个分类平面（线）；求得的向量为这个平面的法向量，训练样本和分类面的法向量的内积确定了训练样本在分类平面的哪一侧。</p>
+<p><strong>同时，参数向量和训练样本向量的内积代表了训练样本离分类平面的远近</strong>:</p>
+<p>假设直线方程为$ax_1+bx_2+c = 0$，(a,b)即为其一个法向量，任意样本$(x_1,y_2)$到直线的距离 $\frac{|ax_1+bx_2+c|}{\sqrt{a^2+b^2}}$</p>
+<p>距离公式的分子即两个向量内积的绝对值，即 在分类问题中，分子为 $y_n w^Tx_n$；而分母为一个确定常量，则分子越大，即内积的绝对值越大，代表训练样本离分类平面越远。=&gt; 所以，我们形象的描述这个内积为“分数”，这个分数score衡量了这个分类面分类这个样本的可信程度。</p>
+<h3 id="PLA-Halt"><a href="#PLA-Halt" class="headerlink" title="PLA Halt"></a>PLA Halt</h3><p><strong>PLA是否真的会停止，取决于训练样本是否真的线性可分。</strong></p>
+<p>如果PLA停止，表明算法收敛，即 模型参数在训练样本上的错误为0 &lt;=&gt; 训练样本为线性可分的</p>
+<p>我们进行以下的推导：假设存在一个最好的PLA模型$w_f^T$</p>
+<p>如果数据点线性可分，则 $y_{n(t)}w_f^Tx_{n(t)} \geq min_n\; y_{n}w_f^Tx_{n} &gt; 0$   ，相当于，每一个训练样本到分类面的距离，一定大于等于 离分类面最近的分类样本；我们通过PLA学习的过程是模型参数$w_t$越来越接近$w_f$</p>
+<p>$w_f^Tw_{t+1} = w_f^T(w_t+ y_nx_N) \geq w_f^Tw_t + min_n\;y_nw_f^Tx_n \geq w_f^Tw_t​$</p>
+<p>💡两个向量的内积的大小，一定程度上反映了两个向量的相似性。即 每一轮更新迭代过程，都会使得我们学习到的向量向最好的分类向量靠近，这个描述成立的前提是，每一次更新以后，向量的模不变，或者不会变特别大</p>
+<p><strong>PLA的更新速度较慢，只有当有分类错误的点出现时，才会进行更新。</strong></p>
+<p><strong>误差更新限制了PLA的参数向量的模的增长，每次最多更新最长的训练样本的向量的模</strong></p>
+<p>分类错误的点 即 $sign(w^Tx_n) \neq y_n$ &lt;=&gt; $y_nw^Tx_n \leq 0​$</p>
+<p>$||w_{t+1}||^2 = ||w_t+y_nx_n||^2 = ||w_t||^2+2y_nw_t^Tx_n + ||y_nx_n||^2 \leq ||w_t||^2 +0 +||y_nx_n||^2 \leq |w_t||^2 + max_n||y_nx_n||^2​$</p>
+<p>如果初始权重设置为$w_0 = 0​$，经过t次修正， $\frac{w_f^T}{||w_f||}\frac{w_t}{||w_t||} \geq \sqrt {t} ·constant​$</p>
+<p><strong>根据</strong>$||w_{t+1}||^2 = ||w_t+y_nx_n||^2 = ||w_t||^2+2y_nw_t^Tx_n + ||y_nx_n||^2 \leq ||w_t||^2 +0 +||y_nx_n||^2 \leq |w_t||^2 + max_n||y_nx_n||^2$ 这是一个迭代式，即$|w_{t+1}^2|| \leq ||w_t||^2 +max_n||y_nx_n||^2$</p>
+<p>$||w_{t}||^2 \leq ||w_{t-1}||^2 +max_n||y_nx_n||^2$</p>
+<p>…</p>
+<p>$||w_{1}||^2 \leq ||w_0||^2 +max_n||y_nx_n||^2$</p>
+<p>因此，$||w_{t}||^2 \leq ||w_{0}||^2 +t·max_n||y_nx_n||^2 = t·max_n||y_nx_n||^2​$</p>
+<p><strong>根据</strong></p>
+<p>$w_f^Tw_{t+1} = w_f^T(w_t+ y_nx_N) \geq w_f^Tw_t + min_n\;y_nw_f^Tx_n​$</p>
+<p>$w_f^Tw_{t} = w_f^T(w_{t-1}+ y_nx_N) \geq w_f^Tw_{t-1} + min_n\;y_nw_f^Tx_n$</p>
+<p>…</p>
+<p>$w_f^Tw_{1} = w_f^T(w_{0}+ y_nx_N) \geq w_f^Tw_{0} + min_n\;y_nw_f^Tx_n​$</p>
+<p>因此，$w_f^Tw_{t}  \geq w_f^Tw_{0} + t·min_n\;y_nw_f^Tx_n =  t·min_n\;y_nw_f^Tx_n​$</p>
+<p>即，$1\geq\frac{w_f^T}{||w_f||}\frac{w_t}{||w_t||} \geq \frac{t·min_ny_nw_f^Tx_n}{||w_f||·\sqrt{t}·max_n||y_nx_n||} \geq \frac{\sqrt{t}·min_ny_nw_f^Tx_n}{||w_f||·max_n||x_n||} = t·const$</p>
+<p><strong>这个不等式表明，随着迭代次数的增多，参数向量越来越靠近最优的分类平面，算法最终会终止halt</strong></p>
+<h2 id="Pocket-Algorithm"><a href="#Pocket-Algorithm" class="headerlink" title="Pocket Algorithm"></a>Pocket Algorithm</h2><p>PLA 终止的前提是 训练样本是线性可分的，且 算法每次都用分类错误的点进行更新 =&gt; $w_f$ 和$w_t$的内积不断变大，且$w_t$的模不会增长很快；但是如果训练样本不是线性可分的，我们就需要采用PLA的变体，Pocket Algorithm</p>
+<p>从初始参数$w_0$出发，针对一个训练样本，如果模型输出的标记和这个训练样本的标记不同，$sign(w_t^Tx_{n(t)}) \neq y_{n(t)}$</p>
+<p>则根据这个样本对模型参数进行修正，$w_{t+1} \leftarrow w_t+y_{n(t)}x_{n(t)}$</p>
+<p>计算$w_t$在所有样本上的分类误差和$w_{t+1}$在所有样本上的分类误差，留下分类误差小的那个参数向量</p>
+<p>再根据上述流程更新参数，直到达到预定的迭代次数为止 ／或者分类误差不再变化</p>
+<h2 id="Linear-Regression"><a href="#Linear-Regression" class="headerlink" title="Linear Regression"></a>Linear Regression</h2><p>回归问题的本质是输出一个real-value output，因此，对于Linear Regression，我们直接输出算出的分数$\sum_{i=0}^d w_ix_i​$，因此 $h(x) = \sum_{i=0}^dw_ix_i= w^Tx​$</p>
+<h3 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h3><p>我们需要定义一个损失函数，用来衡量我们的h(x)和target y之间的相似程度 =&gt; 平方损失函数</p>
+<p>$E_{in}(w) = \frac{1}{N} \sum_{n=1}^N(h(x_n)-y_n)^2$</p>
+<p>$E_{out}(w) = \varepsilon_{(x,y) \sim P} (w^Tx-y)^2$</p>
+<p>我们通过对in-sample error的优化，得到同一假设空间中的不同假设，不断逼近理想的target function</p>
+<h4 id="Matrix-Form-of-Loss-Function"><a href="#Matrix-Form-of-Loss-Function" class="headerlink" title="Matrix Form of Loss Function"></a><strong>Matrix Form of Loss Function</strong></h4><p>$E_{in}(w) = \frac{1}{N} \sum_{n=1}^N(w^Tx_n-y_n)^2 =  \frac{1}{N} \sum_{n=1}^N(x_n^Tw_n-y_n)^2$</p>
+<p>$= \frac{1}{N} \begin{Vmatrix}<br>x_1^Tw-y_1\\<br>x_2^Tw-y_2\\<br>…\\<br>x_N^Tw-y_N\end{Vmatrix}^2$               (相当于一个N维的向量取模)</p>
+<p>$=\frac{1}{N}\begin{Vmatrix}<br>\begin{bmatrix}<br>x_1^T\\<br>x_2^T\\<br>…\\<br>x_N^T<br>\end{bmatrix} w<br>-\begin{bmatrix}<br>y_1\\<br>y_2\\<br>…\\<br>y_N<br>\end{bmatrix}<br>\end{Vmatrix}^2 $  $ = \frac{1}{N} ||Xw-y||^2$   </p>
+<p> （X为一个 N x (d+1)的矩阵；w是一个(d+1) x 1的向量，y是一个y x 1的向量）</p>
+<p>  💡对于一个连续可微的凸函数，其最优解在梯度为0的地方</p>
+<p>$E_{in}(w) = \frac{1}{N}||Xw-y||^2 = \frac{1}{N}(w^TX^TXw-2w^TX^Ty+y^Ty)$</p>
+<p>$||Xw-y||^2 = (Xw-y)^T(Xw-y) = ((Xw)^T-y^T)(Xw-y) = (Xw)^TXw-(Xw)^Ty - y^TXw +y^Ty$</p>
+<p>$=(Xw)^TXw-(Xw)^Ty-(Xw)^Ty+y^Ty = w^TX^TXw-2w^TX^Ty+y^Ty​$</p>
+<p>$\bigtriangledown E_{in}(w) = \frac{2}{N}(X^TXw-X^Ty) = 0​$</p>
+<p>因此，$X^TXw=X^Ty​$</p>
+<p>（1）当X是方阵时，可以$w=X^{-1}y$得到$E_{in} = 0$</p>
+<p>（2）当X不是方阵时，只能通过优化$E_{in}​$关于w的梯度，找到一个$E_{in}​$的极小值：</p>
+<script type="math/tex; mode=display">\color{blue}{w_{LIN}}=\underbrace{(\color{red}{X^TX})^{-1}\color{red}{X^T}}_{pseudo-inverse;\color{red}{X^{\dagger}}}\color{purple}{y} = \color{red}{X^{\dagger}} \color{purple}{y}</script><p>💡我们称$(X^TX)^{-1}X^T​$为伪逆矩阵，是因为这个矩阵存在一些逆矩阵的性质：</p>
+<p>$(X^TX)^{-1}X^T X = I​$</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>通过上述推导，我们整理出Linear Regression的算法流程：</p>
+<p>（1）构建输入样本矩阵 X （N X (d+1)）和训练样本标记向量y (N x 1)</p>
+<p>（2）计算训练样本矩阵X的违拟矩阵 $X^{\dagger}$</p>
+<p>（3）计算模型的参数向量 $w_{LIN} = X^{\dagger} y$</p>
+<h2 id="Logistic-Regression"><a href="#Logistic-Regression" class="headerlink" title="Logistic Regression"></a>Logistic Regression</h2><p>LR 可以视为soft binary classification。PLA算法的类别标记为{+1,-1}，而LR输出的是样本为+1的概率。</p>
+<p>而我们实际的样本中，以银行贷款为例，只有可以贷款和不能贷款两种情况，这两种情况在不同的模型中的标记是不同的。在PLA这种硬分类问题中，我们需要一个分类平面将两类样本分开，通过的是sign函数，这个函数的输出即{+1,-1}；而在软分类问题中，我们将可以贷款视为概率为 1的样本，将不能贷款视为贷款概率为0的样本。</p>
+<p>同样，我们首先需要根据训练样本，计算分数$\sum_{i=0}^d w_ix_i$，再将这个分数送入logistic函数 $\Theta(s) = \frac{e^s}{1+e^s} = \frac{1}{1+e^{-s}}$，得到一个概率。</p>
+<p>LR：$h(x) = \frac{1}{1+exp(-w^Tx)}$  通过h(x) 去approximate $f(x) = P(+1|x)$</p>
+<p>💡这里需要注意，LR学习的是P(+1|x)这个概率，而不是x的具体类别，所以训练样本的标记可以是+1/-1</p>
+<p>因此，LR需要预测类别标签为+1/-1的样本出现的概率</p>
+<p>采用极大似然估计的方式进行求解，即我们不考虑参数存在的先验分布，只考虑根据这个参数生成这些数据的概率。生成带标记的训练样本的过程为：首先生成训练样本，在根据P(+1|x)生成样本标记</p>
+<p><img src="/2019/03/09/Linear-Model/l2.png" width="570px"></p>
+<p>通过假设目标函数产生这些样本的几率非常大，我们让h(x)产生这些样本 即：</p>
+<p>$likelihood(h) = P(x_1)h(x_1) \times  P(x_2)(1-h(x_2)) \times  … \times P(x_N)(1-h(x_N) )​$</p>
+<p>$likelihood(h) = P(x_1)h(x_1) \times  P(x_2)h(-x_2) \times  … \times P(x_N)h(-x_N)​$    1-h(x) = -h(x)</p>
+<p>$likelihood(h) \propto \prod_{n=1}^{N} h(y_nx_n)​$</p>
+<p>$\prod_{n=1}^{N} h(y_nx_n)  =&gt; ln \prod_{n=1}^{N} h(y_nx_n) =&gt; \sum_{n=1}^N ln\; h(y_nx_n)​$</p>
+<p>max $ \sum_{n=1}^N ln\; h(y_nx_n)$ &lt;=&gt; min $ \sum_{n=1}^N- ln\; h(y_nx_n)$</p>
+<p>因此，我们的优化目标可以写为：</p>
+<p>$min_w \frac{1}{N} \sum_{n=1}^N -ln \;\theta(y_nw^Tx_n)$  =&gt; $min_w \frac{1}{N} \sum_{n=1}^Nln \;(1+exp(-y_nw^Tx_n))$</p>
+<p>接下来，我们需要根据梯度下降算法对这个损失函数进行优化。</p>
+<h4 id="多角度理解Logistic-Regression"><a href="#多角度理解Logistic-Regression" class="headerlink" title="多角度理解Logistic Regression"></a>多角度理解Logistic Regression</h4><p>LR的损失函数是交叉熵。我们需要明确两个问题（1）为什么交叉熵可以用来做损失函数（2）这个损失函数为什么是交叉熵</p>
+<p>首先我们需要明确，在实际分类问题中，每个数据点都有一个自己的标记／类别。在分类问题中，我们需要根据这个数据点的标记进行学习，但是在LR中，我们输出的不是每个数据点的标记，而是这个数据点在特定标记下的概率。所以，我们假设数据点的分类标记为{+1,-1}，LR进行学习的是P（+1|x)，而不是+1/-1。</p>
+<p>因此，对于LR来说，其需要进行学习的分布是{target,1-target}，target是数据点x为+1这个类的概率。</p>
+<p>在实际问题中，我们没有办法知道x为+1的概率，因为更多的情况是x就是+1，则此时这个概率target=1；对应的target=0。因此，LR其实学习的是这个概率分布，让现有的训练样本的分类错误最低，即产生这些数据点的概率最大。</p>
+<p><strong>交叉熵为什么可以对误差进行评价</strong></p>
+<p>（1）熵代表了一个事件的信息量，越不可能发生的事情的信息量越大，并且独立事件的熵／信息量可以叠加</p>
+<p>$S(x) = -\sum_{i}P(x_i)log_bP(x_i)$  S表示事件的信息量的总和／熵 ；x表示一个事件；P(x) 表示事件发生的概率</p>
+<p>（2）KL散度／KL距离：KL散度用于计算两个分部之间的不同。</p>
+<p>$D_{KL}(A||B) = \sum_iP_A(x_i)log(\frac{P_A(x_i)}{P_B(x_i)}) = \sum_i(P_A(x_i)log(P_A(x_i))-P_A(x_i)log(P_B(x_i)))​$</p>
+<p>💡事件A与事件B的对数差在A上的期望</p>
+<p>根据KL散度的公式可知：</p>
+<p>a. 如果两个事件的分布完全相同（$P_A=P_B$），则两个事件的KL散度为0</p>
+<p>b. KL散度不具有对称性，即$D_{KL}(A||B) \neq D_{KL}(B||A)​$</p>
+<p>c. $D_{KL}(A||B) = -S(A)-\sum_iP_A(x_i)log(P(_B(x_i))$ </p>
+<p>（3）交叉熵：同样可以衡量两个分布之间的关系</p>
+<p>$H(A,B) = -\sum_iP_A(x_i)log(P_B(x_i))$</p>
+<p>💡交叉熵和KL散度的异同：交叉熵中不考虑熵的部分，但是当事件A固定时，最小化A与B的KL散度等价于最小化A与B的交叉熵</p>
+<hr>
+<p>分割线以后讨论一下，对于LR来说，我们从极大似然估计的角度，希望学习到的分布产生这些数据的概率最大；从交叉熵的角度，希望在原始数据分布一定的情况下，我们学习到的分布和原始数据分布越一致越好。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/01/数据集/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/18/Gradinet-Descent-I/" rel="prev" title="Gradinet Descent I">
+                Gradinet Descent I <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PLA"><span class="nav-number">1.</span> <span class="nav-text">PLA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程"><span class="nav-number">1.1.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PLA-Halt"><span class="nav-number">1.2.</span> <span class="nav-text">PLA Halt</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pocket-Algorithm"><span class="nav-number">2.</span> <span class="nav-text">Pocket Algorithm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linear-Regression"><span class="nav-number">3.</span> <span class="nav-text">Linear Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Loss-Function"><span class="nav-number">3.1.</span> <span class="nav-text">Loss Function</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Matrix-Form-of-Loss-Function"><span class="nav-number">3.1.1.</span> <span class="nav-text">Matrix Form of Loss Function</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">3.1.2.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Logistic-Regression"><span class="nav-number">4.</span> <span class="nav-text">Logistic Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#多角度理解Logistic-Regression"><span class="nav-number">4.0.1.</span> <span class="nav-text">多角度理解Logistic Regression</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
