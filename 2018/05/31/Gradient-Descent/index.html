@@ -81,7 +81,7 @@
 
 <meta name="description" content="终于有时间整理梯度下降的问题了！ 梯度下降是一种常用的优化方法，但是批式的梯度下降方法存在一些可以改进的地方： （1）学习率的问题 （2）随机梯度下降 （3）特征缩放问题">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Gradient Descent II">
+<meta property="og:title" content="Gradient Descent">
 <meta property="og:url" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/index.html">
 <meta property="og:site_name" content="Yeeex">
 <meta property="og:description" content="终于有时间整理梯度下降的问题了！ 梯度下降是一种常用的优化方法，但是批式的梯度下降方法存在一些可以改进的地方： （1）学习率的问题 （2）随机梯度下降 （3）特征缩放问题">
@@ -112,9 +112,9 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g20.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g21.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g22.png">
-<meta property="og:updated_time" content="2019-03-18T08:29:11.000Z">
+<meta property="og:updated_time" content="2019-04-03T15:37:55.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Gradient Descent II">
+<meta name="twitter:title" content="Gradient Descent">
 <meta name="twitter:description" content="终于有时间整理梯度下降的问题了！ 梯度下降是一种常用的优化方法，但是批式的梯度下降方法存在一些可以改进的地方： （1）学习率的问题 （2）随机梯度下降 （3）特征缩放问题">
 <meta name="twitter:image" content="https://yeeex.gitee.io/2018/05/31/Gradient-Descent/g1.png">
 
@@ -152,7 +152,7 @@
 
 
 
-  <title>Gradient Descent II | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>Gradient Descent | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -296,7 +296,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Gradient Descent II</h1>
+          <h1 class="post-title" itemprop="name headline">Gradient Descent</h1>
         
 
         <div class="post-meta">
@@ -388,22 +388,26 @@
 <p>可以简写成：</p>
 <p><img src="/2018/05/31/Gradient-Descent/g2.png" width="200px"></p>
 <p>其中，$\eta $为学习率，是一个超参数，需要学习或者指定；$\bigtriangledown L(\Theta )$为梯度</p>
-<hr>
-<p>这里面有几个问题：</p>
-<p>（1）按照梯度下降的优化方式，我们默认优化后的loss要比优化前的loss更小，但是实际情况不一定是这样，这与学习率有关；</p>
-<p>（2）在学习率合适的情况下，梯度下降的优化方式为什么成立？</p>
-<p>首先，解决第一个问题：</p>
-<h3 id="学习率问题"><a href="#学习率问题" class="headerlink" title="学习率问题"></a>学习率问题</h3><p><strong>Tuning your learning rate</strong></p>
-<p>（1）如果学习率设定的足够小，那么我们总能在迭代多步以后，将参数更新到使得loss足够小的程度，但是学习率太小会使整个优化时间过长；</p>
+<h2 id="PLA-Revisited"><a href="#PLA-Revisited" class="headerlink" title="PLA Revisited"></a>PLA Revisited</h2><p>PLA 每次更新都是用模型分类错误的样本对参数进行更新，我们可以将PLA的更新公式写作：$w_{t+1} &lt;- w_t +[sign(w_t^Tx_n) \neq y_n]y_nx_n​$  =&gt; $w_{t+1} &lt;- w_t + 1 ·  [sign(w_t^Tx_n) \neq y_n]y_nx_n​$</p>
+<p>=&gt; $w_{t+1} &lt;- w_t + \eta ·  [sign(w_t^Tx_n) \neq y_n]y_nx_n$  ($\eta = 1 $      $v = [sign(w_t^Tx_n) \neq y_n]y_nx_n$)</p>
+<p>$\eta$为更新的步长，v为更新的方向，对于PLA而言，参数更新的方向来自分类错误的点。</p>
+<p><strong>对于一般的损失函数优化问题，我们如何确定方向v就是损失函数关于参数的负梯度方向？</strong></p>
+<p>我们先假定更新方向v的长度为1 $||v|| = 1$，因此对于更新的步长$\eta &gt; 0$，我们希望每次更新以后，$min _{||v||=1} E_{in}(w_t + \eta\;v)$，其中 $w_{t+1} = w_t+\eta\;v$</p>
+<p>如果我们更新的步长$\eta​$比较小时，$E_{in}(w_t+\eta\;v) \approx E_{in}(w_t) + \eta v^T\bigtriangledown E_{in}(w_t)​$</p>
+<p>因此，我们现在需要优化，对于$\eta​$非常小时 $min_{||v|| = 1} E_{in}(w_t) + \eta v^T\bigtriangledown E_{in}(w_t) ​$</p>
+<p>上述优化式中，只有$v^T​$是未知的，其余均为已知，对于$v^T\bigtriangledown E_{in}(w_t) ​$，当$v​$和$\bigtriangledown E_{in}(w_t) ​$完全反方向时，二者的内积是最小的，即 $v = -\frac{\bigtriangledown E_{in}(w_t) }{||\bigtriangledown E_{in}(w_t) ||}$</p>
+<p>因此，采用梯度下降优化损失函数时，参数需要向负梯度的方向移动一小步 $w_{t+1} &lt;- w_t + \eta v = w_t - \eta\frac{\bigtriangledown E_{in}(w_t) }{||\bigtriangledown E_{in}(w_t) ||} ​$</p>
+<p>我们另 $\eta ^{‘}  = \frac{\eta}{||\bigtriangledown E_{in}(w_t) ||}$，表明二者之间的比例关系，则 $w_{t+1} = w_t - \eta \bigtriangledown E_{in}(w_t) $</p>
+<h2 id="学习率问题"><a href="#学习率问题" class="headerlink" title="学习率问题"></a>学习率问题</h2><h3 id="Tuning-your-learning-rate"><a href="#Tuning-your-learning-rate" class="headerlink" title="Tuning your learning rate"></a><strong>Tuning your learning rate</strong></h3><p>（1）如果学习率设定的足够小，那么我们总能在迭代多步以后，将参数更新到使得loss足够小的程度，但是学习率太小会使整个优化时间过长；</p>
 <p>（2）如果学习率设定的过大，有可能造成更新后的参数使得loss更大；</p>
 <p>在多维空间中，我们无法可视化loss function的具体函数形态，但是我们可以监控loss-parameter之间的关系，</p>
 <p>图中横轴代表参数的更新次数，纵轴代表loss，每条曲线对应不同的学习率：</p>
 <p><img src="/2018/05/31/Gradient-Descent/g3.png" width="300px"></p>
 <p>通过上面的分析，我们可以得到一个直观的结论，我们希望<strong>随着参数的更新， 学习率越来越小，即是一个动态变化的学习率</strong>：</p>
 <p>在最开始优化的阶段，由于此时loss足够大，我们可以设定一个较大的学习率，加快参数更新；当更新到一定程度时，我们需要小心谨慎的调小我们的学习率，以保证可以持续的降低loss=&gt;学习率是依赖于时间（参数更新次数）</p>
-<p>$\eta ^t = \eta /\sqrt{t+1}$</p>
+<p>$\eta ^t = \eta /\sqrt{t+1}​$</p>
 <p>当然，这并不能满足我们对于学习率的需求，对于<strong>不同的参数，我们应该设定不同的学习率</strong>，即：</p>
-<h4 id="Adagrad"><a href="#Adagrad" class="headerlink" title="Adagrad"></a><strong><u>Adagrad</u></strong></h4><p>$w^{t+1} &lt;- w^t - \frac{\eta  ^t}{\sigma ^t}g^t$</p>
+<h4 id="Adagrad"><a href="#Adagrad" class="headerlink" title="Adagrad"></a><strong><u>Adagrad</u></strong></h4><p>$w^{t+1} &lt;- w^t - \frac{\eta  ^t}{\sigma ^t}g^t​$</p>
 <h4 id="Vanilla-Gradient-descent"><a href="#Vanilla-Gradient-descent" class="headerlink" title="Vanilla Gradient descent"></a><strong><u>Vanilla Gradient descent</u></strong></h4><p>$w^{t+1} &lt;= w^t - \eta ^tg^t$   </p>
 <p>其中：</p>
 <p>$w$是其中一个参数</p>
@@ -433,14 +437,13 @@ w^{t+1} <=   w^t - \frac{\eta  ^t}{\sqrt\sum_{i=0}^{t}(g^i)^2}g^t</script><p>�
 <h5 id="😌Adagrad是如何表征一次微分和二次微分的关系的？"><a href="#😌Adagrad是如何表征一次微分和二次微分的关系的？" class="headerlink" title="😌Adagrad是如何表征一次微分和二次微分的关系的？"></a>😌Adagrad是如何表征一次微分和二次微分的关系的？</h5><p>Adagrad希望通过一次导数的平均平方和来表征二次导数的变化情况：</p>
 <p><img src="/2018/05/31/Gradient-Descent/g8.png" width="500px"></p>
 <p>如果一个函数有较小的二阶导数，则通过sample多个点，对其一阶导数求平均平方和，可以看出，二阶导数大的，对应的一阶导数也比较大=&gt;这样是为了不增加额外的计算量，当然，也可以对Adagrad公式进行改进，将分母改成对应的二阶导数</p>
-<hr>
-<h3 id="加快训练速度"><a href="#加快训练速度" class="headerlink" title="加快训练速度"></a>加快训练速度</h3><h4 id="随机梯度下降-SGD-Stochastic-Gradient-Descent"><a href="#随机梯度下降-SGD-Stochastic-Gradient-Descent" class="headerlink" title="随机梯度下降 SGD(Stochastic Gradient Descent)"></a>随机梯度下降 SGD(Stochastic Gradient Descent)</h4><p>原始的梯度下降算法，是要计算在所有样本上的loss，然后对参数进行更新（参数更新时，梯度前面有一个1/n，n为样本数）；</p>
+<h2 id="加快训练速度"><a href="#加快训练速度" class="headerlink" title="加快训练速度"></a>加快训练速度</h2><h3 id="随机梯度下降-SGD-Stochastic-Gradient-Descent"><a href="#随机梯度下降-SGD-Stochastic-Gradient-Descent" class="headerlink" title="随机梯度下降 SGD(Stochastic Gradient Descent)"></a>随机梯度下降 SGD(Stochastic Gradient Descent)</h3><p>原始的梯度下降算法，是要计算在所有样本上的loss，然后对参数进行更新（参数更新时，梯度前面有一个1/n，n为样本数）；</p>
 <p><img src="/2018/05/31/Gradient-Descent/g9.png" width="300px"></p>
 <p><img src="/2018/05/31/Gradient-Descent/g10.png" width="300px"></p>
 <p>而随机梯度下降是每次更新时，随机选取一个或者几个样本，进行参数更新=&gt;对于深度学习中，loss function非凸时，这种优化方式更有效</p>
 <p><img src="/2018/05/31/Gradient-Descent/个.png" width="300px"></p>
 <p><img src="/2018/05/31/Gradient-Descent/g12.png" width="200px"></p>
-<h4 id="特征缩放Feature-Scaling"><a href="#特征缩放Feature-Scaling" class="headerlink" title="特征缩放Feature Scaling"></a>特征缩放Feature Scaling</h4><p>在进行拿到训练样本进行机器学习之前，应该先做特征工程，特征工程中有一步就是进行特征缩放，而特征缩放的目的是于梯度下降优化有关的</p>
+<h3 id="特征缩放Feature-Scaling"><a href="#特征缩放Feature-Scaling" class="headerlink" title="特征缩放Feature Scaling"></a>特征缩放Feature Scaling</h3><p>在进行拿到训练样本进行机器学习之前，应该先做特征工程，特征工程中有一步就是进行特征缩放，而特征缩放的目的是于梯度下降优化有关的</p>
 <p> 以函数$y=b+w_1x_1+w_2x_2$为例来进行说明：</p>
 <p><img src="/2018/05/31/Gradient-Descent/g13.png" width="300px"></p>
 <p>其对应的loss-参数的等高线图为</p>
@@ -456,9 +459,8 @@ w^{t+1} <=   w^t - \frac{\eta  ^t}{\sqrt\sum_{i=0}^{t}(g^i)^2}g^t</script><p>�
 <p><img src="/2018/05/31/Gradient-Descent/g25.png" width="300px"></p>
 <p>（3）缩放到单位长度：除以向量的欧拉长度</p>
 <p><img src="/2018/05/31/Gradient-Descent/g26.png" width="100px"></p>
-<hr>
-<h3 id="梯度下降理论"><a href="#梯度下降理论" class="headerlink" title="梯度下降理论"></a>梯度下降理论</h3><p>我们接下来要讨论一下梯度下降的正确性✅</p>
-<p>假设有两个参数$\Theta_1$和$\Theta_2$，初始化参数：$\Theta ^0 =${$\Theta^0_1,\Theta^0_2$} 总能在初始化点的周围的一定范围内，找到与其相邻的参数值，使得loss变小 </p>
+<h2 id="梯度下降理论"><a href="#梯度下降理论" class="headerlink" title="梯度下降理论"></a>梯度下降理论</h2><p>我们接下来要讨论一下梯度下降的正确性✅</p>
+<p>假设有两个参数$\Theta_1​$和$\Theta_2​$，初始化参数：$\Theta ^0 =​${$\Theta^0_1,\Theta^0_2​$} 总能在初始化点的周围的一定范围内，找到与其相邻的参数值，使得loss变小 </p>
 <p><img src="/2018/05/31/Gradient-Descent/g15.png" width="400px"> </p>
 <p>图示横轴代表参数$\Theta_2$ 纵轴代表参数$\Theta_2$，等高线 表示里圈的loss小于外圈的loss</p>
 <p>梯度下降理论可以从泰勒展开式的角度进行解释：</p>
@@ -500,7 +502,6 @@ w^{t+1} <=   w^t - \frac{\eta  ^t}{\sqrt\sum_{i=0}^{t}(g^i)^2}g^t</script><p>�
 <p>（1）$\eta$表征的是调节$\overrightarrow{(\Delta \Theta _1, \Delta \Theta _2)}$长度，使得其可以顶到范围的边缘（因为参数的变化可以圆内任何一点变化，当其与$\overrightarrow{(u,v)}$反向共线且达到圆边缘时，可以得到最小值 ）</p>
 <p>（2）以上所有推导是在$L(\Theta) \approx s+u(\Theta_1 - a) + v(\Theta_2 -b)$这个条件成立的时候，而这个约等式成立的条件是$(\Theta_1 -a)^2+(\Theta_2-b)^2 \leq d ^2$范围足够小，即d足够小，而学习率$\eta$又与d有关，所以学习率也要足够小</p>
 <p>（3）当然，我们可以考虑二阶展开式，这样对于学习率的约束会小一点=&gt;牛顿法进行优化，但是这样会带来更大的计算量，需要权衡</p>
-<p>//todo:Adam算法</p>
 
       
     </div>
@@ -614,7 +615,7 @@ w^{t+1} <=   w^t - \frac{\eta  ^t}{\sqrt\sum_{i=0}^{t}(g^i)^2}g^t</script><p>�
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">29</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -660,7 +661,7 @@ w^{t+1} <=   w^t - \frac{\eta  ^t}{\sqrt\sum_{i=0}^{t}(g^i)^2}g^t</script><p>�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#学习率问题"><span class="nav-number">1.</span> <span class="nav-text">学习率问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Adagrad"><span class="nav-number">1.1.</span> <span class="nav-text">Adagrad</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vanilla-Gradient-descent"><span class="nav-number">1.2.</span> <span class="nav-text">Vanilla Gradient descent</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#😌Adagrad是如何表征一次微分和二次微分的关系的？"><span class="nav-number">1.2.1.</span> <span class="nav-text">😌Adagrad是如何表征一次微分和二次微分的关系的？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加快训练速度"><span class="nav-number">2.</span> <span class="nav-text">加快训练速度</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#随机梯度下降-SGD-Stochastic-Gradient-Descent"><span class="nav-number">2.1.</span> <span class="nav-text">随机梯度下降 SGD(Stochastic Gradient Descent)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特征缩放Feature-Scaling"><span class="nav-number">2.2.</span> <span class="nav-text">特征缩放Feature Scaling</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度下降理论"><span class="nav-number">3.</span> <span class="nav-text">梯度下降理论</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PLA-Revisited"><span class="nav-number">1.</span> <span class="nav-text">PLA Revisited</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#学习率问题"><span class="nav-number">2.</span> <span class="nav-text">学习率问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tuning-your-learning-rate"><span class="nav-number">2.1.</span> <span class="nav-text">Tuning your learning rate</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Adagrad"><span class="nav-number">2.1.1.</span> <span class="nav-text">Adagrad</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vanilla-Gradient-descent"><span class="nav-number">2.1.2.</span> <span class="nav-text">Vanilla Gradient descent</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#😌Adagrad是如何表征一次微分和二次微分的关系的？"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">😌Adagrad是如何表征一次微分和二次微分的关系的？</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加快训练速度"><span class="nav-number">3.</span> <span class="nav-text">加快训练速度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#随机梯度下降-SGD-Stochastic-Gradient-Descent"><span class="nav-number">3.1.</span> <span class="nav-text">随机梯度下降 SGD(Stochastic Gradient Descent)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特征缩放Feature-Scaling"><span class="nav-number">3.2.</span> <span class="nav-text">特征缩放Feature Scaling</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度下降理论"><span class="nav-number">4.</span> <span class="nav-text">梯度下降理论</span></a></li></ol></div>
             
 
           </div>
