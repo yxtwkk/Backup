@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文主要整理 CART决策树和TGBDT。 我们可以将bagging，adaboost，decision tree都视为一边学习一边得到模型权重的方式。 对于bagging来说，不同的模型来自数据的bootstrap采样方式；模型权重都是相同的； 对于adaboost来说，不同的模型来自优化带权重的损失函数（weighted error function／下一个模型更关心上一个模型训练错误的样本）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tree Model">
+<meta property="og:url" content="https://yeeex.gitee.io/2019/04/25/Tree-Model/index.html">
+<meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="本文主要整理 CART决策树和TGBDT。 我们可以将bagging，adaboost，decision tree都视为一边学习一边得到模型权重的方式。 对于bagging来说，不同的模型来自数据的bootstrap采样方式；模型权重都是相同的； 对于adaboost来说，不同的模型来自优化带权重的损失函数（weighted error function／下一个模型更关心上一个模型训练错误的样本）">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/04/25/Tree-Model/t1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/04/25/Tree-Model/t.png">
+<meta property="og:updated_time" content="2019-05-11T12:33:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Tree Model">
+<meta name="twitter:description" content="本文主要整理 CART决策树和TGBDT。 我们可以将bagging，adaboost，decision tree都视为一边学习一边得到模型权重的方式。 对于bagging来说，不同的模型来自数据的bootstrap采样方式；模型权重都是相同的； 对于adaboost来说，不同的模型来自优化带权重的损失函数（weighted error function／下一个模型更关心上一个模型训练错误的样本）">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2019/04/25/Tree-Model/t1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yeeex.gitee.io/2019/04/25/Tree-Model/"/>
+
+
+
+
+
+  <title>Tree Model | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Yeeex</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">愿自由且开阔</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/04/25/Tree-Model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Tree Model</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-25T10:10:33+08:00">
+                2019-04-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文主要整理 CART决策树和TGBDT。</p>
+<p>我们可以将bagging，adaboost，decision tree都视为一边学习一边得到模型权重的方式。</p>
+<p>对于bagging来说，不同的模型来自数据的bootstrap采样方式；模型权重都是相同的；</p>
+<p>对于adaboost来说，不同的模型来自优化带权重的损失函数（weighted error function／下一个模型更关心上一个模型训练错误的样本）；模型权重根据模型本身的误差决定，即随着训练产生的；</p>
+<p>decision tree决策树也可以视为一个集成学习的模型，即 树的每一条分支都是conditional的学习方式，</p>
+<a id="more"></a>
+<h2 id="Decision-Tree"><a href="#Decision-Tree" class="headerlink" title="Decision Tree"></a>Decision Tree</h2><p>对于决策树，我们需要决定以下几件事：</p>
+<p>（1）对于每个节点，可以有几个孩子节点（即 分支数目）</p>
+<p>（2）对于每个分支，选择合适的分支条件</p>
+<p>（3）限制树继续分裂／终止的条件</p>
+<p>（4）每个树的叶子结点🍃采用的具体模型</p>
+<h3 id="C-amp-RT"><a href="#C-amp-RT" class="headerlink" title="C&amp;RT"></a>C&amp;RT</h3><h4 id="classification-and-regression-tree"><a href="#classification-and-regression-tree" class="headerlink" title="classification and regression tree"></a><strong>classification and regression tree</strong></h4><p>C&amp;RT决策树既可以解决分类问题，又可以解决回归问题。</p>
+<p>C&amp;RT选择用二叉树作为基本树模型；对于每个叶子节点，采用常数作作为具体模型，即 对于分类问题，每个叶子节点是所属这个叶子节点样本的类别标记的majority （采用0/1损失函数进行误差衡量）；对于回归问题，每个叶子节点是所属这个叶子节点样本的类别标记的平均值（采用平方损失函数进行误差衡量）</p>
+<p><strong>对于C&amp;RT Tree采用不纯度Inpurity作为度量指标：</strong></p>
+<p>对于regreesion error：</p>
+<p>$impurity(D) = \frac{1}{N}\sum_{n=1}^N(y_n-\overline y)^2$</p>
+<p>其中$\overline y = average\; of \; {y_n}$</p>
+<p>xi对于classification error：</p>
+<p>采用Gini Index：$1-\sum_{k=1}^K(\frac{\sum_{n=1}^N ||y_n = k||}{N})^2$，则样本集合D在特征A的条件下可以分成两个子集$D_1$和$D_2$，则集合D在A上的Gini Index $Gini(D,A) = \frac{|D_1|}{|D|}Gini(D_1) + \frac{|D_2|}{|D|}Gini(D_2)$</p>
+<p>💡Gini Index表示现有数据集D共有K个类，计算样本属于第K个类的概率，平方 然后加和</p>
+<p>我们根据度量指标，选择不纯度最小的作为划分的位置</p>
+<p><strong>被迫终止条件：</strong></p>
+<p>对于构建决策树，可以采用不同的终止条件使得建树过程停止；被迫停止的条件有两个：</p>
+<p>（1）当所有的样本在某一个叶子结点的标记都相同时</p>
+<p>（2）尽管每个样本的标记不同，但是每个样本都是相同的</p>
+<p>当所有训练样本都不同时，我们总能找到一个fully-grown的决策树；但是fully-grown的决策树容易过拟合</p>
+<h3 id="C-amp-RT-Tree-Pruning"><a href="#C-amp-RT-Tree-Pruning" class="headerlink" title="C&amp;RT Tree Pruning"></a>C&amp;RT Tree Pruning</h3><p>决策树的剪枝可以通过限制叶子结点数目得到；即 决策树的正则化项 $\Omega(G) = Number\; of \; Leaves(G)$</p>
+<p>对于一棵决策树，优化函数为：$argmin\;E_{in}(G) + \lambda \Omega(G)​$</p>
+<p>显然，我们无法遍历所有的树找到最后的结果，通常采用如下方式进行剪枝：</p>
+<p>$G^{0} =$ fully grown tree $T_0$</p>
+<p>$G^{1} = argmin_{G} E_{in}(G)$  针对完全长成的树，依次移除每一个叶子节点，得到具有最小误差的决策树 $T_1$</p>
+<p>重复以上操作，得到 一个最优的子树序列${T_0,T_1,T_2..T_n}​$</p>
+<p>然后根据$argmin\;E_{in}(G) + \lambda \Omega(G)$，选择出 最优子树序列中最好的一棵树</p>
+<p>💡相当于从0开始，不断增大$\lambda$</p>
+<h3 id="Branching-on-Feature"><a href="#Branching-on-Feature" class="headerlink" title="Branching on Feature"></a>Branching on Feature</h3><p>对于numerical feature，采用decision stump的方式：$b(x) = [x_i \leq \theta] + 1$    $\theta \in R$ </p>
+<p>（满足条件为1，即b(x)=2，样本流入第二棵子树；不满足条件为0，即b(x)=1，样本流入第一棵子树）</p>
+<p>对于categorical feature，采用decision subset的方式：$b(x) = [x_i \in S] +1$    $S \in {1,2,3..k}$</p>
+<p>（categorical feature是指 fever，pain，tired，sweaty这种）</p>
+<h3 id="Missing-Feature-by-Surrogate-Branch"><a href="#Missing-Feature-by-Surrogate-Branch" class="headerlink" title="Missing Feature by Surrogate Branch"></a>Missing Feature by Surrogate Branch</h3><p>对于构建好的决策树，当测试样本在某个属性上是缺失值时，可以采用surrogate branch的方式：</p>
+<p>在构建决策树的过程中，保存一些原始分裂属性的替代品，比如，身高和体重在某些程度上就可以相互替代，即身高小于等于170公分 近似 体重小于等于 50公斤</p>
+<h2 id="Random-Forest"><a href="#Random-Forest" class="headerlink" title="Random Forest"></a>Random Forest</h2><p>对于fully-grown的决策树，模型方差非常大，容易出现过拟合的问题；可以采用bagging的方式，将多棵决策树融合在一起，降低方差，减少过拟合。Random Forest = bagging + fully-grown decision tree</p>
+<h3 id="Diversity-for-Feature-Projection"><a href="#Diversity-for-Feature-Projection" class="headerlink" title="Diversity for Feature Projection"></a>Diversity for Feature Projection</h3><p>原始的bagging方式采用bootstrap的方式进行抽样，以保证训练出不同的diversed基模型；除了在数据端进行抽样以外，我们可以在特征端进行抽样，相当于进行特征转换（从原有的d维特征中，随机抽取d’维特征）</p>
+<p>在进行特征选择时，相当于原始特征向量在特征转换矩阵上的投影，即$\Phi(x) = P·x$</p>
+<p>矩阵P的每一个行，表示成一个标准基的方向（natural basis）；除了用标准基进行投影之外，还可以选择根据现有的特征进行线性组合，得到新的特征的方式保持样本的多样性，即$\Phi_i(x) = p_i^Tx$</p>
+<p>对于向量$p_i$来说，有$d’’$个元素不为0，当$d’’=1$时，相当于采用natural basis</p>
+<p>Random Forest在每一次分支时，都会选择$d’$维度进行投影（Random Combination）得到新的特征，然后进行分支</p>
+<h3 id="OOB-Error"><a href="#OOB-Error" class="headerlink" title="OOB Error"></a>OOB Error</h3><p>在bagging的集成学习模式中，我们采用bootstrap的方式，从原始样本集合中，采用有放回的方式抽样N’个样本，根据抽取到的样本训练基模型，假设我们有N个样本，要训练r个基模型：</p>
+<p><img src="/2019/04/25/Tree-Model/t1.png" width="350px"></p>
+<p>第t列表示，第t个基模型采用了哪些训练样本，对于第t个模型没有采用的训练样本，我们称之为out-of-bag example</p>
+<p>当$N’  = N$时，对于样本$(x_n,y_n)$是OBB example的概率 $(1-\frac{1}{N})^N$</p>
+<p>当N足够大时，$(1-\frac{1}{N})^N  \approx 0.36 $</p>
+<p>我们可以直接利用OOB Example来对训练得到的RF模型进行验证</p>
+<p>原始的Validation Leave One Out的过程是：对于N个训练样本，每次留出一个样本作为验证集合，用剩余的N-1</p>
+<p>个样本作为训练集合，训练得到一个模型，然后进行验证，得到验证误差；如此反复，重复N次，取平均，得到最终模型的验证误差；</p>
+<p>对于OOB Example，我们可以利用同样的思路，假设样本$(x_2,y_2)$，我们可以用这个样本验证$G^-= {g_1,g_2}$；其他样本可以采用类似的思路，因此，我们可以得到OOB Error：</p>
+<p>$E_{oob}(G) = \frac{1}{N}\sum_{n=1}^Nerr(y_n,G_n^-(x_n))$ 即对每个训练样本，用其验证那些没有用这个训练样本训练的决策树构成的RF，得到最终的OOB Error</p>
+<p>💡OOB Error与Validation过程不同的是，Validation需要根据验证误差选择一个合适的模型，然后用全部数据重新训练这个模型；但是OOB Error不需要再用全部的数据重新训练选择出来的RF</p>
+<p>对于bagging／Random Forest这种采用Bootstrap方式训练模型，都可以用OOB Error验证模型，即self-validation</p>
+<h2 id="Feature-Selection"><a href="#Feature-Selection" class="headerlink" title="Feature Selection"></a>Feature Selection</h2><p>特征选择对于机器学习而言，是一个非常重要的问题；在实际问题中，我们需要去除两类特征：</p>
+<p>（1）冗余的特征，比如年龄和生日；</p>
+<p>（2）不相关的特征，比如是否得癌症和保险情况</p>
+<p>之所以在决策树部分总结特征选择，是因为树模型在分裂过程中自带了特征选择过程</p>
+<p>对于线性模型，我们需要根据数据特征与模型参数的内积计算一个分数：$score = w^Tx = \sum_{i=1}^dw_ix_i$</p>
+<p>如果各个特征之间的量纲是一致的，则$|w_i|$代表了对应特征维度$x_i$的分数／权重</p>
+<p>对于非线性模型，我们需要采用permutation test，来判断特征的重要程度。</p>
+<p>对于特征$x_i$    $importance(x_i) = performance(D) - performace(D^{(P)})$</p>
+<p>permutation test的认为：如果一个维度十分重要的话，那么在这个维度上引入random value，会造成性能的大幅度改变：</p>
+<p>（1）可以引入一些uniform的分布，比如高斯分布等 =&gt; 但是这样会改变原始的数据分布</p>
+<p>（2）对于第$x_i$个维度，采用permutation test，根据现有的数据，得到$x_i$可取的值，对于每个训练样本数据，在第$x_i$个维度上，随机抽取一个值作为这个维度的值</p>
+<h4 id="Feature-Selection-Random-Forest"><a href="#Feature-Selection-Random-Forest" class="headerlink" title="Feature Selection + Random Forest"></a>Feature Selection + Random Forest</h4><p>因为RF存在OOB Example，我们可以将上述衡量公式修改成：</p>
+<p>$importance(x_i) = E_{OOB}(D) - E_{OOB}(D^{(P)})$</p>
+<p>基本思路是，对于每个维度$x_i$，采用permutation方式，修改这个维度的值新的数据集$D^{(P)}$，用这个新的数据集重新训练模型，然后计算OOB Error</p>
+<p>但是这种方式非常耗时，如果维度为d维，需要重新训练d个模型；利用OOB Example，我们只在OOB Example的对应维度上进行permutation，这样既保证了时间效率，又保证每个OOB Example的对应维度的值是之前没有被训练过的</p>
+<h2 id="Adaboost-DTree"><a href="#Adaboost-DTree" class="headerlink" title="Adaboost-DTree"></a>Adaboost-DTree</h2><p>Adaboost Desicion Tree是Random Forest的变形版本，Random Forest采用bagging方式，对于RF中的每一棵决策树，采用BootStrap和Feature Projection的方式，得到不同的训练集，进而得到RF中的不同决策树；</p>
+<p>对于Adaboost-DTree，采用递进的方式进行训练，每一棵决策树更关心上一个棵决策树分类错误的样本点；根据训练误差得到每棵决策树的权重，最后按权重投票</p>
+<p>在处理带权重的数据时，我们需要对原始模型进行修改，在原始模型需要计算$E_{in}​$的地方，将计算公式改为带权重的计算方法；如果不想更改原始模型的计算方式，可以将带权重的数据视为数据点在原始数据中所占的份额／比例，我们按照这个比例对原始数据重新采样，可以得到按比例的新的数据样本，每个单独样本的权重此时为1；</p>
+<p>因此，Adaboost-DTRee = Adaboost + sample $\propto​$ $u^{(t)}​$ + DTree($\tilde {D_t}​$)</p>
+<p>（$u^{(t)}$表示原始的数据权重，$\tilde{D_t}$表示按比例权重重新采样后的数据）</p>
+<p> 根据Adaboost，Adaboost-DTree的权重计算公式 $\alpha_t = ln \sqrt{\frac{1-\epsilon_t}{\epsilon_t}}$</p>
+<p>其中，$\epsilon_t$是决策树的带权重的训练误差；如果训练样本全部都是不同的，并且我们根据这个训练样本集合得到一个fully-grown的树，那么会造成$\epsilon_t = 0$   =&gt; $\alpha_t = \infty$ 这就导致完全分裂的树在最后决策中所占的权重／比例最大；</p>
+<p>因此，在进行Adaboost-DTree中，我们不能进行fully-grown的树的训练，需要训练得到的决策树稍微weak一点：</p>
+<p>（1）对树进行剪枝，采用CART树的剪枝方案或者限制树的高度；</p>
+<p>（2）对数据进行采样，选择部分数据进行训练，而不是全部数据；</p>
+<p>因此，更进一步，Adaboost-DTRee = Adaboost + sample $\propto$ $u^{(t)}$ + <strong>pruned</strong> DTree($\tilde {D_t}$)</p>
+<h4 id="With-Extremely-Pruned-Tree"><a href="#With-Extremely-Pruned-Tree" class="headerlink" title="With Extremely Pruned Tree"></a>With Extremely Pruned Tree</h4><p>最极致的剪枝方即限制树的高度为1 ，则对于每一棵高度1为的树，进行Decision Stump</p>
+<p>$b(x) = arg\;min \sum_{c=1}^2|D_c\; with\; h|·impruity(D_c\;\;with \;\;h)$</p>
+<h3 id="Adaboost-Error-Function"><a href="#Adaboost-Error-Function" class="headerlink" title="Adaboost Error Function"></a>Adaboost Error Function</h3><p>对于Adaboost，当数据样本在第t个模型中分类错误时，在第t+1个模型中，样本的权重为$u_n^·\sqrt{\frac{1-\epsilon_t}{\epsilon_t}}$；对于分类正确的样本，样本的权重为$u_n / ( \sqrt{\frac{1-\epsilon_t}{\epsilon_t}})$</p>
+<p>可以将样本权重的公式更新为：$u_n^t \sqrt{\frac{1-\epsilon_t}{\epsilon_t}} ^ {-y_ng_t(x_n)}$ (同号分类正确为- ； 异号分类错误为+)</p>
+<p>样本权重公式进一步可以写作：$u_n^t·exp(-y_n\alpha_tg_t(x))​$</p>
+<p>其中，$\alpha_t = ln\sqrt{\frac{1-\epsilon_t}{\epsilon_t}}​$ 代表第t个模型投票所占的比例</p>
+<p>因此，$u_n^{t+1} =u_n^t·exp(-y_n\alpha_tg_t(x)) $   此式为递推式</p>
+<p>$u_n^{T+1} = u_n^1 · \prod_{t=1}^{T}exp(-y_n\alpha_tg_t(x_n)) = \frac{1}{N}·exp(-y_n\sum_{t=1}^T\alpha_tg_t(x_n))​$</p>
+<p>对于Adaboost而言，最终的模型为$G(x) = sign(\sum_{t=1}^T\alpha_tg_t(x))​$</p>
+<p>$\sum_{t=1}^T\alpha_tg_t(x)$ 代表模型在数据点x上的分数</p>
+<p>因此，对于Adaboost而言，$u_n^{T+1} \propto exp(-y_n （到目前为止训练得到的所有模型在x_n上的分数）)$</p>
+<p>对于集成学习的模型来说，我们可以将每一个基础模型看作是一个特征转换，即原始数据经过$g_t(x)$后得到一个新的维度，将$\alpha_t$视为特征权重／参数，回归在SVM中，我们希望得到的模型具有large margin，即$\frac{y_n·(w^T\phi(x_n)+b)}{||w||}$越大越好；</p>
+<p>根据上面的分析，我们可以将$y_n(\sum_{t=1}^T\alpha_tg_t(x_n))$视为signed没有normalize过的margin，即如果乘积结果为正，表明分类正确；否则表明分类错误；根据Large Margin的理论，我们希望$y_n(\sum_{t=1}^T\alpha_tg_t(x_n))$越大越好</p>
+<p>即对于$exp(-y_n(\sum_{t=1}^T\alpha_tg_t(x_n)))$越小越好；而$u_n^{T+1} = u_n^1 · \prod_{t=1}^{T}exp(-y_n\alpha_tg_t(x_n)) = \frac{1}{N}·exp(-y_n\sum_{t=1}^T\alpha_tg_t(x_n))$，即希望数据点的权重越小越好；</p>
+<p>即 如果每一个数据点的权重都变得比较小，我们希望所有的数据点的权重之和也非常小；即</p>
+<p>$\sum_{n=1}^N u_n^{T+1} = \frac{1}{N}\sum_{n=1}^Nexp(-y_n\sum_{t=1}^T\alpha_tg_t(x_n))$</p>
+<p>对于分类问题，我们通常会采用0/1损失来精准的衡量分类错误，但是因为0/1损失没有办法进行优化，所以，我们一般采用0/1损失的上界作为分类误差衡量方式，进行优化。</p>
+<p>$err_{0/1}(s,y) = [ys \leq 0] $ </p>
+<p>$err_{ADA}(s,y) = exp(-ys)$  =&gt; exponential error function</p>
+<p>如果adaboost 的error fucntion变小，则满足我们希望的数据权重越来越小的目标</p>
+<p>两个损失函数的示意图如图：</p>
+<p><img src="/2019/04/25/Tree-Model/t.png" width="350px"></p>
+<h3 id="Gadient-Descent-on-ADA-Error"><a href="#Gadient-Descent-on-ADA-Error" class="headerlink" title="Gadient Descent on ADA Error"></a>Gadient Descent on ADA Error</h3><p>我们可以采用梯度下降的方法优化Adaboost的误差，梯度下降实际上是进行了一次泰勒展开，通过泰勒展开式进行优化</p>
+<p>$min_{||v=1||}E_{in}(w_t + \eta V) \approx E_{in}(w_t) + \eta V^T\bigtriangledown E_{in}(w_t)​$</p>
+<p>根据泰勒展开式，我们希望Ein变小，即希望在现有的点$w_t​$的情况下，走一小步，使得Ein降低；我们通过V来决定走的方向，并限制V的长度为1；通过$\eta​$表示走的步长；</p>
+<p>根据泰勒展开式，我们得知，当方向V和$\bigtriangledown E_{in}(w_t)$方向相反时，乘积最小；类似地，对于Adaboost的error funcion，我们也可以采取梯度下降的方法进行优化；</p>
+<p>💡函数和向量在某种程度上是一致的，向量的每一个index都是整数，表明第i个维度；函数的每一个index都是实数，表明函数的走向</p>
+<p>假设我们现在训练到第t轮，我们希望得到第t轮的模型和对应的参数，数据点在第t轮的权重为$u^{t}$</p>
+<p>$min_h \hat{E_{ADA}} = \frac{1}{N}\sum_{n=1}^N exp(-y_n(\sum_{c=1}^{t-1}\alpha_cg_c + \eta h(x_N)))​$</p>
+<p>我们希望找到一个合适的$\eta​$和合适的$h(x_N)​$</p>
+<p>观察：$\frac{1}{N}exp(-y_n\sum_{c=1}^{t-1}\alpha_cg_c)​$可知，表示从数据初始权重开始，到第t-1轮训练为止，模型的权重 $u^{t} = \frac{1}{N} exp(-y_n\sum_{c=1}^{t-1}\alpha_cg_c)​$</p>
+<p>故，$min_h \hat{E_{ADA}} =\sum_{n=1}^N u_n^t exp(-y_n \eta h(x_N))​$；因此，找到一个合适的函数和函数权重就是对这个损失函数进行优化</p>
+<p>我们对上式进行一阶泰勒展开，即：</p>
+<p>$\sum_{n=1}^N u_n^t exp(-y_n \eta h(x_n)) \approx_{taylor} \sum_{n=1}^Nu_n^t(1-y_n\eta h(x_n)) = \sum_{n=1}^Nu_n^t - \eta \sum_{n=1}^Nu_n^ty_nh(x_n)$</p>
+<p>💡$e^x​$泰勒展开式：$e^x = 1+x+x^2/2! + x^3 / 3! + … + x^n/n!​$</p>
+<p>根据泰勒展开式，我们希望minimize损失函数，即 minimize $\sum_{n=1}^N  -y_nu_n^th(x_n)​$</p>
+<p>我们以二分类问题进行探讨，即$y_n​$和$h(x_n)​$的取值空间都是{1,-1}</p>
+<p>$\sum_{n=1}^N u_n^t(-y_n h(x_n)) = \sum_{n=1}^Nu_n^t\left\{<br>\begin{aligned}<br>-1 &amp; \;\;\;if &amp; y_n = h(x_n) \\<br>1 &amp;\;\;\;  if &amp; y_n \neq h(x_n) \\<br>\end{aligned}<br>\right.​$</p>
+<p>=$- \sum_{n=1}^Nu_n^t + \left\{<br>\begin{aligned}<br>\sum_{n=1}^Nu_n^t &amp; ·0 &amp; y_n = h(x_n) \\<br>\sum_{n=1}^Nu_n^t &amp;· 2   &amp; y_n \neq h(x_n) \\<br>\end{aligned}<br>\right.$</p>
+<p>$= - \sum_{n=1}^N u_n^t + 2 E_{in}^{u^t}(h) ·N$</p>
+<p>$E_{in}(h) = \frac{1}{N}\sum_{n=1}^N 1u_n^t $ (对分类错误的点的权重进行加和，然后对整个N个样本取平均)</p>
+<p>通过上面的推导我们发现， minimize $\sum_{n=1}^N  -y_nu_n^th(x_n)$ 即 minimize $E_{in}^{u^t}(h)$，而在Adaboost中，我们的训练过程即 minimize 带权重的训练误差，因此，根据$u_n^t$得到的模型即最优模型</p>
+<h3 id="Blending-Weight-Optimization"><a href="#Blending-Weight-Optimization" class="headerlink" title="Blending Weight Optimization"></a>Blending Weight Optimization</h3><p>在得到最优的模型$g_t$以后，我们需要得到最优的模型权重参数，即</p>
+<p>$min_{\eta} E_{ADA} = \sum_{n=1}^Nu_n^texp(-y_n\eta g_t(x_n))$，我们希望$\eta$步长可以长一些，进行steepest descent</p>
+<p>当$y_n = g_t(x_n)$  $u_n^texp(-\eta)$</p>
+<p>当$y_n \neq g_t(x_n)$  $u_n^texp( \eta)$</p>
+<p>类似地，根据上述条件，我们将原式修改成:$E_{ADA} = (\sum_{n=1}^N u_n^t )·((1-\epsilon_t)exp(-\eta) + \epsilon_t exp( + \eta))$</p>
+<p>求导得 $\eta_t = ln\sqrt{\frac{1-\epsilon_t}{\epsilon_t}}$</p>
+<h2 id="Gradient-Boosting"><a href="#Gradient-Boosting" class="headerlink" title="Gradient Boosting"></a>Gradient Boosting</h2><p>根据Adaboost的优化方式，$min_{\eta}\; min_{h} \frac{1}{N} \sum_{n=1}^N \sum_{n=1}^Nexp(-y_n(\sum_{c=1}^{t-1}\alpha_cg_c(x_n) + \eta h(x_n)))​$</p>
+<p>即我们根据泰勒一阶展开式，我们首先采用梯度下降方法，找到合适的基模型h(x)；固定h(x)后，我们再根据梯度下降方法，找到合适的$\eta$</p>
+<p>因为exp是Adaboost的损失函数，更一般地，我们将Gradient Boost扩展成任意损失函数的形式：</p>
+<p>$min_{\eta}min_{h}\frac{1}{N} \sum_{n=1}^Nerr(\sum_{c=1}^{t-1}\alpha_cg_c(x_n) + \eta h(x_n),y_n)$</p>
+<p><strong>一般情况的Gradient Boost可以适用分类问题／回归问题</strong></p>
+<h3 id="确定基模型-h-x-n"><a href="#确定基模型-h-x-n" class="headerlink" title="确定基模型$h(x_n)$"></a>确定基模型$h(x_n)$</h3><p>  同样地，采用泰勒展开的方式，原式$\approx\; min_h \frac{1}{N} \sum_{n=1}^Nerr(S_n,y_n) + \frac{1}{N} \sum_{n=1}^N \eta h(x_n) \frac{\partial err(s,y_n)}{\partial s}|_{s=s_n}$ </p>
+<p>设$S_n= \sum_{c=1}^{t-1}\alpha_cg_c(x_n)$，而$S_n$和$y_n$之间的误差是一个常数，因此只需要优化第二项：</p>
+<p>💡分类问题按Adaboost的思路进行，我们现在讨论回归问题，即损失函数$err(s,y) = (s-y)^2$</p>
+<p>$min_h\;\;constants + \frac{\eta}{N}\sum_{n=1}^N h(x_n) ·2(s_n-y_n)$</p>
+<p>如果我们不对$h(x_n)$进行限制，则 我们可以让$h(x_n)·(s_n-y_n)$负无穷大，这样达到minimize的效果；因此，我们需要对$h(x_n)​$进行限制。</p>
+<p>但是因为存在$\eta$，我们不需要对$h(x_n)$的模长进行非常严格的限制，采用L2正则化的方式，我们在优化函数中加入正则化项：</p>
+<p>$min_h\;\;constants + \frac{\eta}{N} \sum_{n=1}^N(2h(x_n)(s_n-y_n) + (h(x_n))^2) $</p>
+<p>我们只需要考虑 $min_h \frac{\eta}{N}\sum_{n=1}^N(2h(x_n)(s_n-y_n) + (h(x_n))^2) $</p>
+<p>$2h(x_n)(s_n-y_n) + (h(x_n))^2 = -2h(x_n)(y_n-s_n) + (h(x_n))^2 = -(y_n-s_n)^2 + (h(x_n)-(y_n-s_n))^2 = constant + (h(x_n)-(y_n-s_n)^2)$</p>
+<p>加入L2惩罚项以后，即$min_h \;\;constants + \frac{\eta}{N} \sum_{n=1}^N(constant +(h(x_n)-(y_n-s_n))^2 )$</p>
+<p>即 我们希望h(x)可以尽可能去拟合(y-s)</p>
+<p>通过这种方式，我们可以确定$h(x_n)$</p>
+<h3 id="确定模型权重-eta"><a href="#确定模型权重-eta" class="headerlink" title="确定模型权重$\eta$"></a>确定模型权重$\eta$</h3><p>通过确定第t轮的基模型为$g_t(x_n)$，我们现在需要确定模型的权重$\eta$，即</p>
+<p>$min_{\eta}\frac{1}{N} \sum_{n=1}^Nerr(\sum_{c=1}^{t-1}\alpha_cg_c(x_n) + \eta g_t(x_n),y_n)$    对于回归问题，损失函数为平房损失：</p>
+<p>$min_{\eta}\frac{1}{N} \sum_{n=1}^N(S_n+ \eta g_t(x_n)-y_n)^2 = \frac{1}{N}\sum_{n=1}^N((y_n-s_n) - \eta g_t(x_n))^2$</p>
+<p>问题转化为单变量的最佳化问题，类似Linear Regression；我们可以将$g_t(x_n)$视为一个特征转换方式，即输入$x_n$，经过特征转换得到$g_t(x_n)$，学习一个参数$\eta$，使其乘积与$y_n-s_n$越接近越好</p>
+<h3 id="GBDT"><a href="#GBDT" class="headerlink" title="GBDT"></a>GBDT</h3><p>考虑Gradient Boost Descision Tree，假设我们现在有N笔资料，设初始$s_1 = s_2 = s_3 =… = s_N = 0$</p>
+<p>对于第T轮的训练：</p>
+<p>（1）训练一个基模型拟合$y_n-s_n$，即$A({(X_n,y_n-s_n)})$，得到基模型$g_t$</p>
+<p>（2）根据得到的基模型$g_t$，得到模型权重$\alpha_t$  （单变量Linear Regression）</p>
+<p>（3）更新整体模型$s_n &lt;- s_n + \alpha_tg_t(x_n)$</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/27/SVM-II/" rel="next" title="Non-Linear SVM">
+                <i class="fa fa-chevron-left"></i> Non-Linear SVM
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Yeeex</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Decision-Tree"><span class="nav-number">1.</span> <span class="nav-text">Decision Tree</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#C-amp-RT"><span class="nav-number">1.1.</span> <span class="nav-text">C&amp;RT</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#classification-and-regression-tree"><span class="nav-number">1.1.1.</span> <span class="nav-text">classification and regression tree</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-amp-RT-Tree-Pruning"><span class="nav-number">1.2.</span> <span class="nav-text">C&amp;RT Tree Pruning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Branching-on-Feature"><span class="nav-number">1.3.</span> <span class="nav-text">Branching on Feature</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Missing-Feature-by-Surrogate-Branch"><span class="nav-number">1.4.</span> <span class="nav-text">Missing Feature by Surrogate Branch</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Random-Forest"><span class="nav-number">2.</span> <span class="nav-text">Random Forest</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Diversity-for-Feature-Projection"><span class="nav-number">2.1.</span> <span class="nav-text">Diversity for Feature Projection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OOB-Error"><span class="nav-number">2.2.</span> <span class="nav-text">OOB Error</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Feature-Selection"><span class="nav-number">3.</span> <span class="nav-text">Feature Selection</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Feature-Selection-Random-Forest"><span class="nav-number">3.0.1.</span> <span class="nav-text">Feature Selection + Random Forest</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adaboost-DTree"><span class="nav-number">4.</span> <span class="nav-text">Adaboost-DTree</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#With-Extremely-Pruned-Tree"><span class="nav-number">4.0.1.</span> <span class="nav-text">With Extremely Pruned Tree</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Adaboost-Error-Function"><span class="nav-number">4.1.</span> <span class="nav-text">Adaboost Error Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gadient-Descent-on-ADA-Error"><span class="nav-number">4.2.</span> <span class="nav-text">Gadient Descent on ADA Error</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Blending-Weight-Optimization"><span class="nav-number">4.3.</span> <span class="nav-text">Blending Weight Optimization</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gradient-Boosting"><span class="nav-number">5.</span> <span class="nav-text">Gradient Boosting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#确定基模型-h-x-n"><span class="nav-number">5.1.</span> <span class="nav-text">确定基模型$h(x_n)$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#确定模型权重-eta"><span class="nav-number">5.2.</span> <span class="nav-text">确定模型权重$\eta$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GBDT"><span class="nav-number">5.3.</span> <span class="nav-text">GBDT</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yeeex</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

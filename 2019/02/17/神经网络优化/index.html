@@ -110,7 +110,7 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2019/02/17/神经网络优化/t20.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2019/02/17/神经网络优化/t21.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2019/02/17/神经网络优化/t24.png">
-<meta property="og:updated_time" content="2019-04-03T07:47:43.000Z">
+<meta property="og:updated_time" content="2019-05-03T14:04:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Overfitting and Solutions">
 <meta name="twitter:description" content="本篇整理了过拟合的相关问题，并从神经网络的角度整理了如果保证神经网络不过拟合">
@@ -528,15 +528,15 @@
 <p>因此，我们需要一个有效的方式帮助我们选择合适的模型／参数。</p>
 <p>讨论：</p>
 <p>（1）如果我们采用训练误差作为选择指标选择模型，那么选择到的模型多半是过拟合的模型，因为采用正则化进行学习的模型的训练误差会大于不采用正则化的模型，假设空间越复杂的模型的训练误差一定会小于假设空间不复杂的模型；</p>
-<p>此外，根据训练误差选择模型，如果存在多个假设空间，我们需要从每个假设空间中训练得到训练误差最小的模型，然后再从多个模型里选择训练误差最小的作为最终模型。这种方式的弊端：我们根据训练误差选择模型，那么根据hoeffiding不等式，选择的模型就是相当于从几个假设空间的并集中选择一个训练误差最小的模型，则相当于增大了假设空间的大小。导致最终泛化误差变大。 （假设空间现在为 $H_1 \cup  H_2 \cup  H_3 \cup …\cup H_M$）</p>
+<p>此外，根据训练误差选择模型，如果存在多个假设空间，我们需要从每个假设空间中训练得到训练误差最小的模型，然后再从多个模型里选择训练误差最小的作为最终模型。这种方式的弊端：我们根据训练误差选择模型，那么根据hoeffiding不等式，选择的模型就是相当于从几个假设空间的并集中选择一个训练误差最小的模型，则相当于增大了假设空间的大小。导致最终泛化误差变大。 （假设空间现在为 $H_1 \cup  H_2 \cup  H_3 \cup …\cup H_M​$）</p>
 <p>（2）如果我们采用$E_{test}$，即假设现在有M个假设空间，每个假设空间都可以根据训练样本得到一个最好的模型；因此我们现在根据测试集合，在M个模型中选择一个测试误差最小的模型作为最终模型；$m^* = $$argmin_{1\leq m\leq M}(E_m = E_{test}(A_m(D)))​$</p>
 <p>根据hoeffding不等式：</p>
 <p>$E_{out}(g_{m^<em>}) \leq E_{test}(g_{m^</em>}) + O(\sqrt \frac{log M}{N_{test}})​$，最终的泛化误差只跟M个模型和测试样本有关</p>
 <p>但是，我们无法得到测试样本</p>
 <p><strong>因此，我们需要根据训练样本构建验证样本集合</strong></p>
-<h3 id="构建Validation-Set"><a href="#构建Validation-Set" class="headerlink" title="构建Validation Set"></a>构建Validation Set</h3><p>为了保证validation set的分布和原始数据分布是相同的，我们随机从训练样本集合中抽取K个样本作为validation set；原始训练样本为N_K个样本作为真正的训练数据对模型进行训练，根据hoeffding 不等式，最终的泛化误差不等式为： $E_{out}(g_{m}^-) \leq E_{val}(g_{m}^-) + O(\sqrt \frac{log M}{K})$</p>
-<p>此处$g_m^-$表示从原始资料中取出K个样本后训练得到的模型，但是根据learning curve，随着训练样本数目的增多，模型的泛化能力应该越好，且$E_{out}$会变小，因此，我们可以将不等式整理成：</p>
-<p>$E_{out}(g_{m^<em>}) \leq E_{out}(g_{m^</em>}^-) \leq E_val(g_{m^*}^-) + O(\sqrt{\frac{log M}{K}})$</p>
+<h3 id="构建Validation-Set"><a href="#构建Validation-Set" class="headerlink" title="构建Validation Set"></a>构建Validation Set</h3><p>为了保证validation set的分布和原始数据分布是相同的，我们随机从训练样本集合中抽取K个样本作为validation set；原始训练样本为N-K个样本作为真正的训练数据对模型进行训练，根据hoeffding 不等式，最终的泛化误差不等式为： $E_{out}(g_{m}^-) \leq E_{val}(g_{m}^-) + O(\sqrt \frac{log M}{K})$</p>
+<p>此处$g_m^-​$表示从原始资料中取出K个样本后训练得到的模型，但是根据learning curve，随着训练样本数目的增多，模型的泛化能力应该越好，且$E_{out}​$会变小，因此，我们可以将不等式整理成：</p>
+<p>$E_{out}(g_{m^<em>}) \leq E_{out}(g_{m^</em>}^-) \leq E_{val}(g_{m^*}^-) + O(\sqrt{\frac{log M}{K}})​$</p>
 <p>因此，当我们根据validation set选择出最优的模型以后，需要用全部的N条数据重现训练选择到的模型。</p>
 <p>整个Validation过程如下图：</p>
 <p><img src="/2019/02/17/神经网络优化/t24.png" width="220px"></p>
@@ -676,7 +676,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

@@ -249,6 +249,173 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/01/23/VC-Dimension-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yeeex">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yeeex">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/23/VC-Dimension-II/" itemprop="url">VC Dimension</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-23T09:32:34+08:00">
+                2019-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>为了写论文，跑了很久的实验。VC Bound写完就没在关注博客。</p>
+<p>VC Bound说明了$E_{in} \approx E_{out}$这个约等式成立的条件：</p>
+<p>（1） 假设空间的成长函数存在一个上界</p>
+<p>（2）训练样本N的数目足够大</p>
+<p>VC Bound的存在说明，如果机器学习可以really learn something，需要保证以下三点：</p>
+<p>（1）假设空间的VC Dimension有限，这样才会存在VC Bound</p>
+<p>（2）训练样本数目足够大（后面会讨论，$N \approx 10d_{VC}$）</p>
+<p>（3）存在一个合适的算法，可以从假设空间中，选择一个in-sample error最小的假设</p>
+<p>对于假设空间H，现在存在N个训练样本，其break point = k，则：当$N \geq 2 \;\;\;\; k \geq 3$时，成长函数的上届可以再进行放缩</p>
+<p>$m_H(N) \leq B(N,K) =\sum_{i=0}^{k-1}\binom{N}{i} \leq N^{k-1}$  </p>
+<p>💡当k&lt;3时，可以改用其他的上界对成长函数的上界进行放大</p>
+<p><img src="/2019/01/23/VC-Dimension-II/v1.png" width="500px"></p>
+<p>因此，对于任意一个假设空间H，给定训练样本D，任意一个假设 $g=A(D) \in H $不好的概率：</p>
+<p>$P_D[|E_{in}(g)-E_{out}(g)|&gt;\epsilon] $</p>
+<p>$\leq P_D[\exists h \in H s.t. |E_{in}(g)-E_ {out}|&gt; \epsilon ]$</p>
+<p>$\leq 4m_H(2N)exp(-\frac{1}{8}\epsilon^2N)$</p>
+<p>$\leq 4(2N)^{k-1}exp(-\frac{1}{8}\epsilon^2 N)$ </p>
+<p>第一个不等式是推导VC Bound中用到的概率性质 P(A or B) = P(A) + P(B) -P(AB)，发生事件A或者事件B的概率，是发生事件A的概率+发生事件B的概率-发生事件A和B的概率</p>
+<p>第二个不等式是VC Bound的定义，当N足够大的时候，存在这个不等式</p>
+<p>第三个不等式是当所选的假设空间存在break point的时候，不等式成立</p>
+<p>以上条件可以保证 $E_{in} \approx E_{out} $</p>
+<p>当有一个足够优秀的演算法A，可以从假设空间H选择一个合适的假设，保证$E_{in}$很小时，则propbably learned，即PAC probably approximately correct learning</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/01/23/VC-Dimension-II/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/11/19/VCDimension/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -641,9 +808,13 @@
       
         
           <p>集成学习是机器学习中一种常用的手段👋</p>
-<p>本文介绍三种常用的集成学习学习方法，分别是Bagging/Boosting/Stacking</p>
-<p>集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分</p>
+<p>本文介绍两张种常用的集成学习<strong>学习方法</strong>，分别是Bagging/Boosting</p>
+<p>集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace​$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分</p>
 <p>集成学习需要将这些不同的模型通过合适的方式整合到一起，得到一个更强的模型</p>
+<p>我们可以选择三种方式将各个基学习器结合起来（<strong>结合策略</strong>）：</p>
+<p>（1）采用uniform的方式，每个基学习器的权重是相同的</p>
+<p>（2）采用non-uniform的方式，每个基学习器的权重是不同的</p>
+<p>（3）采用conditional的方式，不同的基学习器组合，应用到不同的场景和条件下</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/10/27/Ensemble/#more" rel="contents">
@@ -980,154 +1151,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/10/14/SVM/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yeeex">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yeeex">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/14/SVM/" itemprop="url">Linear SVM</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-14T21:36:17+08:00">
-                2018-10-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>支持向量机SVM（Support Vector Machine）是一个（二）分类模型，主要特点有两个：</p>
-<p>（1）针对分类问题损失函数 loss funcion不方便求导优化参数的问题，SVM采用Hinge Loss</p>
-<p>（2）针对线性分类模型的分类局限性，SVM引入Kernel的方法进行特征变化，进而进行分类</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/10/14/SVM/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1178,7 +1201,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

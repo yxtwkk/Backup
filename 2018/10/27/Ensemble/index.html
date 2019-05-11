@@ -79,20 +79,19 @@
 
 
 
-<meta name="description" content="集成学习是机器学习中一种常用的手段👋 本文介绍三种常用的集成学习学习方法，分别是Bagging/Boosting/Stacking 集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分 集成学习需要将这些不同的模型通过合适的方式整合到一起，得到一个更强的模型">
+<meta name="description" content="集成学习是机器学习中一种常用的手段👋 本文介绍两张种常用的集成学习学习方法，分别是Bagging/Boosting 集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace​$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分 集成学习需要将这些不同的模型通过合适的方式整合到一起，得到一个更强的模型 我们可以选择">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Ensemble">
 <meta property="og:url" content="https://yeeex.gitee.io/2018/10/27/Ensemble/index.html">
 <meta property="og:site_name" content="Yeeex">
-<meta property="og:description" content="集成学习是机器学习中一种常用的手段👋 本文介绍三种常用的集成学习学习方法，分别是Bagging/Boosting/Stacking 集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分 集成学习需要将这些不同的模型通过合适的方式整合到一起，得到一个更强的模型">
+<meta property="og:description" content="集成学习是机器学习中一种常用的手段👋 本文介绍两张种常用的集成学习学习方法，分别是Bagging/Boosting 集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace​$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分 集成学习需要将这些不同的模型通过合适的方式整合到一起，得到一个更强的模型 我们可以选择">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/27/Ensemble/e1.png">
-<meta property="og:image" content="https://yeeex.gitee.io/2018/10/27/Ensemble/e2.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/27/Ensemble/e3.png">
-<meta property="og:updated_time" content="2019-02-21T06:09:56.000Z">
+<meta property="og:updated_time" content="2019-05-11T08:42:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ensemble">
-<meta name="twitter:description" content="集成学习是机器学习中一种常用的手段👋 本文介绍三种常用的集成学习学习方法，分别是Bagging/Boosting/Stacking 集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分 集成学习需要将这些不同的模型通过合适的方式整合到一起，得到一个更强的模型">
+<meta name="twitter:description" content="集成学习是机器学习中一种常用的手段👋 本文介绍两张种常用的集成学习学习方法，分别是Bagging/Boosting 集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace​$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分 集成学习需要将这些不同的模型通过合适的方式整合到一起，得到一个更强的模型 我们可以选择">
 <meta name="twitter:image" content="https://yeeex.gitee.io/2018/10/27/Ensemble/e1.png">
 
 
@@ -346,9 +345,13 @@
 
       
         <p>集成学习是机器学习中一种常用的手段👋</p>
-<p>本文介绍三种常用的集成学习学习方法，分别是Bagging/Boosting/Stacking</p>
-<p>集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分</p>
+<p>本文介绍两张种常用的集成学习<strong>学习方法</strong>，分别是Bagging/Boosting</p>
+<p>集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace​$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分</p>
 <p>集成学习需要将这些不同的模型通过合适的方式整合到一起，得到一个更强的模型</p>
+<p>我们可以选择三种方式将各个基学习器结合起来（<strong>结合策略</strong>）：</p>
+<p>（1）采用uniform的方式，每个基学习器的权重是相同的</p>
+<p>（2）采用non-uniform的方式，每个基学习器的权重是不同的</p>
+<p>（3）采用conditional的方式，不同的基学习器组合，应用到不同的场景和条件下</p>
   <a id="more"></a>
 <h2 id="Recap-Bais-amp-Variance"><a href="#Recap-Bais-amp-Variance" class="headerlink" title="Recap Bais &amp; Variance"></a>Recap Bais &amp; Variance</h2><p>集成学习是在模型的方差或者偏差方面对性能进行改善。对于每一个独立的学习任务，我们首先会定义一个函数空间，比如，模型是$f = ax^3+bx^2+c$，这个就是函数空间，而针对不同的训练数据，对于这个函数空间里的模型定义，可以学习到不同的参数：$\lbrace a,b,c\rbrace$；由此，才衍生出了讨论模型方差和偏差的概念。</p>
 <p>前面提到了函数空间的概念，在描述偏差和方差之前，我们首先假定，对于学习任务T，这个世界上是有一个完美的模型能够解决这个任务。那么，我们需要做的，就是穷尽我们所有的能力，进行如下两件事：</p>
@@ -396,36 +399,15 @@
 <p>每个个体学习器也可以由不同的学习算法得到 =&gt; 这种方式是异质的</p>
 <p>=&gt; 异质的每个个体学习器一般称为组件学习器／个体学习器</p>
 <h2 id="Bagging"><a href="#Bagging" class="headerlink" title="Bagging"></a>Bagging</h2><p><strong>Bagging的方式需要用在较复杂的模型</strong></p>
-<p><strong>Bagging的方式是用在同质的基学习器中</strong></p>
-<p>对于复杂的模型来说，每个模型的偏差较小，但是模型会带来较大的方差；一个改进的方式就是，将这些复杂的模型集合起来，求出平均，以此降低方差；即，目标是$E[f^*] = \hat f$ </p>
+<p>对于复杂的模型来说，每个模型的偏差较小，但是模型会带来较大的方差；一个改进的方式就是，将这些复杂的模型集合起来，求出平均，以此降低方差；即，目标是$E[f^*] = \hat f​$ </p>
 <blockquote>
 <p> 每一个复杂的模型按权重集合起来，即 $f^* = \sum_i^m \gamma_if_i$ </p>
 </blockquote>
 <p>相当于，我们将训练数据分成n份，每一份单独训练一个复杂的模型，每个复杂的模型都可以很好的拟合自己的训练样本，但是每个模型之间的差异很大，如果将这些模型求平均，得到的就是非常贴合的模型</p>
-<h3 id="BootStrap-Sampling"><a href="#BootStrap-Sampling" class="headerlink" title="BootStrap Sampling"></a>BootStrap Sampling</h3><p>对训练样本采用有放回抽样，构造不同的训练样本集合，单独训练每一个复杂的模型。</p>
-<p>如果训练样本集有N个训练样本，对于每个分类器有放回采样$N^{‘}$个训练样本， </p>
-<blockquote>
-<p>一般另$N’ = N $，有放回抽样保证抽样得到的样本与原训练集合是不同的</p>
-</blockquote>
-<p>在测试样本集上，每个模型输出一个预测值，模型最终输出多个预测值的平均值／投票</p>
-<p><img src="/2018/10/27/Ensemble/e1.png" width="450px"></p>
-<p>Bagging的集合学习模型对强学习器更有效，是每个学习器之间是没有联系的，可以独立并行的训练，如果单个模型的性能较弱，集成以后也不会带来更大的性能提升</p>
-<p>当模型容易过拟合时，非常适合采用bagging的方式，比如，决策树 Decision Tree模型</p>
-<h3 id="Random-Forest"><a href="#Random-Forest" class="headerlink" title="Random Forest"></a>Random Forest</h3><p>random forest是决策树模型的bagging版本</p>
-<p>决策树模型非常容易过拟合（如果每个叶子节点都是一个训练样本，那么可以达到训练误差为0），所以适合用bagging的方式进行训练</p>
-<p>在Random Forest模型中，采用如下的方法对每个Decision Tree构建自己的训练集合：</p>
-<p>（1）采用有放回抽样，构造每个决策树的训练集合</p>
-<p>（2）对于每个决策树，随机选择在可以在哪些数据特征上进行分裂</p>
-<p>采用有放回抽样构造训练集，我们<strong>其实不需要</strong>额外的从抽样好的训练集中再抽取一部分构造验证结合，来保证训练得到模型的泛化能力，假设现有四个训练样本，我们需要采用有放回抽样，构造四个训练集合，训练四个分类器：</p>
-<p><img src="/2018/10/27/Ensemble/e2.png" width="350px"></p>
-<p>以$x^1$为例，只有$f_1$和$f_3$两个模型的训练集合中出现了这个样本，$f_2$和$f_4$没有出现这个训练样本，则$x^1$可以作为$f_2$和$f_4$的验证样本</p>
-<p>从Random Forest的角度来说：</p>
-<p>$RF = f_2+f_4$，可以用这个模型验证样本$x^1$</p>
-<p>$RF = f_2+f_3$，可以用这个模型验证样本$x^2$</p>
-<p>$RF = f_1+f_4$，可以用这个模型验证样本$x^3$</p>
-<p>$RF = f_1+f_3$，可以用这个模型验证样本$x^4$</p>
-<p>我们最终的训练目的，是使得Random Forest模型在这几种情况下的验证误差最小</p>
-<p>这种不需要额外切分验证集合的方式 称为 <strong>Out-of-Bag Error(OOB)</strong></p>
+<p>💡如果每个模型都是不复杂的，则其不能很好的学习每一个训练样本导致误差很大，最后得到的bagging模型的误差也会很大，因为每一个基模型都不好</p>
+<h3 id="Uniform-Bagging"><a href="#Uniform-Bagging" class="headerlink" title="Uniform Bagging"></a>Uniform Bagging</h3><p>uniform bagging是针对每个基学习器的权重都是1</p>
+<p>对于回归问题，相当于对所有基模型取平均 $f^* = \frac{1}{T} \sum_{t=1}^T f_t$</p>
+<p>对于分类问题，相当于所有基模型进行投票，少数服从多数 $f^* = sign(\sum_{t=1}^T 1·f_t)$</p>
 <h3 id="Reduce-Variance"><a href="#Reduce-Variance" class="headerlink" title="Reduce Variance"></a>Reduce Variance</h3><p>为什么bagging这种方式，对于复杂模型更有效？</p>
 <p>我们bagging得到的总的模型是$f^* = \sum_i^m \gamma_if_i$ </p>
 <p><strong>期望计算推导</strong></p>
@@ -438,15 +420,45 @@
 <p>$Cov(f_i,f_j) = \rho \sqrt{Var(fi)}\sqrt{Var(f_j)} = \rho·\sigma^2$</p>
 <p>$\sum_i^m \sum_{j \neq i}^m = \frac{m(m-1)}{2}$  =&gt; 含义是 现在的m个样本，两两之间计算相关系数，共有多少种配对</p>
 <p>$Var(f^*) = m·\gamma^2·\sigma^2 + 2·\frac{m(m-1)}{2}·\gamma^2·\rho·\sigma^2 = m^2\gamma^2\sigma^2\rho + m\sigma^2\gamma^2 (1-\rho)$</p>
-<p>因为每个模型的权重，我们认为是相同的 $\rho = \frac{1}{m}$，继续简化上式可得：</p>
+<p>因为每个模型的权重，我们认为是相同的 $\gamma = \frac{1}{m}​$，继续简化上式可得：</p>
 <p>$Var(f^*) = m^2(\frac{1}{m})^2\sigma^2\rho + m(\frac{1}{m})^2\sigma^2(1-\rho) = \rho \sigma^2 + \frac{1-\rho}{m}\sigma^2$</p>
 <p>💡从上面的计算可知，集成之后的总模型的期望和原有模型的期望相差不大，即，如果模型本身的偏差较大，则集成学习以后，总模型的偏差仍然较大</p>
 <p>💡当各个随机变量函数之间的相关性$\rho = 1$时，集成学习后的总模型和各个基模型的方差是相等；（即如果各个基模型之间是强相关的）；一般情况下，$0&lt;\rho&lt;1 $, 因此，随着基模型的个数增加（m增加），总模型的方差是越来越小的</p>
 <p>💡总模型的方差有一个极限，当模型个数趋近于无穷∞，$Var(f^*) = \rho\sigma^2$，即集成学习优化性能的极限值</p>
 <p>💡而在Random Forest中，随着基决策树模型的个数增加，对于$Var(f^*)$的影响更大的是第一项$\rho\sigma^2$；因此，在随机森林中，每棵决策树在训练时，每个分支随机选择分类属性，这样可以降低各个基模型之间的相关性$\rho$；从公式的角度，随即森林模型降低的是两项$\rho \sigma^2$和$\frac{1-\rho}{m}\sigma^2$</p>
+<h3 id="Un-Uniform-Bagging"><a href="#Un-Uniform-Bagging" class="headerlink" title="Un-Uniform Bagging"></a>Un-Uniform Bagging</h3><p>un-uniform bagging主要考虑的是 将各个基学习器线性组合的方式，即</p>
+<p> $f^<em> = sign( \sum_{t=1}^T\alpha_t f_t)$ $\alpha_t \geq 0$         ||     $f^</em> = \sum_{t=1}^T \alpha_tf_t \;\;\;\; \alpha_t \ge 0$     </p>
+<p>现在求解的问题转化为三个步骤：</p>
+<p>（1）根据训练样本得到$f_t$ </p>
+<p>（2）根据训练样本进行 有限制的最优化求解 $min_{\alpha_t \ge 0} \frac{1}{N} \sum_{n=1}^N (\hat f - \sum_{t=1}^T \alpha_tf_t)^2​$</p>
+<p>💡一般情况下，我们可以将 每一个基学习器视为一个特征转换，将原始样本通过基学习器转换后，得到”新”的训练样本，根据”新”的训练样本，学习参数$\alpha$</p>
+<p>💡我们可以将有限制的优化问题转化为无限制的优化问题，去掉$\alpha \ge 0$的条件 =&gt; $\alpha_t &lt; 0  =&gt; \alpha_t f_t == |\alpha_t|(-f_t)$</p>
+<p>对于每个基模型，我们通过最小化训练误差的方式得到每个基模型／学习器；如果我们再通过训练样本学习$\alpha$，这相当于 对于每个训练样本，选择最好的几（个）基模型得到这个训练样本的结果；这会导致过拟合</p>
+<p>（类似于，在模型选择中，如果每个模型的训练误差作为标准选择模型，相当于在最好的模型中选择一个最好的 =&gt; 相当于增大了VC 维）</p>
+<p>所以，一般情况下，我们会划分出训练样本和验证样本，利用训练样本训练每一个基模型，通过验证样本学习基模型之间的系数，即：</p>
+<p>（1）利用训练样本训练得到 $f_1^-,f_2^-,f_3^-…f_t^-$</p>
+<p>（2）将验证集合中的每个训练样本$(x_n,y_n)$通过”特征转换”的方式，转换得到$(z_n,y_n)$</p>
+<p>$z_n = \Phi^-(x_n)$  其中 $\Phi^-(x_n) = (f_1^-(x_n),f_2^-(x_n),…f_n^-(x_n))$</p>
+<p>（3）通过最小化误差函数的方式学习得到参数$\alpha$</p>
+<h3 id="Conditional-Bagging"><a href="#Conditional-Bagging" class="headerlink" title="Conditional Bagging"></a>Conditional Bagging</h3><p>Conditional Bagging 又称为 Stacking，即基模型之间不再是线性关系，比照上述步骤，我们只需要在$(z_n,y_n)$上学习得到一个模型即可</p>
+<p>我们在上描推导中，假设了所有模型是从同一个假设空间得到，但是 模型可以是异质的；我们可以通过以上几种方式得到不同的基模型：</p>
+<p>（1）基模型来自不同的假设空间</p>
+<p>（2）不同的基模型采用不同的学习参数，比如 梯度下降中，不同的基模型设定不同的学习率$\eta = 0.001,0.01,..10$</p>
+<p>（3）不同基模型采用不同的初始化</p>
+<p>（4）采用不同的训练样本训练基模型</p>
+<h3 id="BootStrap-Sampling"><a href="#BootStrap-Sampling" class="headerlink" title="BootStrap Sampling"></a>BootStrap Sampling</h3><p>对训练样本采用有放回抽样，构造不同的训练样本集合，单独训练每一个复杂的模型。</p>
+<p>如果训练样本集有N个训练样本，对于每个分类器有放回采样$N^{‘}$个训练样本， </p>
+<blockquote>
+<p>一般另$N’ = N ​$，有放回抽样保证抽样得到的样本与原训练集合是不同的</p>
+</blockquote>
+<p>在测试样本集上，每个模型输出一个预测值，模型最终输出多个预测值的平均值／投票</p>
+<p><img src="/2018/10/27/Ensemble/e1.png" width="450px"></p>
+<p>Bagging的集合学习模型对强学习器更有效，是每个学习器之间是没有联系的，可以独立并行的训练，如果单个模型的性能较弱，集成以后也不会带来更大的性能提升</p>
+<p>当模型容易过拟合时，非常适合采用bagging的方式，比如，决策树 Decision Tree模型</p>
+<p>假设N个样本，每个样本被选中的概率是$\frac{1}{N}$，则每个样本不被选中的概率为$1-\frac{1}{N}$，假设共有放回的抽样N个样本，则共有$(1-\frac{1}{N})^N \approx\frac{1}{e}\approx 0.36$的样本是不能被抽到的</p>
 <h2 id="Boosting"><a href="#Boosting" class="headerlink" title="Boosting"></a>Boosting</h2><p><strong>Boosting提升的是弱学习器的性能</strong></p>
-<p><strong>Boosting针对的是同质的学习算法</strong></p>
-<p> 假设我们现在需要的是二分类任务，训练数据是$\lbrace(x^1,\hat y^1),(x^2,\hat y^2)…(x^N,\hat y^N) \rbrace$，其中 $\hat y ^n = 1/-1$</p>
+<p>针对上面提到的Bootstrap Sample的方式，对于每个基模型，我们有放回抽样N个样本，N个样本中可能会存在重复的样本，这些重复的样本相当于 让每个基模型优化的是带权重的误差。</p>
+<p>假设我们现在需要的是二分类任务，训练数据是$\lbrace(x^1,\hat y^1),(x^2,\hat y^2)…(x^N,\hat y^N) \rbrace$，其中 $\hat y ^n = 1/-1$</p>
 <p>Boosting的基本模式是，先训练一个分类器$f_1(x)$，接下来训练的第二个分类器需要尽可能的提升分类器的性能；通过调整第一个分类器错误分类的样本权重，使得第二个分类器在训练时更关注这些分错的样本，进而提升分类器的整体性能</p>
 <p>假设每个样本的权重为$u^n$,初始权重均为1；则算法的损失函数Loss Function，需要考虑数据样本的权重：</p>
 <p>$L(f) = \sum_n u^n l(f(x^n),\hat y^n)$</p>
@@ -464,9 +476,9 @@
 <h4 id="Re-weight-Training-Data"><a href="#Re-weight-Training-Data" class="headerlink" title="Re-weight Training Data"></a>Re-weight Training Data</h4><p>对于$f_1(x)$分类错误的训练数据$x^n$ : $u^n_2 $ &lt;- $u_1^n · d_1$</p>
 <p>对于$f_1(x)$分类正确的训练数据$x^n$ : $u^n_2 $ &lt;- $u_1^n ／ d_1$</p>
 <p>现在需要讨论$d_1$的值如何确定：$d_1$是一个和$f_1(x)$分类错误率有关的一个值</p>
-<p>$\epsilon_1 = \frac{\sum_n u_1^n \delta(f_1(x^n)\ne\hat y^n)}{Z_1} $</p>
+<p>$\epsilon_1 = \frac{\sum_n u_1^n \delta(f_1(x^n)\ne\hat y^n)}{Z_1} ​$</p>
 <p> $Z_1 = \sum_n u_1^n$</p>
-<p>$\frac{\sum_n u_2^n \delta(f_1(x^n)\ne\hat y^n)}{Z_2} = 0.5$  </p>
+<p>$\frac{\sum_n u_2^n \delta(f_1(x^n)\ne\hat y^n)}{Z_2} = 0.5​$  </p>
 <p>=&gt; 分子是$f_1$分类错误的样本，其权重换成$u_2^n = u_1^n · d_1$   即 $\sum_n u_2^n \delta(f_1(x^n)\ne\hat y^n) = \sum_{f_1(x^n)\ne\hat y^n} u_1^nd_1$ </p>
 <p>=&gt; 分母是$Z_2 =\sum_{f_1(x^n)\ne\hat y^n} u_1^nd_1 + \sum_{f_1(x^n)=\hat y^n} u_1^n/d_1$</p>
 <p>$\frac{\sum_n\;u_2^n\; \delta(f_1(x^n)\ne\hat y^n)}{Z_2} = 0.5$   =&gt; $\frac{Z_2}{\sum_n\; u_2^n\; \delta(f_1(x^n)\;\ne\;\hat y^n)} = 2$  =&gt; $\frac{\sum_{f_1(x^n)\;\ne\hat y^n}\; u_1^nd_1 + \sum_{f_1(x^n)\;=\hat y^n} \; u_1^n/d_1}{\sum_{f_1(x^n)\;\ne\;\hat y^n}\; u_1^n d_1} = 2$  </p>
@@ -476,15 +488,13 @@
 <p>$\sum_{f_1(x^n)=\hat y^n} u_1^n = Z_1(1-\epsilon_1) $</p>
 <p>$\sum_{f_1(x^n)\ne\hat y^n} u_1^n = Z_1\epsilon_1$</p>
 <p>$d_1 = \sqrt{\frac{1-\epsilon_1}{\epsilon_1}} &gt;1$ ($\epsilon$ &lt; 0.5)</p>
-<p>💡这里面有一个需要讨论的地方，为什么调整数据权重以后，需要$f_1(x)$分类错误的数据，在新的权重下，达到 错误率为0.5，而不是一个其他值？</p>
-<p>我个人认为，这个数据权值的改变其实代表了需要分类错误的样本的重要性，我们可以设置权重改变后，分类错误的样本的权重之和为整体权重的一半，也可以设置，分类错误的样本的权重之和为</p>
 <h4 id="Adaboost-Algorithm"><a href="#Adaboost-Algorithm" class="headerlink" title="Adaboost Algorithm"></a>Adaboost Algorithm</h4><p>给定训练数据：$\lbrace(x^1,\hat y^1,u_1^1)，…,(x^n,\hat y^n,u_1^n),….(x^N,\hat y^N,u_1^N)\rbrace$</p>
 <p>其中，$\hat y =1/-1$     $u_1^n = 1$</p>
 <p>我们需要训练T个基分类器：</p>
 <p>For t = 1，… T:</p>
 <p>（1）根据当前数据权重训练基分类器 $f_t(x)$</p>
 <p>（2）对于N个训练数据：</p>
-<p>a. 如果数据$x^n$被基分类器分类错误，$u_{t+1}^n = u_t^n ·d_t = u_t^n ·exp(\alpha_t)$</p>
+<p>a. 如果数据$x^n​$被基分类器分类错误，$u_{t+1}^n = u_t^n ·d_t = u_t^n ·exp(\alpha_t)​$</p>
 <p>b. 如果数据$x^n$被基分类器分类正确，$u_{t+1}^n = u_t^n /d_t = u_t^n ·exp(-\alpha_t)$</p>
 <p>$d_t = \sqrt\frac{1-\epsilon_t}{\epsilon_t}$</p>
 <p>$\alpha_t = ln \sqrt{\frac{1-\epsilon_t}{\epsilon_t}}$</p>
@@ -502,7 +512,7 @@
 <p>$E(f^*) = E(\sum_i^m\gamma_if_i) = \sum_i^m\gamma_iE(f_i) $</p>
 <p>$Var(f^*) = m·\gamma^2·\sigma^2 + 2·\frac{m(m-1)}{2}·\gamma^2·\rho·\sigma^2 = m^2\gamma^2\sigma^2\rho + m\sigma^2\gamma^2 (1-\rho) =m^2\gamma^2\sigma^2$</p>
 <p>对于集成学习后的总模型而言，如果每个基模型都是较复杂的模型，则模型的方差较大，则集成后的总模型方差也会很大，反而会导致性能的下降；所以，boosting针对的是弱学习器</p>
-<p>对于每个简单模型而言，所以每个基模型的准确度都较低，因此，随着基模型数目的增加，会带来整体集成学习模型的期望增加；但是，基模型的个数不是越多越好；因为随着基模型数目不断增多，整体模型的方差也会变大                </p>
+<p>对于每个简单模型而言，所以每个基模型的准确度都较低，因此，随着基模型数目的增加，会带来整体集成学习模型的期望增加；但是，基模型的个数不是越多越好；因为随着基模型数目不断增多，整体模型的方差也会变大</p>
 <h3 id="Margin-Theory"><a href="#Margin-Theory" class="headerlink" title="Margin Theory"></a>Margin Theory</h3><h4 id="Error-Upperbond"><a href="#Error-Upperbond" class="headerlink" title="Error Upperbond"></a>Error Upperbond</h4><p>根据前面的推导，我们得到Adaboost的分类函数为:</p>
 <p>$H(x) = sign(\sum_{t=1}^T \alpha_t f_t(x))$</p>
 <p>其中，$\alpha_t = ln \sqrt{\frac{1-\epsilon_t}{\epsilon_t}}$</p>
@@ -696,7 +706,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -742,7 +752,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Recap-Bais-amp-Variance"><span class="nav-number">1.</span> <span class="nav-text">Recap Bais &amp; Variance</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#偏差Bais"><span class="nav-number">1.1.</span> <span class="nav-text">偏差Bais</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方差Variance"><span class="nav-number">1.2.</span> <span class="nav-text">方差Variance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#偏差方差分解"><span class="nav-number">1.3.</span> <span class="nav-text">偏差方差分解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Recap-Math"><span class="nav-number">2.</span> <span class="nav-text">Recap Math</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同质与异质"><span class="nav-number">3.</span> <span class="nav-text">同质与异质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bagging"><span class="nav-number">4.</span> <span class="nav-text">Bagging</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BootStrap-Sampling"><span class="nav-number">4.1.</span> <span class="nav-text">BootStrap Sampling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Random-Forest"><span class="nav-number">4.2.</span> <span class="nav-text">Random Forest</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reduce-Variance"><span class="nav-number">4.3.</span> <span class="nav-text">Reduce Variance</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Boosting"><span class="nav-number">5.</span> <span class="nav-text">Boosting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adaboost"><span class="nav-number">5.1.</span> <span class="nav-text">Adaboost</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Re-weight-Training-Data"><span class="nav-number">5.1.1.</span> <span class="nav-text">Re-weight Training Data</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Adaboost-Algorithm"><span class="nav-number">5.1.2.</span> <span class="nav-text">Adaboost Algorithm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Reduce-Bias"><span class="nav-number">5.1.3.</span> <span class="nav-text">Reduce Bias</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Margin-Theory"><span class="nav-number">5.2.</span> <span class="nav-text">Margin Theory</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Error-Upperbond"><span class="nav-number">5.2.1.</span> <span class="nav-text">Error Upperbond</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#General-Formulation-of-Boosting"><span class="nav-number">5.2.2.</span> <span class="nav-text">General Formulation of Boosting</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Margin-Theroy"><span class="nav-number">5.2.3.</span> <span class="nav-text">Margin Theroy</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Recap-Bais-amp-Variance"><span class="nav-number">1.</span> <span class="nav-text">Recap Bais &amp; Variance</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#偏差Bais"><span class="nav-number">1.1.</span> <span class="nav-text">偏差Bais</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方差Variance"><span class="nav-number">1.2.</span> <span class="nav-text">方差Variance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#偏差方差分解"><span class="nav-number">1.3.</span> <span class="nav-text">偏差方差分解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Recap-Math"><span class="nav-number">2.</span> <span class="nav-text">Recap Math</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同质与异质"><span class="nav-number">3.</span> <span class="nav-text">同质与异质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bagging"><span class="nav-number">4.</span> <span class="nav-text">Bagging</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Uniform-Bagging"><span class="nav-number">4.1.</span> <span class="nav-text">Uniform Bagging</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reduce-Variance"><span class="nav-number">4.2.</span> <span class="nav-text">Reduce Variance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Un-Uniform-Bagging"><span class="nav-number">4.3.</span> <span class="nav-text">Un-Uniform Bagging</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Conditional-Bagging"><span class="nav-number">4.4.</span> <span class="nav-text">Conditional Bagging</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BootStrap-Sampling"><span class="nav-number">4.5.</span> <span class="nav-text">BootStrap Sampling</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Boosting"><span class="nav-number">5.</span> <span class="nav-text">Boosting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adaboost"><span class="nav-number">5.1.</span> <span class="nav-text">Adaboost</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Re-weight-Training-Data"><span class="nav-number">5.1.1.</span> <span class="nav-text">Re-weight Training Data</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Adaboost-Algorithm"><span class="nav-number">5.1.2.</span> <span class="nav-text">Adaboost Algorithm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Reduce-Bias"><span class="nav-number">5.1.3.</span> <span class="nav-text">Reduce Bias</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Margin-Theory"><span class="nav-number">5.2.</span> <span class="nav-text">Margin Theory</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Error-Upperbond"><span class="nav-number">5.2.1.</span> <span class="nav-text">Error Upperbond</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#General-Formulation-of-Boosting"><span class="nav-number">5.2.2.</span> <span class="nav-text">General Formulation of Boosting</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Margin-Theroy"><span class="nav-number">5.2.3.</span> <span class="nav-text">Margin Theroy</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

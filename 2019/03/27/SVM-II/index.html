@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Yeeex">
 <meta property="og:description" content="本文Non-Linear SVM，我们着重总结，在large margin保证SVM 模型不复杂的前提下，我们如何通过feature transform的形式，让原始模型可以处理更复杂的样本">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-29T08:53:07.000Z">
+<meta property="og:updated_time" content="2019-04-10T07:23:47.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Non-Linear SVM">
 <meta name="twitter:description" content="本文Non-Linear SVM，我们着重总结，在large margin保证SVM 模型不复杂的前提下，我们如何通过feature transform的形式，让原始模型可以处理更复杂的样本">
@@ -397,9 +397,9 @@
 <p>根据互补松弛条件 $\alpha_n &gt;0$的训练样本恰好在分类边界上 是支撑向量</p>
 <p>总结一下：SVM的分类平面只跟支撑向量有关，即：</p>
 <p>$w=\sum_{n=1}^N\alpha_ny_nz_n = \sum_{SV}\alpha_ny_nz_n​$</p>
-<p>$b= y_n-w^Tz_n $ （选择一个支撑向量进行计算即可）</p>
+<p>$b= y_n-w^Tz_n ​$ （选择一个支撑向量进行计算即可）</p>
 <h4 id="SVM-vs-PLA"><a href="#SVM-vs-PLA" class="headerlink" title="SVM vs PLA"></a>SVM vs PLA</h4><p>在SVM中，我们可以将参数向量表示称训练样本（支撑向量）的线性组合</p>
-<p>同样，在PLA中，如果我们的初参数向量从0开始，则PLA的参数也可以表示称分类错误的样本的线性组合 $w_{PLA} = \sum_{n=1}^N \beta_n(y_nz_n)$</p>
+<p>同样，在PLA中，如果我们的初参数向量从0开始，则PLA的参数也可以表示称分类错误的样本的线性组合 $w_{PLA} = \sum_{n=1}^N \beta_n(y_nz_n)​$</p>
 <p>我们称这种模型为represented by data</p>
 <h2 id="Kernel-SVM"><a href="#Kernel-SVM" class="headerlink" title="Kernel SVM"></a>Kernel SVM</h2><p>仔细观察SVM的优化函数，虽然我们将SVM的优化问题转换到对偶问题求解，但是在求解过程中，需要计算两个向量的内积：</p>
 <p>优化目标：$min \;\frac{1}{2}||\sum_{n=1}^N\alpha_ny_nz_{n}||^2 - \sum_{n=1}^N\alpha_n​$</p>
@@ -410,7 +410,14 @@
 <p>当我们进行特征转换后，训练样本维度特别高时，增加了计算复杂度和存储的空间需求。</p>
 <p>以$\Phi_2$转换为例，$\Phi_2(x) = (1,x_1,x_2,…,x_d,x_1^2,x_1x_2,…x_1x_d,x2x1,x_2^2,…x_2x_d,….x_d^2)$</p>
 <p>（此处为了说明方便，同时包含了$x_1x_2$和$x_2x_1$，但是实际的转换这两个可以合并同类项）</p>
-<p>原始数据x和x‘，经过feature transform以后，得到$\Phi_2(x)$和$\Phi_2(x’)$</p>
+<p>原始数据x和x‘，经过feature transform以后，得到$\Phi_2(x)​$和$\Phi_2(x’)​$</p>
+<p>两个向量的内积 即$\Phi_2(x)^T \Phi_2(x’) = 1+\sum_{i=1}^d x_ix_i’ + \sum_{i=1}^d \sum_{j=1}^dx_ix_jx_i’x_j’  = 1 + \sum_{i=1}^d x_ix_i’ + \sum_{i=1}^dx_ix_i’\sum_{j=1}^dx_jx_j’ = 1+x^Tx’+(x^Tx’)(x^Tx’)$</p>
+<p>💡通过上面的推导，我们可以得出，如果向量从d维经过特征准换后变成z维，我们可以直接通过d维的向量内积结果表示成 z维的向量内积结果 =&gt; 这个就是核化的技巧 Kernel Trick，即：</p>
+<p>$K_{\Phi}(x,x’) = \Phi(x)^T\Phi(x’)$ </p>
+<p>根据我们之前的推导，$g_{svm} = sign(w^T\Phi(x)+b)$  参数w和b都可以直接用支撑向量表示，即：</p>
+<p>$b= y_s-w^Tz_s = y_s - (\sum_{n=1}^N \alpha_ny_nz_n)^Tz_s = y_s -  \sum_{n=1}^N\alpha_ny_n(K(x_n,x_s)) $ </p>
+<p>对于一个任意的测试样本x ：$g_{svm}(x) = sign(w^T\Phi(x)+b ) = sign(\sum_{n=1}^N\alpha_ny_nK(x_n,x)+b)$</p>
+<p>因此，我们通过对偶问题，将原始的d+1个优化参数，N个约束条件，转换成 N个优化参数，N+1个约束条件；通过核化技巧，保证计算复杂度限制在$N^2$内；通过支撑向量，保证最后参与预测的只是支撑向量，而与其他样本无关。</p>
 
       
     </div>
@@ -444,6 +451,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/25/Tree-Model/" rel="prev" title="Tree Model">
+                Tree Model <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -520,7 +531,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
