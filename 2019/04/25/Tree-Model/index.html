@@ -88,7 +88,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yeeex.gitee.io/2019/04/25/Tree-Model/t1.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2019/04/25/Tree-Model/t.png">
-<meta property="og:updated_time" content="2019-05-12T12:03:08.000Z">
+<meta property="og:updated_time" content="2019-05-12T12:24:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Tree Model">
 <meta name="twitter:description" content="本文主要整理 CART决策树和TGBDT。 我们可以将bagging，adaboost，decision tree都视为一边学习一边得到模型权重的方式。 对于bagging来说，不同的模型来自数据的bootstrap采样方式；模型权重都是相同的； 对于adaboost来说，不同的模型来自优化带权重的损失函数（weighted error function／下一个模型更关心上一个模型训练错误的样本）">
@@ -481,7 +481,8 @@
 <p>因为exp是Adaboost的损失函数，更一般地，我们将Gradient Boost扩展成任意损失函数的形式：</p>
 <p>$min_{\eta}min_{h}\frac{1}{N} \sum_{n=1}^Nerr(\sum_{c=1}^{t-1}\alpha_cg_c(x_n) + \eta h(x_n),y_n)$</p>
 <p><strong>一般情况的Gradient Boost可以适用分类问题／回归问题</strong></p>
-<h3 id="确定基模型-h-x-n"><a href="#确定基模型-h-x-n" class="headerlink" title="确定基模型$h(x_n)$"></a>确定基模型$h(x_n)$</h3><p>  同样地，采用泰勒展开的方式，原式$\approx\; min_h \frac{1}{N} \sum_{n=1}^Nerr(S_n,y_n) + \frac{1}{N} \sum_{n=1}^N \eta h(x_n) \frac{\partial err(s,y_n)}{\partial s}|_{s=s_n}$ </p>
+<h3 id="确定基模型-h-x-n"><a href="#确定基模型-h-x-n" class="headerlink" title="确定基模型$h(x_n)$"></a>确定基模型$h(x_n)$</h3><p>  同样地，采用泰勒展开的方式，原式$\approx\; min_h \frac{1}{N} \sum_{n=1}^Nerr(S_n,y_n) + \frac{1}{N} \sum_{n=1}^N \eta h(x_n) \frac{\partial err(s,y_n)}{\partial s}|_{s=s_n}​$ </p>
+<p>（相当于，$S_n​$和$y_n​$构成一个损失函数，我们希望在$S_n​$的地方进行一定的修正，使其离$y_n​$越近越好，故采用一阶泰勒展开式）</p>
 <p>设$S_n= \sum_{c=1}^{t-1}\alpha_cg_c(x_n)$，而$S_n$和$y_n$之间的误差是一个常数，因此只需要优化第二项：</p>
 <p>💡分类问题按Adaboost的思路进行，我们现在讨论回归问题，即损失函数$err(s,y) = (s-y)^2$</p>
 <p>$min_h\;\;constants + \frac{\eta}{N}\sum_{n=1}^N h(x_n) ·2(s_n-y_n)$</p>
@@ -502,6 +503,10 @@
 <p>（1）训练一个基模型拟合$y_n-s_n$，即$A({(X_n,y_n-s_n)})$，得到基模型$g_t$</p>
 <p>（2）根据得到的基模型$g_t$，得到模型权重$\alpha_t$  （单变量Linear Regression）</p>
 <p>（3）更新整体模型$s_n &lt;- s_n + \alpha_tg_t(x_n)$</p>
+<p>对GBDT而言，我们对于原有损失函数，我们进行一阶泰勒展开：</p>
+<p>原式$\approx\; min_h \frac{1}{N} \sum_{n=1}^Nerr(S_n,y_n) + \frac{1}{N} \sum_{n=1}^N \eta h(x_n) \frac{\partial err(s,y_n)}{\partial s}|_{s=s_n}$ </p>
+<p>对于XGBOOST，我们使用二阶泰勒展开：</p>
+<p>原式$\approx\; min_h \frac{1}{N} \sum_{n=1}^Nerr(S_n,y_n) + \frac{1}{N} \sum_{n=1}^N \eta h(x_n) \frac{\partial err(s,y_n)}{\partial s}|_{s=s_n} + \frac{1}{N}\sum_{n=1}^N\frac{1}{2}\eta h^2 (x_n)\frac{\partial err^2(s,y_n)}{\partial s}|_{s=s_n}$  </p>
 
       
     </div>
