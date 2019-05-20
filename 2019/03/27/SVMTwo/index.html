@@ -88,7 +88,8 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yeeex.gitee.io/2019/03/27/SVMTwo/s1.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2019/03/27/SVMTwo/s2.png">
-<meta property="og:updated_time" content="2019-05-16T01:59:42.000Z">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/03/27/SVMTwo/s3.png">
+<meta property="og:updated_time" content="2019-05-19T10:01:35.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Non-Linear SVM">
 <meta name="twitter:description" content="本文Non-Linear SVM，我们着重总结，在large margin保证SVM 模型不复杂的前提下，我们如何通过feature transform的形式，让原始模型可以处理更复杂的样本">
@@ -457,6 +458,65 @@
 <p>（3）Gaussian Kernel $K(x,x’) = exp(-\gamma||x-x’||^2)$ </p>
 <p>pros：高斯核比线性核和多项式核的power都大；因为高斯函数的范围在[0,1]之间，不会像多项式核的计算范围过大；高斯核只有一个参数$\gamma$需要选择</p>
 <p>cons：因为高斯核函数将所有的数据点映射到高维空间，所以无法计算得到模型的w和b；容易过拟合</p>
+<h2 id="Soft-Margin-SVM"><a href="#Soft-Margin-SVM" class="headerlink" title="Soft-Margin SVM"></a>Soft-Margin SVM</h2><p>对于以上讨论的SVM，无论经过怎样的kernel转换，我们始终认为数据是线性可分的，即转换到高维空间，我们也是进行的hard-margin svm；但是数据未必是线性可分的，可能存在离群点；因此，我们需要求解soft-margin svm；</p>
+<p>对于hard margin而言，我们的优化函数和约束条件为：</p>
+<p>$min_{b,w} \frac{1}{2}w^Tw$</p>
+<p>$s.t. \;\;y_n(w^Tz_n+b) \geq 1 $</p>
+<p>我们将优化函数放缩：$min_{b,w}\frac{1}{2}w^Tw + C·\sum_{n=1}^N[y_n \neq sign(w^Tz_n+b)]$</p>
+<p>（C是large margin和噪声容忍度之间的平衡参数；C越大，我们越希望分类正确，C越小，我们越关注Large Margin／模型复杂度）</p>
+<p>对于约束条件，我们表示为：</p>
+<p>（1）对于分类正确的数据，$y_n(w^Tz_n+b) \geq 1$</p>
+<p>（2）对于分类错误的数据，$y_n(w^Tz_n+b) \geq -\infty$</p>
+<p>将两个约束条件整理一起，得到$y_n(w^Tz_n+b) \geq 1 - \infty·[y_n \neq sign(w^Tz_n+b)]$</p>
+<p>以上的优化函数和约束条件存在两个问题：</p>
+<p>（1）[]是一个非线性的约束条件，无法进行优化</p>
+<p>（2）无法区分分类错误的点犯错的程度，即 分类错误的点是稍微远离分类平面，还是分类错误的点 离 分类平面非常非常远</p>
+<p>因此，我们可以引入变量$\xi_n$，表示每一个点犯错的程度</p>
+<p>优化函数：$min_{b,w,\xi} \frac{1}{2}w^Tw + C·\sum_{n=1}^N \xi_n$</p>
+<p>约束条件：$y_n(w^Tz_n+b) \geq 1-\xi_n$   $\xi_n \geq 0$</p>
+<p>其中，C表示large margin和margin violation之间的平衡，如果C越大，表明更不能忍受分类错误的点；如果C越小，表明更希望保持large margin的特性</p>
+<p>我们需要优化d+1+N个变量（参数向量w是d维，b是1维，$\xi_n$是根据样本数目有N个）；约束条件有2N个（样本数目为N，每个样本有两个约束条件）</p>
+<h3 id="Lagrange-Dual"><a href="#Lagrange-Dual" class="headerlink" title="Lagrange Dual"></a>Lagrange Dual</h3><p>我们可以将上述问题转换成拉格朗日对偶问题，进行优化求解，即</p>
+<p>$L(b,w,\xi,\alpha,\beta) = \frac{1}{2}w^Tw + C·\sum_{n=1}^N\xi_n + \sum_{n=1}^N\alpha_n·(1-\xi_n-y_n(w^Tz_n+b)) + \sum_{n=1}^N\beta_n·(-\xi_n)​$</p>
+<p>根据拉格朗日乘子法，我们需要优化$min_{b,w,\xi}L(b,w,\xi,\alpha,\beta) max_{\alpha_n\ge 0, \beta_n\ge0}​$</p>
+<p>根据对偶问题，我们可以将max min问题转换为min max问题：</p>
+<p>$max_{\alpha_n\geq0,\beta_n \geq0}(min_{b,w,\xi} L(b,w,\xi,\alpha,\beta))$</p>
+<p>（1）$min_{b,w,\xi}L(b,w,\xi,\alpha,\beta)$</p>
+<p>$\frac{\partial L}{\partial \xi_n} =0 = C - \alpha_n-\beta_n$</p>
+<p>因为$\alpha_n \ge 0$ $\beta_n \ge 0$，因此，可以将约束转换成$0 \le \alpha_n \le C$</p>
+<p>我们整理$L(b,w,\xi,\alpha,\beta) = \frac{1}{2}w^Tw + C·\sum_{n=1}^N\xi_n + \sum_{n=1}^N\alpha_n·(1-\xi_n-y_n(w^Tz_n+b)) + \sum_{n=1}^N\beta_n·(-\xi_n)$</p>
+<p>$L = \frac{1}{2}w^Tw + \sum_{n=1}^N(C-\alpha_n-\beta_n)\xi_n + \sum_{n=1}^N\alpha_n(1-y_n(w^Tz_n+b))$</p>
+<p>因为$C-\alpha_n-\beta_n= 0$，$L=\frac{1}{2}w^Tw + \sum_{n=1}^N\alpha_n(1-y_n(w^Tz_n+b))$</p>
+<p>（2）$min_{b,w}L(b,w,\alpha,\beta)$</p>
+<p>$\frac{\partial L}{\partial b} = 0​$，因此，$\sum_{n=1}^N\alpha_ny_n = 0​$</p>
+<p>$\frac{\partial L}{\partial w_i} = 0$，因此，$w = \sum_{n=1}^N\alpha_ny_nz_n$</p>
+<p>（3）Standard Soft-Margin SVM Dual</p>
+<p>优化函数：$min_{\alpha}\frac{1}{2}\sum_{n=1}^Nsum_{m=1}^N\alpha_n\alpha_my_ny_mz^T_nz_m - \sum_{n=1}^N\alpha_n$</p>
+<p>约束条件；$min_{n=1}^Ny_n\alpha_n =0$</p>
+<p>​        $0\le \alpha_n\le C $ $n=1,2,3…N $</p>
+<p>隐式约束条件：$w = \sum_{n=1}^N\alpha_ny_nz_n$</p>
+<p>​             $\beta_n = C - \alpha_n$</p>
+<p>💡soft-margin svm和hard-margin svm在优化问题中，只有$\alpha_n$的约束增加$\alpha_n \le C $</p>
+<p>💡同样，我们将优化问题转换为N个变量，2N+1个约束条件</p>
+<h3 id="Kernel-Soft-Margin-SVM"><a href="#Kernel-Soft-Margin-SVM" class="headerlink" title="Kernel Soft-Margin SVM"></a>Kernel Soft-Margin SVM</h3><p>$g_{SVM}(x ) = sign ( \sum_{SV} \alpha_ny_nK(x_n,x) +b)$</p>
+<p>soft-margin SVM 和 hard-margin SVM在kernel问题中的形式一致，只不过soft margin问题更灵活，不需要限制样本一定是被large margin分类平面完全分开</p>
+<p>在hard margin中，我们利用KKT互补松弛条件求解b，即 两个约束条件的乘积为0</p>
+<p> $\alpha_n(1-y_n(w^Tz_n+b)) = 0$，对于$\alpha_n &gt;0 $的支撑向量保证$1-y_n(w^Tz_n+b) = 0$</p>
+<p>同样，我们在soft-margin SVM中，利用KKT互补松弛条件求解b：</p>
+<p>$\alpha_n(1-\xi_n-y_n(w^Tz_n+b)) = 0​$</p>
+<p>$\beta_n \xi_n = 0 $ =&gt; $(C-\alpha_n)\xi_n =0 $</p>
+<p>non support vector：$\alpha_n = 0$ $\xi_n = 0$ （数据点有可能落在boundary边界，但是更多的点远离边界，分类正确）</p>
+<p>free support vector：$0 &lt; \alpha_n &lt; C$  $\xi_n =0$ （数据点落在boundary边界上）</p>
+<p>Bouded vector：$\alpha_n = C$ $\xi_n$代表数据点在现有分类超平面下，数据点所犯的错误的大小；当$0&lt;\xi_n<1$，表示数据点分类正确，数据点介于分类超平面和boundary之间；当$\xi_n> 1$，表示数据点分类错误，在分类错误的一侧</1$，表示数据点分类正确，数据点介于分类超平面和boundary之间；当$\xi_n></p>
+<p>在Soft-Margin SVM中，C也是一个超参数，C越大，表明更不能忍受分类错误的问题，也越容易出现过拟合问题</p>
+<p><img src="/2019/03/27/SVMTwo/s3.png" width="650px"></p>
+<p> 以Gaussian Kernel SVM为例，我们需要调解soft-margin中的C和Guassian Kernel中的$\gamma$，可以采用V-fold cross validation的方法进行验证；</p>
+<p>💡对于SVM来说，leave-one-out的交叉验证误差和模型对应的支撑向量的数目比例相关；即$E_{loocv} \leq \frac{\text{number of } SV}{N}$</p>
+<p>因为SVM的模型参数只跟support vector有关，和其他训练样本无关；因此，当从原始样本中留出一个非support vector进行验证时，用剩余样本训练得到的$err(g^-,non-SV) = err(g,non-SV) = 0​$</p>
+<p>而对于support vector来说，如果模型可以将其分类正确，则误差为0；否则误差为1；即$e_{SV} \leq 1$</p>
+<p>$err(g^-,SV) \ge err(g,SV) = 0$ (表示留出原始模型的support vector进行验证误差)</p>
+<p>因此，我们可以根据模型训练得到的support vector来预估模型的验证误差</p>
+<p>💡但是，这个不等式只是一个原始模型的验证误差的上界！！！</p>
 
       
     </div>
@@ -616,7 +676,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Non-Linear-SVM"><span class="nav-number">1.</span> <span class="nav-text">Non-Linear SVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Lagrange-Dual-Problem"><span class="nav-number">1.1.</span> <span class="nav-text">Lagrange Dual Problem</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SVM-vs-PLA"><span class="nav-number">1.1.1.</span> <span class="nav-text">SVM vs PLA</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel-SVM"><span class="nav-number">2.</span> <span class="nav-text">Kernel SVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel-Function"><span class="nav-number">3.</span> <span class="nav-text">Kernel Function</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Infinite-Dimensional-Transform"><span class="nav-number">3.1.</span> <span class="nav-text">Infinite Dimensional Transform</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Discuss"><span class="nav-number">3.2.</span> <span class="nav-text">Discuss</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Non-Linear-SVM"><span class="nav-number">1.</span> <span class="nav-text">Non-Linear SVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Lagrange-Dual-Problem"><span class="nav-number">1.1.</span> <span class="nav-text">Lagrange Dual Problem</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SVM-vs-PLA"><span class="nav-number">1.1.1.</span> <span class="nav-text">SVM vs PLA</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel-SVM"><span class="nav-number">2.</span> <span class="nav-text">Kernel SVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel-Function"><span class="nav-number">3.</span> <span class="nav-text">Kernel Function</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Infinite-Dimensional-Transform"><span class="nav-number">3.1.</span> <span class="nav-text">Infinite Dimensional Transform</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Discuss"><span class="nav-number">3.2.</span> <span class="nav-text">Discuss</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Soft-Margin-SVM"><span class="nav-number">4.</span> <span class="nav-text">Soft-Margin SVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Lagrange-Dual"><span class="nav-number">4.1.</span> <span class="nav-text">Lagrange Dual</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kernel-Soft-Margin-SVM"><span class="nav-number">4.2.</span> <span class="nav-text">Kernel Soft-Margin SVM</span></a></li></ol></li></ol></div>
             
 
           </div>

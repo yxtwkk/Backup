@@ -104,7 +104,7 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c15.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c16.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/06/16/分类Classification/c17.png">
-<meta property="og:updated_time" content="2018-10-08T14:37:05.000Z">
+<meta property="og:updated_time" content="2019-05-16T02:46:26.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Classification">
 <meta name="twitter:description" content="分类问题和回归问题是机器学习中非常常见的两个学习任务，通常情况下，如果目标输出$y$ 是连续值，则为回归问题；如果目标输出$y$是类别标签，则为分类问题 分类问题的应用场景很多： （1）信用卡申请：根据申请人的个人情况判断是否给予其信用卡：accept/refuse =&amp;gt;二分类问题 （2）疾病检测：根据病人的身体特征判断其所患疾病 =&amp;gt; 多分类问题 （3）手写体识别 （4）面部识别">
@@ -391,8 +391,8 @@
 <p><img src="/2018/06/16/分类Classification/c5.png" width="300px"></p>
 <p>计算公式中的 $p(x|C_1) $   $p(x|C_2)$  $p(C_1)$  $p(C_2)$ 都可以从训练样本中估计得到</p>
 <hr>
-<h4 id="高斯判别分析-GDA"><a href="#高斯判别分析-GDA" class="headerlink" title="高斯判别分析 GDA"></a>高斯判别分析 GDA</h4><p>以pokerman的训练数据为例，假设水系的pokerman可以通过$ <sp defense,="" defense="">$两个特征来表示</sp></p>
-<p>训练样本选取了79只，现在有一个新来的样本$ <sp defense="103,">$ </sp></p>
+<h4 id="高斯判别分析-GDA"><a href="#高斯判别分析-GDA" class="headerlink" title="高斯判别分析 GDA"></a>高斯判别分析 GDA</h4><p>以pokerman的训练数据为例，假设水系的pokerman可以通过$ (SP Defense, Defense)$两个特征来表示</p>
+<p>训练样本选取了79只，现在有一个新来的样本$ (SP Defense = 103, Defense = 450)$ </p>
 <p>如何知道从水系的pokerman中选出这个样本的概率 $p(x|水系)$ </p>
 <p><img src="/2018/06/16/分类Classification/c7.png" width="400px"></p>
 <p><strong>一般情况下，会假设训练样本（如图所示为79个训练样本点）是从一个高斯分布（Gassion Distribution）中抽样得到</strong> </p>
