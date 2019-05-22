@@ -79,17 +79,19 @@
 
 
 
-<meta name="description" content="在前面的介绍中，每一个机器学习问题，其训练样样本x是从一个固定的分布P(x)中产生，类比从bin中选择小球的过程，选择每个小球是有一定概率的，这个概率就是P(x)，其会影响$\nu$和$\mu$；但是在既定的学习问题中，我们只需要固定的sample set就可以。 P(x)的存在强调，训练样本和测试样本需来自同一个概率分布。 有了训练样本x以后，我们需要得到x对应的标签／具体值，则需要根据targ">
+<meta name="description" content="RBF NetWork = Radial Basis Function Network 考虑Gaussian Kernel SVM：$g_{SVM} = sign(\sum_{SV} \alpha_ny_nexp(-\gamma||x-x_n||^2) + b)$ 我们可以将Gaussian Kernel SVM理解为，我们将多个以支撑向量为中心的高斯函数线性组合，可以实现在无限多维上进行larg">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Noise And Error">
-<meta property="og:url" content="https://yeeex.gitee.io/2019/02/23/Noise-And-Error/index.html">
+<meta property="og:title" content="RBF NetWork">
+<meta property="og:url" content="https://yeeex.gitee.io/2019/05/22/RBF-NetWork/index.html">
 <meta property="og:site_name" content="Yeeex">
-<meta property="og:description" content="在前面的介绍中，每一个机器学习问题，其训练样样本x是从一个固定的分布P(x)中产生，类比从bin中选择小球的过程，选择每个小球是有一定概率的，这个概率就是P(x)，其会影响$\nu$和$\mu$；但是在既定的学习问题中，我们只需要固定的sample set就可以。 P(x)的存在强调，训练样本和测试样本需来自同一个概率分布。 有了训练样本x以后，我们需要得到x对应的标签／具体值，则需要根据targ">
+<meta property="og:description" content="RBF NetWork = Radial Basis Function Network 考虑Gaussian Kernel SVM：$g_{SVM} = sign(\sum_{SV} \alpha_ny_nexp(-\gamma||x-x_n||^2) + b)$ 我们可以将Gaussian Kernel SVM理解为，我们将多个以支撑向量为中心的高斯函数线性组合，可以实现在无限多维上进行larg">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-02-24T09:11:24.000Z">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/05/22/RBF-NetWork/r1.png">
+<meta property="og:updated_time" content="2019-05-22T11:59:58.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Noise And Error">
-<meta name="twitter:description" content="在前面的介绍中，每一个机器学习问题，其训练样样本x是从一个固定的分布P(x)中产生，类比从bin中选择小球的过程，选择每个小球是有一定概率的，这个概率就是P(x)，其会影响$\nu$和$\mu$；但是在既定的学习问题中，我们只需要固定的sample set就可以。 P(x)的存在强调，训练样本和测试样本需来自同一个概率分布。 有了训练样本x以后，我们需要得到x对应的标签／具体值，则需要根据targ">
+<meta name="twitter:title" content="RBF NetWork">
+<meta name="twitter:description" content="RBF NetWork = Radial Basis Function Network 考虑Gaussian Kernel SVM：$g_{SVM} = sign(\sum_{SV} \alpha_ny_nexp(-\gamma||x-x_n||^2) + b)$ 我们可以将Gaussian Kernel SVM理解为，我们将多个以支撑向量为中心的高斯函数线性组合，可以实现在无限多维上进行larg">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2019/05/22/RBF-NetWork/r1.png">
 
 
 
@@ -119,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="https://yeeex.gitee.io/2019/02/23/Noise-And-Error/"/>
+  <link rel="canonical" href="https://yeeex.gitee.io/2019/05/22/RBF-NetWork/"/>
 
 
 
 
 
-  <title>Noise And Error | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>RBF NetWork | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -252,7 +254,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/02/23/Noise-And-Error/">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/05/22/RBF-NetWork/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yeeex">
@@ -269,7 +271,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Noise And Error</h1>
+          <h1 class="post-title" itemprop="name headline">RBF NetWork</h1>
         
 
         <div class="post-meta">
@@ -281,8 +283,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-23T22:16:21+08:00">
-                2019-02-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-22T15:36:36+08:00">
+                2019-05-22
               </time>
             
 
@@ -341,44 +343,52 @@
       
 
       
-        <p>在前面的介绍中，每一个机器学习问题，其训练样样本x是从一个固定的分布P(x)中产生，类比从bin中选择小球的过程，选择每个小球是有一定概率的，这个概率就是P(x)，其会影响$\nu$和$\mu$；但是在既定的学习问题中，我们只需要固定的sample set就可以。</p>
-<p>P(x)的存在强调，训练样本和测试样本需来自同一个概率分布。</p>
-<p>有了训练样本x以后，我们需要得到x对应的标签／具体值，则需要根据target function找到对应训练样本的标签／值。</p>
-<p>所以，对于每一个训练任务（监督学习）， 需要通过样本分布P(x)产生sample和target function产生label</p>
+        <p>RBF NetWork = Radial Basis Function Network</p>
+<p>考虑Gaussian Kernel SVM：$g_{SVM} = sign(\sum_{SV} \alpha_ny_nexp(-\gamma||x-x_n||^2) + b)$</p>
+<p>我们可以将Gaussian Kernel SVM理解为，我们将多个以支撑向量为中心的高斯函数线性组合，可以实现在无限多维上进行larger margin的数据分类；</p>
+<p>Gaussian Kernel又称为Radial Basis Function Kernel（RBF Kernel） ：</p>
+<p>（1）Radial指计算函数值只与新数据点x与高斯函数的中心点$x_n$的距离有关，与其他无关；</p>
+<p>（2）Basis Function指通过线性组合的方式，将多个高斯函数组合在一起；</p>
+<p>我们设$g_n(x) = y_nexp(-\gamma||x-x_n||^2)$:</p>
+<p>$g_{SVM}(x) = sign(\sum_{SV}\alpha_ng_n(x) +b)$</p>
+<p>函数表达的意思可以理解为：计算新来数据点和原有支撑向量 之间的距离，距离越近，则支撑向量在最后表决意见时的权重越大</p>
+<p>RBF Network：linear aggregation of radial hypotheses</p>
 <a id="more"></a>
-<h2 id="Error-Measure"><a href="#Error-Measure" class="headerlink" title="Error Measure"></a>Error Measure</h2><p>我们希望我们从假设空间中选择的假设与目标函数越接近越好，因此我们需要通过定义误差评价方式来衡量假设和target funcion之间的接近程度 $E(h,f)$</p>
-<p>Error Measure 是pointwise definition，即 $e(h(x),f(x))$，因此整体的误差 是pointwise definition的平均</p>
-<p><strong>In-Sample Error</strong> : $E_{in}(h) = \frac{1}{N} \sum_{n=1}^N e(h(x_n),f(x_n))$</p>
-<p>💡这里的x是sample set中的每一个训练样本x</p>
-<p>💡在二分类问题中，in-sample error是 训练样本的错误频率 frequency of error in sample</p>
-<p><strong>Out-of-sample Error</strong>：$E_{out}(h) = E_{x}[e(h(x),f(x)]$</p>
-<p>💡这里的x是整体样本空间中每一个general point，是general point的误差期望；因为我们无法得到整体样本空间中每一个general point，所以才根据Hoeffding Inequality进行判断</p>
-<p>💡在二分类问题中，out-of-sample error是整体样本的误差概率 probability of error </p>
-<p><strong>误差评价的选择方式和具体的应用有关</strong>：在误差评价中，重点关注 false reject 和 false accpet</p>
-<p>无论选择什么样的误差评价方式，一个好的error measure是closed-form solution 并且是 convex optimization</p>
-<h2 id="Noisy-Target"><a href="#Noisy-Target" class="headerlink" title="Noisy Target"></a>Noisy Target</h2><p>前面提到，我们需要选择一个合适的假设，使得这个假设越接近target funcion 越好，但是现在情况是，因为存在数据噪声，实际数据往往不是一个target funcion f(x) 而是target distribution P(y|x)</p>
-<p>💡function的意思是，给定一个数据点，可以根据这个function得到一个具体的确定的类别／值；distribution的意思是，给定一个数据点，这个数据点可能属于多个类别，每个类别都有一个具体的概率，这个就是target distribution</p>
-<p>因此，(x,y)不再是通过 P(x)和target function产生，而是通过联合概率分布产生  P(x)P(y|x)</p>
-<p>假设不存在noise的情况下，某个hypothesis <script type="math/tex">h</script>在<script type="math/tex">\mathcal{D}</script>中的错误率<script type="math/tex">E_{in}=\mu</script>。现在考虑加上一个 ‘flipping’ noise level*<script type="math/tex">=1-\lambda​</script>的noise，即：</p>
-<p>$P(y|x)= \left\{\begin{matrix} \lambda &amp; y=f(x)\\\ 1-\lambda &amp; y\neq f(x) \end{matrix}\right.$</p>
-<p>考虑到了noise，<script type="math/tex">h</script>判断正确的样本当中，实际只有<script type="math/tex">\lambda</script>这么多的比例是真的判断正确的，同理<script type="math/tex">h</script>判断错误的样本中，实际也只有<script type="math/tex">\lambda</script>这么多的比例是真的判断错误。假设<script type="math/tex">\mathcal{D}</script>中样本量为N：</p>
-<p>$ \begin{matrix} &amp; \text{no noise} &amp; \text{noise}\\\ h\text{ on }\mathcal{D} &amp; \left\{\begin{matrix} (1-\mu)N &amp; right\\ \\ \\ \mu N&amp; wrong \end{matrix}\right. &amp; \begin{matrix} \left\{\begin{matrix} \lambda(1-\mu)N &amp; \text{true right}\\ (1-\lambda)(1-\mu)N &amp; \text{false right} \end{matrix}\right.\\ \\ \left\{\begin{matrix} \lambda \mu N &amp; \text{true wrong}\\ (1-\lambda)\mu N &amp; \text{false wrong} \end{matrix}\right. \end{matrix} \end{matrix}$</p>
-<p>因此，如果存在noise，则<script type="math/tex">h</script>判断错误的数量实际应该为<script type="math/tex">\lambda \mu N + (1-\lambda)(1-\mu)N</script>这么多，<script type="math/tex">h</script>真实的<script type="math/tex">E_{in}=\lambda \mu + (1-\lambda)(1-\mu)</script>。稍微做个合并，得到：<script type="math/tex">\text{true }E_{in} = (2\lambda - 1)\mu + (1-\lambda)</script></p>
-<p>假设通过学习我们得到一个<script type="math/tex">g</script>，并且有<script type="math/tex">E_{in}(g)=0.2</script>(即<script type="math/tex">\mu = 0.2</script>)，若学习所用的<script type="math/tex">\mathcal{D}</script>中存在 ‘flipping’ level=0.1的noise(即<script type="math/tex">\lambda = 0.9</script>)，则真实的<script type="math/tex">E_{in}(g)=0.26</script>。若 ‘flipping’ level达到0.2，则真实的<script type="math/tex">E_{in}(g) = 0.32</script></p>
-<p><strong>Noisy Target / y= deterministic target + noise</strong>:</p>
-<p>deteministic target 确定性的target 即 f(x) = E(y|x)</p>
-<p>noise = y - f(x)</p>
-<p>💡 确定性target是noisy target的一个特殊情况，令 y=f(x) ，其他P(y|x) = 0</p>
-<p><strong>这里需要明确</strong>：</p>
-<p>target distribtuion是P(y|x), 是我们学习的目标；输入空间的概率分布P(x)表明x的分布与训练样本的重要性；我们将sample set的产生过程合并成联合概率分布 P(x,y)= P(x)P(y|x)，但是这并不表明我们需要学习这个联合概率P(x,y)，我们真正学习的是P(y|x)</p>
-<p><strong>不同的误差评价方式会影响mini-target的选择：</strong> （mini-taget即 假设空间在样本的这个target上的误差最小／deterministic target）</p>
-<p>假设P(y=1|x) = 0.2,P(y=2|x)=0.7,P(y=3|x)=0.1</p>
-<p>选择0/1误差：$e(h(x),f(x)) = [h(x) \neq f(x)]$  =&gt; $f(x) = argmax_{y \in Y}P(y|x)​$</p>
-<p>$\widetilde{y} = \left\{\begin{matrix}<br>1 &amp;  avg.err 0.8 \\<br>2&amp; avg.err 0.3 &amp; \\<br>3 &amp; avg.err 0.9 &amp; \\<br>1.9 &amp;avg.err 1.0  &amp;<br>\end{matrix}\right.$</p>
-<p>选择平方损失 mse：$e(h(x),f(x)) = (h(x) \neq f(x))^2$  =&gt; $f(x) = \sum_{y \in Y} y ·P(y|x)$</p>
-<p>$\widetilde{y} = \left\{\begin{matrix}<br>1 &amp;  avg.err 1.1 \\<br>2&amp; avg.err 0.3&amp; \\<br>3 &amp; avg.err 1.5 &amp; \\<br>1.9 &amp;avg.err 0.29  &amp;<br>\end{matrix}\right.$</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>因为我们没有办法确定所选的假设在全部样本空间上的表现如何，所以只能通过$E_{in} \approx E_{out}$ （通过 Hoeffding。Inequality）</p>
-<p>而 我们希望学习到 所选的假设 $g\approx \; target \;function$，即希望$E_{out} = 0$，只能通过优化$E_{in}$来优化</p>
+<h2 id="RBF-Network"><a href="#RBF-Network" class="headerlink" title="RBF Network"></a>RBF Network</h2><p>传统的神经网络模型，需要将输入数据的特征维度与对应的权重内积计算；</p>
+<p>RBF Network可以看作是输入的数据和对应的中心点进行距离计算，得到对应的RBF值，然后再进行liear aggregation</p>
+<p>💡即神经网络模型通过内积计算表征 数据点和对应参数向量之间的相似度；RBF Network通过距离计算表征数据点和中心点之间的相似程度</p>
+<p><img src="/2019/05/22/RBF-NetWork/r1.png" width="370px"></p>
+<p>对于RBF Network，我们需要指定高斯函数的中心点$\mu_m$，各个高斯函数的权重/投票系数$\beta_m$</p>
+<p>学习的过程即学习以上这两个参数</p>
+<h3 id="Similarity"><a href="#Similarity" class="headerlink" title="Similarity"></a>Similarity</h3><p>我们在这一小节整理一下相似性问题：</p>
+<p>Kernel Similarity是一种计算相似性的方式，更一般地，向量之间的内积计算是度量相似性的方式；kernel核化技巧是将特征转换和内积计算结合在一起，通过在原始数据上进行内积计算，直接表征在转换后的数据上，两个数据点的相似性；</p>
+<p>RBF Similarity是通过计算数据点之间的距离表征相似性；数据点之间的距离越近，数据点越相似</p>
+<p>Gaussian Kernel是介于Kernel Similarity和RBF Similarity之间的一种形式：</p>
+<p>$Gaussian(x,x’) = exp (-\gamma ||x-x’||^2)$：表面上Gaussian Kernel通过计算距离的方式，表达了相似性；从kernel的角度，Gaussian kernel是将数据点映射到无限多维后，进行内积计算后的结果</p>
+<p>还有其他的一些度量相似性的方式：</p>
+<p>DNASim(x,x’) = EditDistance(x,x’) 通过计算编辑距离衡量</p>
+<p>$Neuron(x,x’) = tanh(\gamma x^Tx’+1)$ </p>
+<h2 id="Full-RBF-Network"><a href="#Full-RBF-Network" class="headerlink" title="Full RBF Network"></a>Full RBF Network</h2><p>RBF Network 通用模型：$h(x) = Output(\sum_{m=1}^M\beta_m RBF(x,\mu_m))$</p>
+<p>如果我们将所有的训练样本视为中心点，即M个中心点 = N个训练样本；对应的物理含义即，每个训练样本都可以参与对测试样本的决策中；如果每个训练样本的决定权重都是uniform的，我们设为1，即：</p>
+<p>$g_{uniform(x)} = sign(\sum_{m=1}^Ny_mexp(-\gamma||x-x_m||)^2)$</p>
+<p>因为高斯函数的衰减很快，梯度很大，样本之间越相近，样本参与的决策权重越大，因此可以用一个点代替所有的点进行决策；即通过selection的方式进行决策，而不是通过aggregation的方式</p>
+<p>通过selection而不是aggregation的方式的RBF Network的物理意义是，我们总是根据距离样本点最近的点决定样本的标记；</p>
+<p>我们称uniformly aggregate K neighbors =&gt; K nearest neighbor</p>
+<p>KNN的方式是一种lazy训练的方式，我们不需要训练得到中心点的位置，只需要在测试的时候，选择离测试样本最近的K 个点参与决策即可</p>
+<p>当然，如果用全部数据作为中心点，Full RBF容易出现过拟合的问题；一个合适的解决策略是，从原始训练样本中选出数据代表，作为中心代表</p>
+<h2 id="Clutering"><a href="#Clutering" class="headerlink" title="Clutering"></a>Clutering</h2><p>聚类问题，如果两个数据越相似，则两个数据越应该聚合在一起；因此，我们可以通过聚类的方式，将原始数据聚合成多个类；衡量聚类效果的一个指标是SSQ：$E_{in}(S_1,S_2,…S_M;\mu_1,\mu_2…\mu_M) = \frac{1}{N}\sum_{n=1}^N\sum_{m=1}^M[X_n \in S_m]||X_n-\mu_m||^2$</p>
+<p>其中，$S_i$表示原始样本聚合成的多个类；$\mu_i$表示对应的第i个类的中心点</p>
+<p>我们可以采用分步优化的策略对$E_{in}$进行优化</p>
+<p>（1）首先固定数据所属的聚类$S_i$，通过梯度下降的方式计算$\mu_i$</p>
+<p>$\bigtriangledown _{\mu_m}E_{in} = -2\sum_{n=1}^N<a href="X_n-\mu_m">X_n \in S_m</a> = -2((\sum_{x_n \in S_m}X_n)-|S_m|\mu_m)$</p>
+<p>根据求导可以得出，最终的聚类中心即，所有属于这个聚类的数据点的平均值</p>
+<p>（2）然后固定所有的聚类中心$\mu_i$，通过计算数据点和聚类中心的距离，得到新的数据点所属的聚类</p>
+<p>=&gt; 重复上述过程，直到收敛；</p>
+<p>=&gt; 初始化中心点，采用随机选择K个点的方式</p>
+<h3 id="RBF-Network-Using-K-means"><a href="#RBF-Network-Using-K-means" class="headerlink" title="RBF Network Using K-means"></a>RBF Network Using K-means</h3><p>（1）对所有数据点进行k-means，学习得到k个聚类中心（可以作为高斯函数的中心点）</p>
+<p>（2）根据模型$\Phi(x) = [RBF(x,\mu_1),RBF(x,\mu_2),…RBF(x,\mu_M)]$</p>
+<p>对新的数据点${(\Phi(x_n),y_n)}$进行linear model，求解得到每一个RBF Kernel的权重$\beta$</p>
+<p>💡整个模型的参数：M个聚类中心（通过K-means确定），RBF的参数$\gamma$（超参数，人工确定），RBF的权重$\beta$（通过线性模型确定）</p>
 
       
     </div>
@@ -403,8 +413,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/02/21/Distributed-Machine-Learning/" rel="next" title="Distributed Machine Learning Introduction">
-                <i class="fa fa-chevron-left"></i> Distributed Machine Learning Introduction
+              <a href="/2019/04/25/Tree-Model/" rel="next" title="Tree Model">
+                <i class="fa fa-chevron-left"></i> Tree Model
               </a>
             
           </div>
@@ -412,10 +422,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/03/09/Linear-Model/" rel="prev" title="Linear Model">
-                Linear Model <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -538,7 +544,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Error-Measure"><span class="nav-number">1.</span> <span class="nav-text">Error Measure</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Noisy-Target"><span class="nav-number">2.</span> <span class="nav-text">Noisy Target</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RBF-Network"><span class="nav-number">1.</span> <span class="nav-text">RBF Network</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Similarity"><span class="nav-number">1.1.</span> <span class="nav-text">Similarity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Full-RBF-Network"><span class="nav-number">2.</span> <span class="nav-text">Full RBF Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Clutering"><span class="nav-number">3.</span> <span class="nav-text">Clutering</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RBF-Network-Using-K-means"><span class="nav-number">3.1.</span> <span class="nav-text">RBF Network Using K-means</span></a></li></ol></li></ol></div>
             
 
           </div>
