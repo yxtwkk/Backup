@@ -87,7 +87,7 @@
 <meta property="og:description" content="RBF NetWork = Radial Basis Function Network 考虑Gaussian Kernel SVM：$g_{SVM} = sign(\sum_{SV} \alpha_ny_nexp(-\gamma||x-x_n||^2) + b)$ 我们可以将Gaussian Kernel SVM理解为，我们将多个以支撑向量为中心的高斯函数线性组合，可以实现在无限多维上进行larg">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yeeex.gitee.io/2019/05/22/RBF-NetWork/r1.png">
-<meta property="og:updated_time" content="2019-05-22T11:59:58.000Z">
+<meta property="og:updated_time" content="2019-05-22T14:57:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RBF NetWork">
 <meta name="twitter:description" content="RBF NetWork = Radial Basis Function Network 考虑Gaussian Kernel SVM：$g_{SVM} = sign(\sum_{SV} \alpha_ny_nexp(-\gamma||x-x_n||^2) + b)$ 我们可以将Gaussian Kernel SVM理解为，我们将多个以支撑向量为中心的高斯函数线性组合，可以实现在无限多维上进行larg">
@@ -389,6 +389,7 @@
 <p>（2）根据模型$\Phi(x) = [RBF(x,\mu_1),RBF(x,\mu_2),…RBF(x,\mu_M)]$</p>
 <p>对新的数据点${(\Phi(x_n),y_n)}$进行linear model，求解得到每一个RBF Kernel的权重$\beta$</p>
 <p>💡整个模型的参数：M个聚类中心（通过K-means确定），RBF的参数$\gamma$（超参数，人工确定），RBF的权重$\beta$（通过线性模型确定）</p>
+<p>💡这里也说明了RBF Network和SVM的不同，Gaussian-Kernel SVM是通过一次训练，得到$\beta$和Gaussian Kernel的中心点（即support vector和其对应的权重）；而RBF Network则是通过两次训练，一层训练是无监督学习，通过聚类等方式确定数据的中心点（也可以称为记忆样本），第二层训练是有监督学习，根据中心点和样本之间的联系，训练得到每一个Gaussian Kernel的权重$\beta$</p>
 
       
     </div>
@@ -422,6 +423,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/23/Matrix-Factorization/" rel="prev" title="Matrix Factorization">
+                Matrix Factorization <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -498,7 +503,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

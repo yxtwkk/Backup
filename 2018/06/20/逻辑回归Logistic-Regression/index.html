@@ -97,7 +97,7 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2018/06/20/逻辑回归Logistic-Regression/l9.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/06/20/逻辑回归Logistic-Regression/l10.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/06/20/逻辑回归Logistic-Regression/l11.png">
-<meta property="og:updated_time" content="2018-09-27T13:20:46.000Z">
+<meta property="og:updated_time" content="2019-06-09T16:00:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Logistic Regression">
 <meta name="twitter:description" content="逻辑回归Logistic Regerssion虽然带上了回归二字，但其是一个不折不扣的分类模型，在上一篇blog中，我们推导了逻辑回归和概率分类模型的关系： （1）假设各个类别和其对应的特征维度是基于高斯分布产生的 （2）假设各个类别的高斯分布的协方差矩阵是一样的 则，在二分类问题中，GDA分类模型和逻辑回归是一致的，但是两个分类模型并不是基于同一个假设学习得到的">
@@ -468,6 +468,25 @@
 <p>对于高斯判别分析GDA，假定样本服从正态分布，但是不知道均值和协方差矩阵</p>
 <p>对于逻辑回归LR，假定样本服从二项分布，但是不知道均值</p>
 <p>最大后验概率MAP：假设在MLE中用来估计参数$\mu$,但是MLE不考虑$\mu$的先验概率，但是如果考虑$\mu$服从某个先验概率，则需进行最大后验概率估计MAP</p>
+<hr>
+<h3 id="交叉熵与平方损失的不同"><a href="#交叉熵与平方损失的不同" class="headerlink" title="交叉熵与平方损失的不同"></a>交叉熵与平方损失的不同</h3><p>在SVM讨论损失函数中，讨论了在采用sigmoid函数的情况，用平方损失和交叉熵损失的不同</p>
+<p>平方损失$L(\sigma(z),y) = (y·\sigma(z) - 1)^2​$</p>
+<p>交叉熵损失$L(\sigma(z),y) = ln(1+exp(-y\sigma(z)))​$</p>
+<p>根据二者的函数图像，可以得到，当$y\sigma(z)​$的乘积小于0 且绝对值较大时，交叉熵损失的梯度较大，可以更好的进行训练</p>
+<p>对于深度神经网络中，我们在最后一层通常使用平方损失／交叉损失：</p>
+<p>平方损失更适合输出为连续，且最后一层不含sigmoid或softmax的神经网络；交叉熵适合二分类和多分类的场景。</p>
+<p>我们以神经网络最后一层为例，假设输入激活函数为z，从激活函数输出为a，我们利用a和实际值y进行比较，计算损失；因为神经网络存在误差的反向传播，我们可以先从最后一层计算误差关于z的导数，这样可以继续向后传播。</p>
+<p>平方损失：$L(a,y) = \frac{1}{2}||y-a||^2 = \frac{1}{2}||y-f(z)||^2$  （其中，$f(z)$是关于z的激活函数）</p>
+<p>$\frac{\partial L}{\partial z} = -(y-a)f’(z)​$</p>
+<p>交叉熵损失：$L(a,y) = -\sum_{k=1}^n y_klna_k = -\sum_{k=1}^ny_klnf(z_k)$</p>
+<p>$\frac{\partial L}{\partial z} = -\frac{1}{a_k}·\frac{\partial a_k}{\partial z_k} ​$</p>
+<p>如果激活函数取SoftMax激活函数，则根据SoftMax函数的计算公式，我们需要讨论两种情况：</p>
+<p>$a = \frac{z_1}{z_1+z_2+z_3}$</p>
+<p>如果此时反传的误差与$z_1$有关，则$\frac{\partial a}{\partial z_1} = \frac{z_1’}{z_1+z_2+z_3} - \frac{z_1}{(z_1+z_2+z_3)^2} = a(1-a)$</p>
+<p>${z_1}’ = {e^{z}}’ = e^z$</p>
+<p>如果此时反传的误差与$z_1$无关，假设是$z_2$，则$\frac{\partial a’}{\partial z_2} = \frac{0}{z_1+z_2+z_3} - \frac{z_1· (z_2)’}{(z_1+z_2+z_3)^2} = -a_1·a_2$ </p>
+<p>因此，我们可以看出，采用平方损失函数，当激活函数为sigmoid时，如果z的绝对值很大，$f’(z)$会趋近于饱和，</p>
+<p>$f’(z) = f(z)(1-f(z))​$， 导致梯度非常小，会使得学习变得比较缓慢</p>
 
       
     </div>
@@ -581,7 +600,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -627,7 +646,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Function-Set"><span class="nav-number">1.</span> <span class="nav-text">Function Set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Goodness-of-a-Function"><span class="nav-number">2.</span> <span class="nav-text">Goodness of a Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-the-Best-Function"><span class="nav-number">3.</span> <span class="nav-text">Find the Best Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Comparison"><span class="nav-number">4.</span> <span class="nav-text">Comparison</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#💡思考：为什么逻辑回归不能采用平方损失函数，而采用交叉熵损失函数？"><span class="nav-number">4.1.</span> <span class="nav-text">💡思考：为什么逻辑回归不能采用平方损失函数，而采用交叉熵损失函数？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multi-Class-Classification-多分类问题"><span class="nav-number">5.</span> <span class="nav-text">Multi-Class Classification 多分类问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Limitation-of-LR-逻辑回归的局限性"><span class="nav-number">6.</span> <span class="nav-text">Limitation of LR 逻辑回归的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特征变换-Feature-Transformation"><span class="nav-number">6.1.</span> <span class="nav-text">特征变换 Feature Transformation</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成模型／判别模型"><span class="nav-number">7.</span> <span class="nav-text">生成模型／判别模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#以朴素贝叶斯为例，对两类模型进行说明"><span class="nav-number">7.1.</span> <span class="nav-text">以朴素贝叶斯为例，对两类模型进行说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#讨论-Generative-v-s-Discriminative"><span class="nav-number">7.2.</span> <span class="nav-text">讨论 Generative v.s. Discriminative</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#极大似然估计MLE-最大后验概率MAP"><span class="nav-number">8.</span> <span class="nav-text">极大似然估计MLE /最大后验概率MAP</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Function-Set"><span class="nav-number">1.</span> <span class="nav-text">Function Set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Goodness-of-a-Function"><span class="nav-number">2.</span> <span class="nav-text">Goodness of a Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-the-Best-Function"><span class="nav-number">3.</span> <span class="nav-text">Find the Best Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Comparison"><span class="nav-number">4.</span> <span class="nav-text">Comparison</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#💡思考：为什么逻辑回归不能采用平方损失函数，而采用交叉熵损失函数？"><span class="nav-number">4.1.</span> <span class="nav-text">💡思考：为什么逻辑回归不能采用平方损失函数，而采用交叉熵损失函数？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multi-Class-Classification-多分类问题"><span class="nav-number">5.</span> <span class="nav-text">Multi-Class Classification 多分类问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Limitation-of-LR-逻辑回归的局限性"><span class="nav-number">6.</span> <span class="nav-text">Limitation of LR 逻辑回归的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特征变换-Feature-Transformation"><span class="nav-number">6.1.</span> <span class="nav-text">特征变换 Feature Transformation</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成模型／判别模型"><span class="nav-number">7.</span> <span class="nav-text">生成模型／判别模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#以朴素贝叶斯为例，对两类模型进行说明"><span class="nav-number">7.1.</span> <span class="nav-text">以朴素贝叶斯为例，对两类模型进行说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#讨论-Generative-v-s-Discriminative"><span class="nav-number">7.2.</span> <span class="nav-text">讨论 Generative v.s. Discriminative</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#极大似然估计MLE-最大后验概率MAP"><span class="nav-number">8.</span> <span class="nav-text">极大似然估计MLE /最大后验概率MAP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#交叉熵与平方损失的不同"><span class="nav-number">9.</span> <span class="nav-text">交叉熵与平方损失的不同</span></a></li></ol></div>
             
 
           </div>

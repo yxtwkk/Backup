@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s3.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s4.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/14/SVM/s5.png">
-<meta property="og:updated_time" content="2019-04-09T13:31:36.000Z">
+<meta property="og:updated_time" content="2019-06-09T02:59:25.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linear SVM">
 <meta name="twitter:description" content="支持向量机SVM（Support Vector Machine）是一个（二）分类模型，主要特点有两个： （1）针对分类问题损失函数 loss funcion不方便求导优化参数的问题，SVM采用Hinge Loss （2）针对线性分类模型的分类局限性，SVM引入Kernel的方法进行特征变化，进而进行分类">
@@ -418,7 +418,7 @@
 <p>💡在这个函数形式中，1为penalty／margin，是一个超参数，我们当然可以定义这个penalty为2，3，4..</p>
 <p>💡上式定义penalty为1，hinge loss可以作为理想loss的upper bound</p>
 <p><strong>hinge loss和交叉熵的区别</strong></p>
-<p>考虑$y^n$和f(x)的同向问题，当$y^nf(x)&gt;1时，f(x)的增加，会使得sigmoid+交叉熵的loss变得更小，而hinge loss的变化并不是很大</p>
+<p>考虑$y^n$和f(x)的同向问题，当$y^nf(x)&gt;1$时，f(x)的增加，会使得sigmoid+交叉熵的loss变得更小，而hinge loss的变化并不是很大</p>
 <p>即 交叉熵需要分离器在做的好的样本上需要做的更好；而hinge loss只需要好过定义好的penalty，就不需要再好</p>
 <h2 id="Linear-SVM"><a href="#Linear-SVM" class="headerlink" title="Linear SVM"></a>Linear SVM</h2><p>线性svm与逻辑回归的不同点在于线性svm采用了hinge loss</p>
 <p><strong>线性svm的模型为：</strong></p>
@@ -649,7 +649,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

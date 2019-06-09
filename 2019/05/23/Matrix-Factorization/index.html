@@ -79,13 +79,21 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Yeeex">
-<meta property="og:url" content="https://yeeex.gitee.io/page/6/index.html">
+<meta name="description" content="在推荐系统中，我们需要根据用户的打分历史，预测出用户在其他没有打分的商品上的打分情况； 而对于用户来说，我们拥有用户的抽象特征，比如用户的注册编号，用户的性别等； 如何将这些抽象的特征和用户的打分喜好关联起来，这就是Matrix Factorization做的事情">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Matrix Factorization">
+<meta property="og:url" content="https://yeeex.gitee.io/2019/05/23/Matrix-Factorization/index.html">
 <meta property="og:site_name" content="Yeeex">
+<meta property="og:description" content="在推荐系统中，我们需要根据用户的打分历史，预测出用户在其他没有打分的商品上的打分情况； 而对于用户来说，我们拥有用户的抽象特征，比如用户的注册编号，用户的性别等； 如何将这些抽象的特征和用户的打分喜好关联起来，这就是Matrix Factorization做的事情">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/05/23/Matrix-Factorization/m1.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/05/23/Matrix-Factorization/m2.png">
+<meta property="og:image" content="https://yeeex.gitee.io/2019/05/23/Matrix-Factorization/m3.png">
+<meta property="og:updated_time" content="2019-05-24T08:55:39.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Yeeex">
+<meta name="twitter:title" content="Matrix Factorization">
+<meta name="twitter:description" content="在推荐系统中，我们需要根据用户的打分历史，预测出用户在其他没有打分的商品上的打分情况； 而对于用户来说，我们拥有用户的抽象特征，比如用户的注册编号，用户的性别等； 如何将这些抽象的特征和用户的打分喜好关联起来，这就是Matrix Factorization做的事情">
+<meta name="twitter:image" content="https://yeeex.gitee.io/2019/05/23/Matrix-Factorization/m1.png">
 
 
 
@@ -115,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="https://yeeex.gitee.io/page/6/"/>
+  <link rel="canonical" href="https://yeeex.gitee.io/2019/05/23/Matrix-Factorization/"/>
 
 
 
 
 
-  <title>Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>Matrix Factorization | Yeeex</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -140,8 +148,7 @@
     
   
 
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left 
-  page-home">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -234,9 +241,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -249,7 +256,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/05/23/偏差方差分解/">
+    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2019/05/23/Matrix-Factorization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Yeeex">
@@ -266,9 +273,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/23/偏差方差分解/" itemprop="url">Bias-Variance Decompostion</a></h1>
+          <h1 class="post-title" itemprop="name headline">Matrix Factorization</h1>
         
 
         <div class="post-meta">
@@ -280,8 +285,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-23T20:03:21+08:00">
-                2018-05-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-23T23:14:16+08:00">
+                2019-05-23
               </time>
             
 
@@ -340,19 +345,58 @@
       
 
       
-        
-          <p>在回归问题中，我们有提到两个问题：</p>
-<p>（1）模型的泛化能力和参数正则化</p>
-<p>（2）梯度下降优化损失函数</p>
-<p>这两部分其实都有可以深入探讨的地方，本篇来谈谈模型的偏差方差分解</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/23/偏差方差分解/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+        <p>在推荐系统中，我们需要根据用户的打分历史，预测出用户在其他没有打分的商品上的打分情况；</p>
+<p>而对于用户来说，我们拥有用户的抽象特征，比如用户的注册编号，用户的性别等；</p>
+<p>如何将这些抽象的特征和用户的打分喜好关联起来，这就是Matrix Factorization做的事情</p>
+<a id="more"></a>
+<h2 id="Binary-Vector-Encoding"><a href="#Binary-Vector-Encoding" class="headerlink" title="Binary Vector Encoding"></a>Binary Vector Encoding</h2><p>我们将这种数值离散的特征称为categorical feature，这种特征在数值上没有意义，只代表离散上的种类；</p>
+<p>这种类型的特征，比如，用户的ID，用户血型，编程语言的种类等；</p>
+<p>多数情况下，我们需要将没有数值意义的categorical featue 转换成 numerical feature；但是，诸如决策树等模型，可以直接在categorical feature上处理</p>
+<p>我们可以通过encoding的方式，将categorical feature转换成 numerical feature（将类别特征转换成数字特征）</p>
+<p>比如，假设血型有四种，我们可以encoding为一个四维的向量：</p>
+<p>$A =[1\;\;0\;\;0\;\;0]^T$           $AB=[0\;\;0\;\;1\;\;0]^T$</p>
+<p>$B=[0\;\;1\;\;0\;\;0]^T$            $O =[0\;\;0\;\;0\;\;1]^T$</p>
+<h3 id="Feature-Extraction"><a href="#Feature-Extraction" class="headerlink" title="Feature Extraction"></a>Feature Extraction</h3><p>我们将使用者通过encoding成binary vector，通过$N-\tilde{d}-M$的三层神经网络（输入层／隐藏层／输出层）可以得到用户的特征和电影的特征</p>
+<p>N：表示一共有N个用户，所以我们的bianry vector是一个N维的向量</p>
+<p>$\tilde {d}​$：表示中间隐藏神经元的个数</p>
+<p>M：表示一共有M个电影，用户给有的电影打了分数，给有的电影没有打分，我们需要通过用户给打了分数的电影预测没有打分的电影分数</p>
+<p><img src="/2019/05/23/Matrix-Factorization/m1.png" width="550px"></p>
+<p>但是因为对于每个输入向量，只有一个维度是1，其他维度是0；因此，隐藏神经元不需要作非线性变化，可以直接做线性变化 ；因为只有一个维度为1，即相当于只有这个维度对应的权重进入隐藏层，因此，从效果上看，非线性变化和线性变化是类似的，我们可以将网络简化成下面：</p>
+<p><img src="/2019/05/23/Matrix-Factorization/m2.png" width="550px"></p>
+<p>我们将输入样本和隐藏神经元之间的权重称为 $V^T$ for $[w_{ni}^{(1)}]$；我们称隐藏神经元和输出之间的权重称为$W$ for $[w_{im}^{(2)}]$</p>
+<p>其中，$V^T​$ 是 N<em>$\tilde{d}​$，W是$\tilde{d} </em> M​$ （N代表用户数目，M代表电影数目）</p>
+<p>$h(x) = W^TVx$  对于假设函数，我么可以这样理解：</p>
+<p>x的每一列是N*1的向量，x共有N列；</p>
+<p>我们需要得到用户在不同类型电影上的喜好，我们可以认为$\tilde{d}$这个维度即是隐藏的喜好维度，</p>
+<p>则对于单一用户$x_n$，是一个N<em>1的向量，向量中只有一个维度为1，其他均为0，则$Vx_n = v_n$  是一个$\tilde{d} </em>1$的矩阵，代表用户n的隐藏喜好维度</p>
+<p>$W^T$是$M*\tilde{d}$维度，共有M部电影，每一部电影的隐藏特征维度为$\tilde{d}$维，则$W^Tv_n$代表，用户在隐藏喜好维度的向量和每一个电影的隐藏维度向量内积，得到相似性，代表了用户对这个电影的打分</p>
+<p>即对于每一个用户$h(x_n) = W^Tv_n$</p>
+<h2 id="Linear-Network"><a href="#Linear-Network" class="headerlink" title="Linear Network"></a>Linear Network</h2><p>我们称上述在隐藏层没有做非线性变化的网络，为Linear Network，$h(x) = W^TVx$</p>
+<p>对于第n个用户：$h(x_n) = W^Tv_n$</p>
+<p>对于第m部电影：$h_m(x) = w_m^T\Phi(x)$   $\Phi(x) = Vx$</p>
+<p>对于每部电影，我们希望电影评分，我们希望我们学习到的评分和原始评分越接近越好$r_{mn} = y_n \approx w_m^Tv_n$</p>
+<p>$E_{in}$是所有用户在所有电影上评分的损失函数：$E_{in}({w_m},{v_n}) = \frac{1}{\sum_{m=1}^M|D_m|} \sum_{\text{user n rated movie m}}(r_{mn} - w^T_mv_n)^2$</p>
+<p>对于这个损失函数，我们可以采用两种方式进行优化：</p>
+<h3 id="Matrix-Factorization"><a href="#Matrix-Factorization" class="headerlink" title="Matrix Factorization"></a>Matrix Factorization</h3><p>假设矩阵R是用户-打分矩阵，矩阵的每一行代表一个用户的打分情况，每一列代表一个电影：</p>
+<p><img src="/2019/05/23/Matrix-Factorization/m3.png" width="650px"></p>
+<p>对于每一个打分$r_{nm} = w_m^Tv_n = v_n^Tw_m &lt;=&gt; R \approx V^TW$</p>
+<p>学习的过程即，我们根据已知的打分情况，学习得到每一个用户的$v_n$和每一部电影的$w_m$，然后根据两个向量的内积，得到用户在未知电影上的打分情况</p>
+<h3 id="SGD"><a href="#SGD" class="headerlink" title="SGD"></a>SGD</h3><p>可以采用随机梯度下降的方法进行求解；</p>
+<p>$E_{in}({w_m},{v_n}) \propto \sum_{\text{user n rated movie n}} (r_{nm} - w_m^Tv_n)^2$  </p>
+<p>$err(user \; n, movie\; m, rating\;\; r_{nm}) = (r_{nm}-w_m^Tv_n)^2$</p>
+<p>只有当n=1126时，对于1126号用户 ，err才会有值，否则err为0；</p>
+<p>同样，只有当m=6211时，对于第6211部电影，err才会有值，否则err为0</p>
+<p>因此，$\frac{\partial err}{\partial v_n} = -2(r_{nm}-w_m^Tv_n)w_m$</p>
+<p>$\frac{\partial }{\partial w_m} = -2(r_{nm}-w_m^Tv_n)v_n$</p>
+<p>对于每一个样本，我们的更新方式是，根据现在的残差$(r_{nm} - w_m^Tv_n)$和对应的维度向量进行更新</p>
+<p>算法具体流程：</p>
+<p>（1）为 每一个用户n和每一部电影m随机初始化$\tilde{d}$向量</p>
+<p>（2）从训练样本中选择一组样本，计算$\tilde r_{nm} = r_{nm} - w_m^Tv_n$</p>
+<p>（3）根据SGD更新公式：</p>
+<p>$v_n^{new} &lt;- v_n^{old} + \eta · \tilde {r}_{nm}w_m^{old}$</p>
+<p>$w_m^{new} &lt;- w_m^{old} + \eta · \tilde {r}_{nm}v_n^{old}$</p>
+<p>💡对于SGD而言，因为是随机选取样本进行更新，则更新后的参数越容易满足后更新的样本的条件，所以，当数据的产生有时间需求时，我们可以保证在SGD后几次的更新中，更多的采用后产生的数据进行更新</p>
+
       
     </div>
     
@@ -369,161 +413,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yeeex.gitee.io/2018/05/22/回归Regression/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yeeex">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yeeex">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/22/回归Regression/" itemprop="url">Regression</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-22T21:22:11+08:00">
-                2018-05-22
-              </time>
+              <a href="/2019/05/22/RBF-NetWork/" rel="next" title="RBF NetWork">
+                <i class="fa fa-chevron-left"></i> RBF NetWork
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <p>机器学习问题是，根据实际需求，设计训练函数集合，通过一定的方法，找到一个最优的函数，即可以分为三个步骤：</p>
-<p>（1）定义函数集合</p>
-<p>（2）确定衡量函数/模型好坏的标准（最常见的就是loss funcion + regularization 即，损失函数+正则化）</p>
-<p>（3）根据确定的标准，从函数集合中选择最优的函数</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/22/回归Regression/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -533,14 +444,11 @@
   </article>
 
 
-    
-  </section>
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
-  </nav>
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -548,6 +456,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -568,8 +480,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -620,6 +541,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Binary-Vector-Encoding"><span class="nav-number">1.</span> <span class="nav-text">Binary Vector Encoding</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Feature-Extraction"><span class="nav-number">1.1.</span> <span class="nav-text">Feature Extraction</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linear-Network"><span class="nav-number">2.</span> <span class="nav-text">Linear Network</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Matrix-Factorization"><span class="nav-number">2.1.</span> <span class="nav-text">Matrix Factorization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SGD"><span class="nav-number">2.2.</span> <span class="nav-text">SGD</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -753,6 +690,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
