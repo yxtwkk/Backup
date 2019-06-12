@@ -88,7 +88,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/27/Ensemble/e1.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/10/27/Ensemble/e3.png">
-<meta property="og:updated_time" content="2019-05-11T08:42:30.000Z">
+<meta property="og:updated_time" content="2019-06-10T13:04:06.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ensemble">
 <meta name="twitter:description" content="集成学习是机器学习中一种常用的手段👋 本文介绍两张种常用的集成学习学习方法，分别是Bagging/Boosting 集成学习的框架是：现有一些分类器／模型，记为$\lbrace f_1(x),f_2(x),f_3(x)…\rbrace​$，这些分类器／模型需要不同，相当于每个模型其实在负责自己做的好的那一部分 集成学习需要将这些不同的模型通过合适的方式整合到一起，得到一个更强的模型 我们可以选择">
@@ -385,11 +385,12 @@
 <p>$E(f;D) = E_D[(f(x;D)-y_D)^2] = E_D[(f(x;D)-\overline f(x)+ \overline f(x)-y_D)^2] $</p>
 <p>$ = E_D[(f(x;D)-\overline f(x))^2] + E_D[(\overline f(x)-y_D)^2]+ E_D[2(f(x;D)-\overline f(x))(\overline f(x)-y_D)]$</p>
 <p>$E_D[2(f(x;D)-\overline f(x))(\overline f(x)-y_D)] = 2E_D[f(x;D)\overline f(x)-f(x;D)y_D - \overline f(x)^2 + \overline f(x)y_D] = 2(\overline f(x)^2 - \overline f(x)y_D - \overline f(x)^2 + \overline f(x) y_D) = 0$</p>
-<p>$E_D[f(x;D)\overline  f(x)] = \overline f(x) E_D[f(x;D)] = \overline f(x)^2$</p>
+<p>$E_D[f(x;D)\overline  f(x)] = \overline f(x) E_D[f(x;D)] = \overline f(x)^2​$</p>
 <p>$E_D[f(x;D)y_D] = y_DE_D[f(x;D)] = y_D\overline f(x) $</p>
 <p>$E(f;D) =  E_D[(f(x;D)-\overline f(x))^2] + E_D[(\overline f(x)-y_D)^2] =  E_D[(f(x;D)-\overline f(x))^2] + E_D[(\overline f(x)-y+y-y_D)^2]$</p>
-<p>$E_D[(\overline f(x)-y+y-y_D)^2] = E_D[(\overline f(x)-y)^2]+ E_D[(y-y_D)^2]+2E_D[(\overline f(x)-y)(y-y_D)] =  E_D[(\overline f(x)-y)^2]+ E_D[(y-y_D)^2]$</p>
-<p>$E(f;D) =  E_D[(f(x;D)-\overline f(x))^2] + E_D[(\overline f(x)-y)^2]+ E_D[(y-y_D)^2]  = variance + bias^2 + error^2$</p>
+<p>$E_D[(\overline f(x)-y+y-y_D)^2] = E_D[(\overline f(x)-y)^2]+ E_D[(y-y_D)^2]+2E_D[(\overline f(x)-y)(y-y_D)] =  E_D[(\overline f(x)-y)^2]+ E_D[(y-y_D)^2]​$</p>
+<p>💡假定噪声期望为0 $E_D[(y-y_D)] = 0$</p>
+<p>$E(f;D) =  E_D[(f(x;D)-\overline f(x))^2] + E_D[(\overline f(x)-y)^2]+ E_D[(y-y_D)^2]  = variance + bias^2 + error^2​$</p>
 <h2 id="Recap-Math"><a href="#Recap-Math" class="headerlink" title="Recap Math"></a>Recap Math</h2><p>为了方便后面的讨论，我们需要首先定义好变量含义。</p>
 <p>对于集成学习的每个模型，我们将其视为基模型，每个基模型其实是自己所在的函数空间的一个函数随机变量</p>
 <p>假设每个基模型的权重$\gamma = \frac{1}{m}$，方差$\sigma^2$，以及两个基模型之间的相关系数$\rho$都相等</p>

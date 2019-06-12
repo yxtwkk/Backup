@@ -110,7 +110,7 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2019/02/17/神经网络优化/t20.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2019/02/17/神经网络优化/t21.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2019/02/17/神经网络优化/t24.png">
-<meta property="og:updated_time" content="2019-06-09T15:54:49.000Z">
+<meta property="og:updated_time" content="2019-06-12T01:55:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Overfitting and Solutions">
 <meta name="twitter:description" content="本篇整理了过拟合的相关问题，并从神经网络的角度整理了如果保证神经网络不过拟合">
@@ -525,7 +525,7 @@
 <p>用训练数据的一个mini-batch训练一种神经网络；不同网络的参数之间可能是共享的，即一个神经元可能出现在多个网络当中</p>
 <p><img src="/2019/02/17/神经网络优化/t20.png" width="420px"></p>
 <p><img src="/2019/02/17/神经网络优化/t21.png" width="420px"></p>
-<p>而根据集成学习的方法，将多个模型集成在一起后，最终的结果是多个模型取平均值（算术平均或加权平均），但是Dropout得到的神经网络很多，无法对每个网络都进行output输出以后再取平均，所以将最终训练得到的参数乘以1-p%</p>
+<p>而根据集成学习的方法，将多个模型集成在一起后，最终的结果是多个模型取平均值（算术平均或加权平均），但是Dropout得到的神经网络很多，无法对每个网络都进行output输出以后再取平均，所以将最终训练得到的参数乘以1-p% 或者 p%</p>
 <h2 id="Validation"><a href="#Validation" class="headerlink" title="Validation"></a>Validation</h2><p>对于一个机器学习过程来说，我们首先需要选择合适的假设空间：</p>
 <p>（1）如果是迭代求解的问题，我们需要设定迭代的次数 （ T = 100／1000/10000）</p>
 <p>（2）如果采用了梯度下降的优化方式，我们需要设定学习率（$\eta = 1,0.01,0.0001$）</p>
@@ -540,8 +540,8 @@
 <p>$E_{out}(g_{m^<em>}) \leq E_{test}(g_{m^</em>}) + O(\sqrt \frac{log M}{N_{test}})​$，最终的泛化误差只跟M个模型和测试样本有关</p>
 <p>但是，我们无法得到测试样本</p>
 <p><strong>因此，我们需要根据训练样本构建验证样本集合</strong></p>
-<h3 id="构建Validation-Set"><a href="#构建Validation-Set" class="headerlink" title="构建Validation Set"></a>构建Validation Set</h3><p>为了保证validation set的分布和原始数据分布是相同的，我们随机从训练样本集合中抽取K个样本作为validation set；原始训练样本为N-K个样本作为真正的训练数据对模型进行训练，根据hoeffding 不等式，最终的泛化误差不等式为： $E_{out}(g_{m}^-) \leq E_{val}(g_{m}^-) + O(\sqrt \frac{log M}{K})$</p>
-<p>此处$g_m^-​$表示从原始资料中取出K个样本后训练得到的模型，但是根据learning curve，随着训练样本数目的增多，模型的泛化能力应该越好，且$E_{out}​$会变小，因此，我们可以将不等式整理成：</p>
+<h3 id="构建Validation-Set"><a href="#构建Validation-Set" class="headerlink" title="构建Validation Set"></a>构建Validation Set</h3><p>为了保证validation set的分布和原始数据分布是相同的，我们随机从训练样本集合中抽取K个样本作为validation set；原始训练样本为N-K个样本作为真正的训练数据对模型进行训练，根据hoeffding 不等式，最终的泛化误差不等式为： $E_{out}(g_{m}^-) \leq E_{val}(g_{m}^-) + O(\sqrt \frac{log M}{K})​$</p>
+<p>此处$g_m^-$表示从原始资料中取出K个样本后训练得到的模型，但是根据learning curve，随着训练样本数目的增多，模型的泛化能力应该越好，且$E_{out}​$会变小，因此，我们可以将不等式整理成：</p>
 <p>$E_{out}(g_{m^<em>}) \leq E_{out}(g_{m^</em>}^-) \leq E_{val}(g_{m^*}^-) + O(\sqrt{\frac{log M}{K}})​$</p>
 <p>因此，当我们根据validation set选择出最优的模型以后，需要用全部的N条数据重现训练选择到的模型。</p>
 <p>整个Validation过程如下图：</p>

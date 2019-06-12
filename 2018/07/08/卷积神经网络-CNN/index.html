@@ -99,7 +99,7 @@
 <meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c11.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c13.png">
 <meta property="og:image" content="https://yeeex.gitee.io/2018/07/08/卷积神经网络-CNN/c14.png">
-<meta property="og:updated_time" content="2018-09-27T13:14:37.000Z">
+<meta property="og:updated_time" content="2019-06-10T07:32:33.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Convolutional Neural Network">
 <meta name="twitter:description" content="卷机神经网络 CNN（Convolutional Neural Network）在图像识别和特征提取方面有很大的优势，也正是因为其强大的网络结构，也相继出现如text-cnn之类的类cnn网络用于文本特征提取。 CNN也代表着我们可以根据自己的需求，设计不同的神经网络 （我们可以通过设定不同的参数值来使得全连接神经网络做各种不同的变形，类似于，全连接神经网络是一个大的函数空间Function Se">
@@ -359,9 +359,9 @@
 <p>CNN也代表着我们可以根据自己的需求，设计不同的神经网络</p>
 <p>（我们可以通过设定不同的参数值来使得全连接神经网络做各种不同的变形，类似于，全连接神经网络是一个大的函数空间Function Set，而不同的神经网络模型／深度学习模型都是函数空间中的一个函数，而这个函数又自身可以代表一个Function Set，通过设定不同的网络权值，得到不同的函数）</p>
 <a id="more"></a>
-<h2 id="背景Background"><a href="#背景Background" class="headerlink" title="背景Background"></a>背景Background</h2><p>（1）我们其实不需要观察整个图像，就可以识别其中的一些特征；比如，我们可以只看一部分，就可以判断出图像是否包含鸟喙，而不需要观察整张图像</p>
+<h2 id="背景Background"><a href="#背景Background" class="headerlink" title="背景Background"></a>背景Background</h2><p>（1）我们其实不需要观察整个图像，就可以识别其中的一些特征；比如，我们可以只看一部分，就可以判断出图像是否包含鸟喙，而不需要观察整张图像 =&gt; <strong>稀疏交互</strong></p>
 <p><img src="/2018/07/08/卷积神经网络-CNN/c1.png" width="400px"></p>
-<p>（2）在一幅图像中，同样的pattern可能出现在不同的位置上，所以并不需要在每个位置上都设置参数/权重，在相同pattern的地方可以使用同样的参数</p>
+<p>（2）在一幅图像中，同样的pattern可能出现在不同的位置上，所以并不需要在每个位置上都设置参数/权重，在相同pattern的地方可以使用同样的参数 =&gt; <strong>参数共享</strong></p>
 <p>（3）下采样Subsampling不会改变image的形状</p>
 <p>通过下采样的方式使得图片的pixel（像素点）更小，这样我们需要用到的参数也就更少</p>
 <p>CNN网络的网络结构就是基于以上三点设计的</p>
@@ -370,7 +370,8 @@
 <p>卷积层（Convolution）：我们不需要观察整个图像，就可以发现其中的pattern；一些pattern会在图像的多个位置出现</p>
 <p>池化层（MaxPooling）：下采样并不会影响我们对图像的判断</p>
 <p>卷积层和池化层主要用来提取特征，全连接层利用提取到的特征进行学习（分类／回归）</p>
-<h2 id="卷积层-Convolution"><a href="#卷积层-Convolution" class="headerlink" title="卷积层 Convolution"></a>卷积层 Convolution</h2><p>假设有一个6*6的图像（以单通道图像为例），每个位置代表一个像素点pxiel值</p>
+<h2 id="卷积层-Convolution"><a href="#卷积层-Convolution" class="headerlink" title="卷积层 Convolution"></a>卷积层 Convolution</h2><p>卷基层由一组filter组成，每一个filter相当于原始全链接层的一个神经元；即对于卷积神经网络而言，下一层的输入个数由本层filter的个数决定</p>
+<p>假设有一个6*6的图像（以单通道图像为例），每个位置代表一个像素点pxiel值</p>
 <p>卷积层是通过filter在图像上扫过，形成feature map用来提取图像特征；</p>
 <p>每个filter是一个矩阵（假设3*3），需要设定步长stride（用来表示一个filter在图像上移动的距离），filter移动过程中要和所覆盖的位置的图像的像素点组成的矩阵做内积（即，对应位置相乘并相加）；</p>
 <p>当一个filter对整个图像完成一次扫描以后，就会得到一个feature map；多个filter就会得到多个feature map</p>
@@ -392,11 +393,15 @@
 <p>（2）图示中相同颜色的边代表的是相同的权重（即filter 1对应的一个位置），利用相同的权重参数，但是改变不同的输入（不同位置的像素点），得到不同的输出</p>
 <p><img src="/2018/07/08/卷积神经网络-CNN/c7.png" width="235px"></p>
 <p>CNN通过这种方式得到更少的参数！！</p>
+<p>卷积神经网络同样采用反向传播的方法进行优化；对于共享参数的问题，比如上图中两个深红色的线，如何保证这两个线代表的参数保持一致？ =&gt; 两个线的梯度取平均，才按照负梯度的方向优化</p>
 <h2 id="Pooling"><a href="#Pooling" class="headerlink" title="Pooling"></a>Pooling</h2><p>池化就是选择一些元素代表其中一个元素，可以用Max Pooling或者Average Pooling</p>
 <p><img src="/2018/07/08/卷积神经网络-CNN/c8.png" width="235px"></p>
 <p>以上面的网络为例，filter 1经过图像以后形成的feature map，每4个pixel可以选择其中最大的作为代表，形成一个更小的图片</p>
 <p>💡卷积层的每个filter会形成一个channel</p>
 <p>💡原始图像经过一 次卷积一次池化以后，会得到更小的图像</p>
+<p>💡图像经过卷基层以后，得到新的feature map（与stride步长和卷基层个数有关）；池化Pooling操作会将经过卷基层得到的feature map缩小</p>
+<p>💡一次卷积和池化以后，会得到新的feature map，每一个feature map对应一个filter，相当于，得到一个新的图像，图像上每一个点的深度／一个pixel的位置由几个值表示，由卷积层filter的个数决定</p>
+<p>💡池化可以保持平移不变性、伸缩不变性和旋转不变性</p>
 <h2 id="Flatten"><a href="#Flatten" class="headerlink" title="Flatten"></a>Flatten</h2><p>flatten层是将经过卷积和池化之后的图像拉直成一个向量，输入全连接层进行分类／回归学习</p>
 <p><img src="/2018/07/08/卷积神经网络-CNN/c9.png" width="335px"></p>
 <h2 id="What-does-machine-learn"><a href="#What-does-machine-learn" class="headerlink" title="What does machine learn"></a>What does machine learn</h2><p>我们如何判断机器学习学习到的内容？</p>
